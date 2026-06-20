@@ -11,15 +11,20 @@
   :root{
     --bg:#0c0c0e;
     --bg-2:#101013;
+    --bg-3:#131317;
     --orange:#ff5a00;
     --orange-soft:#ff7a2e;
+    --orange-rgb:255,90,0;
     --cyan:#1fd1f0;
     --cyan-soft:#5fe1ff;
+    --cyan-rgb:31,209,240;
     --ink:#f4f3ee;
     --muted:#8b8b93;
     --line:rgba(255,255,255,.08);
+    --line-strong:rgba(255,255,255,.14);
     --pix:'Pixelify Sans', system-ui, sans-serif;
     --body:'Inter', system-ui, -apple-system, sans-serif;
+    --radius:10px;
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -32,6 +37,22 @@
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
+  }
+
+  /* ---- scroll progress bar ---- */
+  .scroll-progress{
+    position:fixed;top:0;left:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+    z-index:9999;transform-origin:left;transform:scaleX(0);
+    pointer-events:none;
+  }
+
+  /* ---- cursor glow ---- */
+  .cursor-glow{
+    position:fixed;width:500px;height:500px;border-radius:50%;
+    background:radial-gradient(circle,rgba(var(--orange-rgb),.055) 0%,transparent 65%);
+    pointer-events:none;z-index:0;transform:translate(-50%,-50%);
+    transition:opacity .3s;opacity:0;
   }
 
   /* ---- ambient background ---- */
@@ -66,6 +87,15 @@
     gap:24px;
     padding:20px clamp(20px,4vw,56px);
     border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:100;
+    background:transparent;
+    transition:background .3s ease, backdrop-filter .3s ease, border-color .3s ease;
+  }
+  header.scrolled{
+    background:rgba(12,12,14,.85);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-bottom-color:var(--line-strong);
   }
   .brand{display:flex; align-items:center; gap:12px;}
   .brand-mark{
@@ -89,8 +119,14 @@
     font-size:14px; font-weight:600; letter-spacing:.3px;
     text-transform:uppercase;
     transition:color .15s ease;
+    position:relative;
+  }
+  nav a::after{
+    content:'';position:absolute;bottom:-3px;left:0;width:0;height:1.5px;
+    background:var(--orange);transition:width .25s ease;
   }
   nav a:hover{color:var(--ink)}
+  nav a:hover::after{width:100%}
 
   .btn{
     font-family:var(--body); font-weight:700;
@@ -99,11 +135,16 @@
     border:2px solid transparent; border-radius:999px;
     padding:12px 22px; cursor:pointer; text-decoration:none;
     display:inline-flex; align-items:center; justify-content:center; gap:8px;
-    transition:transform .12s ease, background .15s ease, color .15s ease, border-color .15s ease;
+    transition:transform .12s ease, background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
     white-space:nowrap;
   }
   .btn-orange{background:var(--orange); color:#0c0c0e; border-color:var(--orange);}
-  .btn-orange:hover{background:var(--orange-soft); border-color:var(--orange-soft); transform:translateY(-2px);}
+  .btn-orange:hover{
+    background:var(--orange-soft); border-color:var(--orange-soft);
+    transform:translateY(-2px);
+    box-shadow:0 6px 24px rgba(var(--orange-rgb),.35);
+  }
+  .btn-orange:active{transform:translateY(0) scale(.97);box-shadow:none;}
   .header-cta{padding:11px 24px}
 
   /* ============ HERO ============ */
@@ -115,15 +156,12 @@
     padding:clamp(28px,5vh,64px) clamp(20px,4vw,56px);
     max-width:1320px; width:100%; margin:0 auto;
   }
-
-  /* -- heading block: full width, centered -- */
   .hero-top{
     display:flex;
     flex-direction:column;
     align-items:center;
     text-align:center;
   }
-
   .eyebrow{
     display:inline-flex; align-items:center; gap:10px;
     font-family:var(--pix); font-weight:500;
@@ -135,7 +173,6 @@
     content:""; width:26px; height:3px; background:var(--cyan);
     box-shadow:0 5px 0 var(--orange);
   }
-
   h1{
     font-family:var(--body); font-weight:800;
     font-size:clamp(2.05rem, 4.6vw, 3.7rem);
@@ -144,14 +181,12 @@
   h1 .hl-o{color:var(--orange)}
   h1 .hl-c{color:var(--cyan)}
 
-  /* -- two-column area -- */
   .hero-cols{
     display:grid;
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
     align-items:start;
     gap:clamp(28px,5vw,72px);
   }
-
   .lead{
     color:#cfcfd4; font-size:clamp(.98rem,1.15vw,1.08rem);
     line-height:1.65;
@@ -159,7 +194,6 @@
   .lead b{color:var(--ink); font-weight:700}
   .lead i{color:var(--cyan); font-style:normal; font-weight:600}
 
-  /* -- method card -- */
   .method-card{
     padding:22px 24px;
     background:linear-gradient(145deg, rgba(255,90,0,.06) 0%, rgba(31,209,240,.04) 100%);
@@ -167,6 +201,11 @@
     border-radius:8px;
     position:relative;
     overflow:hidden;
+    transition:border-color .25s ease, box-shadow .25s ease;
+  }
+  .method-card:hover{
+    border-color:rgba(255,255,255,.18);
+    box-shadow:0 0 40px rgba(var(--orange-rgb),.08);
   }
   .method-card::before{
     content:"";
@@ -187,8 +226,6 @@
     padding-top:14px;
     border-top:1px solid var(--line);
   }
-
-  /* -- platforms row: full width -- */
   .platforms{
     display:flex; flex-wrap:wrap; gap:9px;
   }
@@ -198,22 +235,14 @@
     padding:7px 12px; border:1px solid var(--line);
     background:rgba(255,255,255,.02);
     border-radius:4px;
+    transition:border-color .15s, background .15s, color .15s;
   }
+  .chip:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.18);}
   .chip.on-o{border-color:rgba(255,90,0,.55); color:#ffd2b8}
   .chip.on-c{border-color:rgba(31,209,240,.5); color:#bdf2fb}
 
-  /* -- visual column -- */
-  .visual-col{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:24px;
-  }
-  .visual{
-    position:relative;
-    display:flex; align-items:center; justify-content:center;
-    width:100%;
-  }
+  .visual-col{display:flex;flex-direction:column;align-items:center;gap:24px;}
+  .visual{position:relative;display:flex;align-items:center;justify-content:center;width:100%;}
   .eye-wrap{
     position:relative; width:100%; max-width:430px;
     filter:drop-shadow(0 0 26px rgba(255,90,0,.22));
@@ -231,40 +260,405 @@
   .t2{bottom:6%; left:-2%; animation-delay:-2.3s; border-color:rgba(255,90,0,.5)}
   .t2 b{background:var(--orange)}
   .t3{bottom:38%; right:-3%; animation-delay:-4.1s}
-
-  @keyframes float{
-    0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-12px)}
-  }
-
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
   .btn-lg{padding:16px 30px; font-size:14.5px}
+  .teeth{width:100%; height:30px; display:block; color:var(--cyan); margin-top:auto;}
 
-  /* ============ jagged cyan bottom accent ============ */
-  .teeth{
-    width:100%; height:30px; display:block; color:var(--cyan);
-    margin-top:auto;
+  /* ============ MARQUEE ============ */
+  .marquee-wrap{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.015);
+    overflow:hidden;
+    padding:12px 0;
+    position:relative;
   }
+  .marquee-wrap::before,.marquee-wrap::after{
+    content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;
+    pointer-events:none;
+  }
+  .marquee-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent);}
+  .marquee-wrap::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent);}
+  .marquee-track{
+    display:flex;gap:0;
+    animation:marqueeScroll 28s linear infinite;
+    width:max-content;
+  }
+  .marquee-track:hover{animation-play-state:paused;}
+  @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  .marquee-item{
+    font-family:var(--pix);font-size:11.5px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--muted);
+    padding:0 28px;white-space:nowrap;
+    display:flex;align-items:center;gap:28px;
+  }
+  .marquee-item .dot{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--orange);flex:none;
+    box-shadow:0 0 6px rgba(var(--orange-rgb),.6);
+  }
+  .marquee-item .dot.c{background:var(--cyan);box-shadow:0 0 6px rgba(var(--cyan-rgb),.6);}
+
+  /* ============ SHARED SECTION ============ */
+  .section{
+    padding:clamp(56px,9vh,100px) clamp(20px,4vw,56px);
+    border-top:1px solid var(--line);
+    position:relative;overflow:hidden;
+  }
+  .section-inner{max-width:1320px;margin:0 auto;position:relative;z-index:1;}
+  .section-alt{background:rgba(255,255,255,.013);}
+  .section-header{
+    display:flex;flex-direction:column;align-items:center;
+    text-align:center;gap:14px;
+    margin-bottom:clamp(36px,6vh,64px);
+  }
+  .section-header .eyebrow{margin-bottom:0;}
+  h2{
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(1.7rem,3.2vw,2.9rem);
+    line-height:1.08;letter-spacing:-.6px;
+  }
+  h2 .hl-o{color:var(--orange)}
+  h2 .hl-c{color:var(--cyan)}
+  h3{
+    font-family:var(--body);font-weight:700;
+    font-size:clamp(.96rem,1.2vw,1.12rem);
+    line-height:1.3;color:var(--ink);
+  }
+
+  /* ---- scroll reveal ---- */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+  .reveal-scale{opacity:0;transform:scale(.94);transition:opacity .55s cubic-bezier(.34,1.56,.64,1),transform .55s cubic-bezier(.34,1.56,.64,1);}
+  .reveal-scale.in-view{opacity:1;transform:scale(1);}
+
+  /* ============ EXAMPLES ============ */
+  .examples-layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+    margin-bottom:clamp(28px,4vh,48px);
+  }
+  .ex-col{display:flex;flex-direction:column;gap:12px;}
+  .ex-col-label{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--pix);font-size:11px;letter-spacing:1.5px;
+    text-transform:uppercase;margin-bottom:4px;
+  }
+  .ex-col-label .lbadge{
+    padding:4px 10px;border-radius:3px;font-size:10px;font-weight:700;
+  }
+  .bylo-col .lbadge{background:rgba(200,50,50,.15);color:#ff8080;border:1px solid rgba(200,50,50,.25);}
+  .stalo-col .lbadge{background:rgba(var(--cyan-rgb),.12);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+
+  /* spotlight card technique */
+  .spotlight-card{
+    position:relative;overflow:hidden;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);
+    cursor:default;transition:border-color .25s ease;
+  }
+  .spotlight-card::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;
+    opacity:0;transition:opacity .35s ease;pointer-events:none;z-index:0;
+    background:radial-gradient(350px circle at var(--mx,50%) var(--my,50%),rgba(var(--cyan-rgb),.08),transparent 70%);
+  }
+  .bylo-col .spotlight-card::before{
+    background:radial-gradient(350px circle at var(--mx,50%) var(--my,50%),rgba(200,50,50,.08),transparent 70%);
+  }
+  .spotlight-card:hover{border-color:rgba(255,255,255,.18);}
+  .spotlight-card:hover::before{opacity:1;}
+  .spotlight-card > *{position:relative;z-index:1;}
+
+  .ai-mock-bar{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;background:#131317;
+    border-bottom:1px solid var(--line);
+  }
+  .ai-mock-icon{
+    font-family:var(--pix);font-size:10px;font-weight:700;
+    padding:3px 7px;border-radius:3px;flex:none;letter-spacing:.5px;
+  }
+  .bylo-col .ai-mock-icon{background:#2a2a33;color:#666;}
+  .stalo-col .ai-mock-icon{background:var(--cyan);color:#06222a;}
+  .ai-mock-q{
+    font-size:11.5px;color:var(--muted);font-style:italic;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;
+  }
+  .ai-mock-body{padding:12px 14px;font-size:12.5px;line-height:1.7;color:#808090;}
+  .ai-mock-body .b-hit{
+    background:var(--cyan);color:#06222a;font-weight:700;
+    padding:1px 5px;border-radius:2px;
+  }
+  .ai-mock-body .rival{color:#c0c0ca;font-weight:600;}
+  .ai-mock-status{
+    padding:7px 14px;border-top:1px solid var(--line);
+    font-family:var(--pix);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
+  }
+  .bylo-col .ai-mock-status{color:#cc5555;}
+  .stalo-col .ai-mock-status{color:var(--cyan);}
+
+  /* principle + conclusion */
+  .principle-wrap{
+    display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  }
+  .principle-card{
+    padding:28px;border-radius:var(--radius);
+    background:linear-gradient(145deg,rgba(255,90,0,.05),rgba(31,209,240,.03));
+    border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;
+    transition:border-color .25s,box-shadow .25s;
+  }
+  .principle-card:hover{border-color:rgba(255,255,255,.2);box-shadow:0 0 40px rgba(var(--orange-rgb),.07);}
+  .principle-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+  }
+  .principle-card h3{margin-bottom:14px;font-size:1.05rem;}
+  .principle-card .lead{font-size:13.5px;}
+  .principle-card .lead+.lead{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
+  .conclusion-card{
+    padding:24px;border-radius:var(--radius);
+    background:rgba(var(--cyan-rgb),.055);
+    border:1px solid rgba(var(--cyan-rgb),.22);
+    display:flex;gap:14px;align-items:flex-start;
+    transition:background .25s,border-color .25s;
+  }
+  .conclusion-card:hover{background:rgba(var(--cyan-rgb),.08);border-color:rgba(var(--cyan-rgb),.35);}
+  .conclusion-card .c-icon{font-size:24px;flex:none;margin-top:1px;}
+  .conclusion-card p{font-size:13.5px;line-height:1.8;color:#cfcfd4;}
+  .conclusion-card b{color:var(--ink);}
+
+  /* ============ HOW IT WORKS ============ */
+  .steps-timeline{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+    position:relative;
+  }
+  .steps-timeline::before{
+    content:'';position:absolute;
+    top:48px;left:calc(12.5% + 24px);right:calc(12.5% + 24px);
+    height:1px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+    opacity:.4;pointer-events:none;
+    z-index:0;
+  }
+  .step{
+    background:var(--bg-2);border:1px solid var(--line);
+    border-radius:var(--radius);padding:28px 22px 24px;
+    position:relative;z-index:1;
+    transition:border-color .25s,transform .3s,box-shadow .3s;
+  }
+  .step:hover{
+    border-color:rgba(var(--orange-rgb),.4);
+    transform:translateY(-4px);
+    box-shadow:0 12px 40px rgba(0,0,0,.25),0 0 0 1px rgba(var(--orange-rgb),.15);
+  }
+  .step-n{
+    font-family:var(--pix);font-size:42px;font-weight:700;
+    color:transparent;-webkit-text-stroke:1.5px rgba(255,90,0,.3);
+    line-height:1;margin-bottom:16px;display:block;
+    transition:-webkit-text-stroke-color .25s;
+  }
+  .step:hover .step-n{-webkit-text-stroke-color:rgba(255,90,0,.65);}
+  .step h3{margin-bottom:10px;font-size:.98rem;}
+  .step .lead{font-size:13px;color:#a0a0b0;}
+
+  .step-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--bg-2);border:2px solid rgba(var(--orange-rgb),.5);
+    position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+    z-index:2;
+    transition:background .25s,border-color .25s,box-shadow .25s;
+  }
+  .step:hover .step-dot{
+    background:var(--orange);border-color:var(--orange);
+    box-shadow:0 0 10px rgba(var(--orange-rgb),.6);
+  }
+
+  /* ============ DIFF / BENTO ============ */
+  .bento-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:auto auto;
+    gap:16px;
+  }
+  .bento-card{
+    background:var(--bg-2);border:1px solid var(--line);
+    border-radius:var(--radius);padding:28px;
+    position:relative;overflow:hidden;
+    transition:border-color .25s,box-shadow .25s,transform .3s;
+  }
+  .bento-card:hover{border-color:rgba(255,255,255,.18);transform:translateY(-3px);}
+  .bento-card.ours{
+    grid-column:1 / -1;
+    border-color:rgba(var(--orange-rgb),.35);
+    background:linear-gradient(145deg,rgba(var(--orange-rgb),.07),rgba(var(--cyan-rgb),.04) 60%,rgba(var(--orange-rgb),.02));
+  }
+  .bento-card.ours:hover{
+    border-color:rgba(var(--orange-rgb),.55);
+    box-shadow:0 0 60px rgba(var(--orange-rgb),.12),0 16px 48px rgba(0,0,0,.3);
+  }
+  .bento-card.ours::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+  }
+  .bento-card.ours::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(600px circle at 60% 50%,rgba(var(--orange-rgb),.06),transparent 55%);
+    pointer-events:none;
+  }
+  .bento-corner{
+    position:absolute;bottom:16px;right:18px;
+    font-family:var(--pix);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+    color:rgba(var(--orange-rgb),.5);
+  }
+  .diff-who{
+    font-family:var(--pix);font-size:10.5px;letter-spacing:1px;
+    text-transform:uppercase;margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .diff-who .who-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex:none;}
+  .bento-card.ours .diff-who .who-dot{background:var(--orange);box-shadow:0 0 8px rgba(var(--orange-rgb),.6);}
+  .bento-card:not(.ours) .diff-who{color:var(--muted);}
+  .bento-card.ours .diff-who{color:var(--orange-soft);}
+  .bento-card .lead{font-size:13.5px;line-height:1.7;}
+  .bento-card.ours .lead{font-size:14.5px;}
+  .ours-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--pix);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    background:rgba(var(--orange-rgb),.15);color:var(--orange-soft);
+    border:1px solid rgba(var(--orange-rgb),.3);
+    padding:4px 10px;border-radius:3px;
+    margin-top:16px;
+  }
+
+  /* ============ FAQ ============ */
+  .faq-layout{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:clamp(32px,5vw,72px);
+    align-items:start;
+  }
+  .faq-sidebar{
+    position:sticky;top:96px;
+  }
+  .faq-sidebar h2{text-align:left;font-size:clamp(1.5rem,2.5vw,2.2rem);}
+  .faq-sidebar .eyebrow{margin-bottom:16px;}
+  .faq-sidebar-text{
+    margin-top:18px;font-size:13.5px;color:var(--muted);line-height:1.7;
+  }
+  .faq-list{display:flex;flex-direction:column;gap:6px;}
+  .faq-item{
+    border:1px solid var(--line);border-radius:8px;overflow:hidden;
+    transition:border-color .2s;
+  }
+  .faq-item:hover{border-color:rgba(255,255,255,.16);}
+  .faq-item.open{border-color:rgba(var(--orange-rgb),.3);}
+  .faq-q{
+    width:100%;text-align:left;background:var(--bg-2);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:18px 22px;font-family:var(--body);font-weight:600;
+    font-size:14.5px;color:var(--ink);transition:background .15s;
+  }
+  .faq-q:hover{background:var(--bg-3);}
+  .faq-toggle{
+    width:28px;height:28px;border-radius:50%;flex:none;
+    border:1.5px solid rgba(255,255,255,.15);
+    display:grid;place-items:center;
+    font-family:var(--pix);font-size:16px;color:var(--orange);
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1),background .15s,border-color .15s;
+    line-height:1;
+  }
+  .faq-item.open .faq-toggle{transform:rotate(45deg);background:rgba(var(--orange-rgb),.1);border-color:rgba(var(--orange-rgb),.4);}
+  .faq-a{
+    max-height:0;overflow:hidden;
+    transition:max-height .3s cubic-bezier(.16,1,.3,1),padding .3s;
+    padding:0 22px;
+    font-size:14px;line-height:1.75;color:#a0a0b0;
+    background:var(--bg-2);border-top:0 solid var(--line);
+  }
+  .faq-item.open .faq-a{
+    max-height:400px;padding:10px 22px 20px;
+    border-top-width:1px;
+  }
+  .faq-a b{color:var(--ink);}
+  .faq-note{margin-top:10px;font-size:12.5px;color:var(--muted);font-style:italic;}
+
+  /* ============ FINAL CTA ============ */
+  .cta-section{
+    padding:clamp(72px,12vh,128px) clamp(20px,4vw,56px);
+    text-align:center;border-top:1px solid var(--line);
+    position:relative;overflow:hidden;
+  }
+  .cta-bg{
+    position:absolute;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(800px 600px at 50% 50%,rgba(var(--orange-rgb),.09),transparent 60%),
+      radial-gradient(500px 400px at 80% 20%,rgba(var(--cyan-rgb),.06),transparent 55%);
+  }
+  .cta-bg::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1.4px);
+    background-size:24px 24px;
+  }
+  .cta-inner{max-width:760px;margin:0 auto;position:relative;z-index:1;}
+  .cta-inner h2{
+    font-size:clamp(1.8rem,3.8vw,3.2rem);
+    margin-bottom:20px;
+  }
+  .cta-sub{
+    font-size:clamp(.98rem,1.3vw,1.12rem);
+    color:var(--orange-soft);font-weight:600;
+    line-height:1.55;margin-bottom:clamp(28px,5vh,44px);
+  }
+  .btn-xl{
+    padding:20px 52px;font-size:15.5px;
+    position:relative;overflow:hidden;
+  }
+  .btn-xl::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 50%);
+    opacity:0;transition:opacity .2s;border-radius:inherit;
+  }
+  .btn-xl:hover::after{opacity:1;}
+  .cta-fine{margin-top:20px;font-size:13.5px;color:var(--muted);line-height:1.65;max-width:520px;margin-left:auto;margin-right:auto;}
+
+  /* ============ FOOTER ============ */
   .footstrip{
     background:var(--cyan); color:#06222a;
     font-family:var(--pix); font-size:13px; letter-spacing:1px;
     text-transform:uppercase;
     display:flex; align-items:center; justify-content:space-between;
-    gap:16px; padding:10px clamp(20px,4vw,56px);
+    gap:16px; padding:11px clamp(20px,4vw,56px);
     flex-wrap:wrap;
   }
   .footstrip span{font-weight:600}
+  .footstrip .credit{
+    font-size:9px;letter-spacing:.5px;opacity:.5;
+  }
 
   /* ============ RESPONSIVE ============ */
   @media (max-width:960px){
     .hero-cols{grid-template-columns:1fr;}
     .visual-col{order:-1}
     .eye-wrap{max-width:360px}
+    .examples-layout{grid-template-columns:1fr;}
+    .principle-wrap{grid-template-columns:1fr;}
+    .steps-timeline{grid-template-columns:repeat(2,1fr);}
+    .steps-timeline::before{display:none;}
+    .bento-grid{grid-template-columns:1fr 1fr;}
+    .bento-card.ours{grid-column:1 / -1;}
+    .faq-layout{grid-template-columns:1fr;}
+    .faq-sidebar{position:static;}
   }
   @media (max-width:760px){
     nav{display:none}
-    .footstrip{justify-content:center; text-align:center}
+    .footstrip{justify-content:center;text-align:center}
+    .bento-grid{grid-template-columns:1fr;}
+    .bento-card.ours{grid-column:auto;}
   }
-  @media (max-width:520px){
+  @media (max-width:600px){
+    .steps-timeline{grid-template-columns:1fr;}
     .eye-tag{display:none}
     .eye-wrap{max-width:300px}
   }
@@ -274,439 +668,256 @@
   }
 
   @media (prefers-reduced-motion:reduce){
-    .eye-wrap,.eye-tag{animation:none}
+    .eye-wrap,.eye-tag,.marquee-track{animation:none}
     *{transition:none !important}
-  }
-
-  /* ===== SECTIONS ===== */
-  .section{
-    padding:clamp(48px,8vh,88px) clamp(20px,4vw,56px);
-    border-top:1px solid var(--line);
-  }
-  .section-inner{max-width:1320px;margin:0 auto;}
-  .section-alt{background:rgba(255,255,255,.013);}
-  .section-header{
-    display:flex;flex-direction:column;align-items:center;
-    text-align:center;gap:12px;
-    margin-bottom:clamp(28px,4vh,48px);
-  }
-  .section-header .eyebrow{margin-bottom:0;}
-  h2{
-    font-family:var(--body);font-weight:800;
-    font-size:clamp(1.55rem,2.8vw,2.5rem);
-    line-height:1.1;letter-spacing:-.5px;
-  }
-  h3{
-    font-family:var(--body);font-weight:700;
-    font-size:clamp(.96rem,1.2vw,1.12rem);
-    line-height:1.3;color:var(--ink);
-  }
-
-  /* ---- EXAMPLES ---- */
-  .ex-split{
-    display:grid;grid-template-columns:1fr 1fr;
-    gap:clamp(14px,2.5vw,36px);
-    margin-bottom:clamp(24px,4vh,40px);
-  }
-  .ex-col-head{
-    font-family:var(--pix);font-size:11.5px;font-weight:700;
-    letter-spacing:1.5px;text-transform:uppercase;
-    padding:6px 13px;border-radius:4px;
-    display:inline-block;margin-bottom:12px;
-  }
-  .bylo-col .ex-col-head{
-    background:rgba(220,50,50,.12);color:#ff9090;
-    border:1px solid rgba(220,50,50,.25);
-  }
-  .stalo-col .ex-col-head{
-    background:rgba(31,209,240,.1);color:var(--cyan);
-    border:1px solid rgba(31,209,240,.3);
-  }
-  .ai-mock{
-    background:#0d0d10;border:1px solid var(--line);
-    border-radius:8px;overflow:hidden;margin-bottom:10px;
-  }
-  .ai-mock:last-of-type{margin-bottom:0;}
-  .ai-mock-bar{
-    display:flex;align-items:center;gap:10px;
-    padding:8px 13px;background:#131317;
-    border-bottom:1px solid var(--line);
-  }
-  .ai-mock-icon{
-    font-family:var(--pix);font-size:10px;font-weight:700;
-    padding:2px 6px;border-radius:3px;flex:none;
-  }
-  .bylo-col .ai-mock-icon{background:#3a3a44;color:#777;}
-  .stalo-col .ai-mock-icon{background:var(--cyan);color:#06222a;}
-  .ai-mock-q{
-    font-size:11.5px;color:var(--muted);font-style:italic;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  }
-  .ai-mock-body{
-    padding:10px 13px;font-size:12px;line-height:1.65;color:#808090;
-  }
-  .ai-mock-body .b-hit{
-    background:var(--cyan);color:#06222a;
-    font-weight:700;padding:1px 5px;border-radius:2px;
-  }
-  .ai-mock-body .rival{color:#c0c0ca;font-weight:600;}
-  .ai-mock-status{
-    padding:6px 13px;border-top:1px solid var(--line);
-    font-family:var(--pix);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
-  }
-  .bylo-col .ai-mock-status{color:#cc5555;}
-  .stalo-col .ai-mock-status{color:var(--cyan);}
-
-  .principle-wrap{
-    display:grid;grid-template-columns:1fr 1fr;gap:20px;
-  }
-  .principle-card{
-    padding:22px 24px;border-radius:8px;
-    background:linear-gradient(145deg,rgba(255,90,0,.05),rgba(31,209,240,.03));
-    border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;
-  }
-  .principle-card::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,var(--orange),var(--cyan));
-  }
-  .principle-card h3{margin-bottom:14px;}
-  .principle-card .lead{font-size:13.5px;}
-  .principle-card .lead+.lead{
-    margin-top:12px;padding-top:12px;border-top:1px solid var(--line);
-  }
-  .conclusion-card{
-    padding:20px 22px;border-radius:8px;
-    background:rgba(31,209,240,.06);
-    border:1px solid rgba(31,209,240,.22);
-    display:flex;gap:14px;align-items:flex-start;
-  }
-  .conclusion-card .c-icon{font-size:22px;flex:none;margin-top:1px;}
-  .conclusion-card p{font-size:13.5px;line-height:1.75;color:#cfcfd4;}
-  .conclusion-card b{color:var(--ink);}
-
-  /* ---- STEPS ---- */
-  .steps-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);
-    gap:clamp(12px,2vw,22px);
-  }
-  .step{
-    background:#101013;border:1px solid var(--line);
-    border-radius:8px;padding:22px 18px;position:relative;
-  }
-  .step-n{
-    font-family:var(--pix);font-size:36px;font-weight:700;
-    color:transparent;-webkit-text-stroke:1.5px rgba(255,90,0,.35);
-    line-height:1;margin-bottom:12px;display:block;
-  }
-  .step h3{margin-bottom:8px;font-size:.96rem;}
-  .step .lead{font-size:13px;}
-  .steps-grid .step:not(:last-child)::after{
-    content:"→";
-    position:absolute;right:-14px;top:24px;
-    font-family:var(--pix);font-size:13px;
-    color:rgba(255,90,0,.4);pointer-events:none;
-  }
-
-  /* ---- DIFF ---- */
-  .diff-grid{
-    display:grid;grid-template-columns:repeat(3,1fr);
-    gap:clamp(12px,2vw,22px);
-  }
-  .diff-card{
-    background:#101013;border:1px solid var(--line);
-    border-radius:8px;padding:22px;
-  }
-  .diff-card.ours{
-    border-color:rgba(255,90,0,.4);
-    background:linear-gradient(155deg,rgba(255,90,0,.07),rgba(31,209,240,.04));
-    position:relative;overflow:hidden;
-  }
-  .diff-card.ours::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,var(--orange),var(--cyan));
-  }
-  .diff-who{
-    font-family:var(--pix);font-size:10.5px;letter-spacing:1px;
-    text-transform:uppercase;margin-bottom:12px;
-  }
-  .diff-card:not(.ours) .diff-who{color:var(--muted);}
-  .diff-card.ours .diff-who{color:var(--orange-soft);}
-  .diff-card .lead{font-size:13px;line-height:1.65;}
-
-  /* ---- FAQ ---- */
-  .faq-list{display:flex;flex-direction:column;gap:4px;}
-  .faq-item{border:1px solid var(--line);border-radius:6px;overflow:hidden;}
-  .faq-q{
-    width:100%;text-align:left;background:#101013;border:none;cursor:pointer;
-    display:flex;align-items:center;justify-content:space-between;gap:16px;
-    padding:17px 22px;font-family:var(--body);font-weight:600;
-    font-size:14px;color:var(--ink);transition:background .15s;
-  }
-  .faq-q:hover{background:#141418;}
-  .faq-toggle{
-    font-family:var(--pix);font-size:18px;color:var(--orange);
-    flex:none;transition:transform .18s;line-height:1;
-  }
-  .faq-item.open .faq-toggle{transform:rotate(45deg);}
-  .faq-a{
-    display:none;padding:6px 22px 18px;
-    font-size:13.5px;line-height:1.7;color:#a0a0b0;
-    background:#101013;border-top:1px solid var(--line);
-  }
-  .faq-item.open .faq-a{display:block;}
-  .faq-a b{color:var(--ink);}
-  .faq-note{margin-top:10px;font-size:12.5px;color:var(--muted);font-style:italic;}
-
-  /* ---- FINAL CTA ---- */
-  .cta-section{
-    padding:clamp(56px,10vh,108px) clamp(20px,4vw,56px);
-    text-align:center;border-top:1px solid var(--line);
-    background:linear-gradient(155deg,rgba(255,90,0,.08) 0%,rgba(31,209,240,.05) 100%);
-    position:relative;overflow:hidden;
-  }
-  .cta-section::before{
-    content:"";position:absolute;inset:0;
-    background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1.4px);
-    background-size:26px 26px;pointer-events:none;
-  }
-  .cta-inner{max-width:680px;margin:0 auto;position:relative;}
-  .cta-inner h2{margin-bottom:14px;}
-  .cta-sub{
-    font-size:clamp(.96rem,1.2vw,1.06rem);
-    color:var(--orange-soft);font-weight:600;
-    line-height:1.5;margin-bottom:clamp(24px,4vh,36px);
-  }
-  .btn-xl{padding:18px 42px;font-size:15px;}
-  .cta-fine{margin-top:18px;font-size:13px;color:var(--muted);line-height:1.6;}
-
-  /* ---- EXTRA RESPONSIVE ---- */
-  @media(max-width:960px){
-    .ex-split{grid-template-columns:1fr;}
-    .principle-wrap{grid-template-columns:1fr;}
-    .steps-grid{grid-template-columns:repeat(2,1fr);}
-    .steps-grid .step:not(:last-child)::after{display:none;}
-    .diff-grid{grid-template-columns:1fr;}
-  }
-  @media(max-width:600px){
-    .steps-grid{grid-template-columns:1fr;}
+    .reveal,.reveal-scale{opacity:1;transform:none;}
   }
 </style>
 </head>
 <body>
-  <div class="stage">
 
-    <!-- ===== HEADER ===== -->
-    <header>
-      <div class="brand">
-        <div class="brand-mark">AI</div>
-        <div class="brand-name">AI Brand<br><span>Advocacy</span></div>
-      </div>
-      <nav>
-        <a href="#how">Услуги</a>
-        <a href="#examples">Примеры</a>
-        <a href="#faq">FAQ</a>
-        <a href="#diff">О нас</a>
-      </nav>
-      <a href="#contact" class="btn btn-orange header-cta">Связаться</a>
-    </header>
+<!-- scroll progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+<!-- cursor glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
 
-    <!-- ===== HERO ===== -->
-    <main class="hero">
+<div class="stage">
 
-      <!-- heading: full width, centered -->
-      <div class="hero-top">
-        <span class="eyebrow">// Видимость в нейросетях</span>
-        <h1>Продвигается ли ваш бренд в&nbsp;ответах <span class="hl-o">ChatGPT</span> и&nbsp;<span class="hl-c">Яндекс&nbsp;AI</span>?</h1>
-      </div>
+  <!-- ===== HEADER ===== -->
+  <header id="mainHeader">
+    <div class="brand">
+      <div class="brand-mark">AI</div>
+      <div class="brand-name">AI Brand<br><span>Advocacy</span></div>
+    </div>
+    <nav>
+      <a href="#how">Услуги</a>
+      <a href="#examples">Примеры</a>
+      <a href="#faq">FAQ</a>
+      <a href="#diff">О нас</a>
+    </nav>
+    <a href="#contact" class="btn btn-orange header-cta">Связаться</a>
+  </header>
 
-      <!-- two columns -->
-      <div class="hero-cols">
-        <div class="method-card">
-          <div class="card-label"><span>// Как это работает</span></div>
-          <p class="lead">Мы создаём <i>«глас народа»</i> — контент, необходимый для продвижения в&nbsp;<b>нейросетях</b>. Это посты, комментарии и&nbsp;обсуждения на&nbsp;VC, DTF, Pikabu, TenChat, Дзен, а&nbsp;также онлайн-отзывы на&nbsp;Otzovik, IRecommend, Яндекс&nbsp;Картах и&nbsp;прочих отзовиках.</p>
-          <p class="lead">Наш контент <b>неотличим</b> от&nbsp;обычных пользовательских материалов — без&nbsp;ссылок, без&nbsp;рекламных маркеров. Только натуральные тексты постов, комментариев и&nbsp;отзывов, продвигающих ваш бренд.</p>
-        </div>
+  <!-- ===== HERO ===== -->
+  <main class="hero">
 
-        <div class="visual-col">
-          <div class="visual">
-            <div class="eye-wrap" aria-hidden="true">
-              <div id="eye"></div>
-            </div>
-            <div class="eye-tag t1"><b>AI</b>видит ваш бренд</div>
-            <div class="eye-tag t2"><b>★</b>натуральный контент</div>
-            <div class="eye-tag t3"><b>AI</b>показывает ваши преимущества</div>
-          </div>
-          <a href="#contact" class="btn btn-orange btn-lg">Заказать консультацию</a>
-        </div>
+    <div class="hero-top">
+      <span class="eyebrow">// Видимость в нейросетях</span>
+      <h1>Продвигается ли ваш бренд в&nbsp;ответах <span class="hl-o">ChatGPT</span> и&nbsp;<span class="hl-c">Яндекс&nbsp;AI</span>?</h1>
+    </div>
+
+    <div class="hero-cols">
+      <div class="method-card">
+        <div class="card-label"><span>// Как это работает</span></div>
+        <p class="lead">Мы создаём <i>«глас народа»</i> — контент, необходимый для продвижения в&nbsp;<b>нейросетях</b>. Это посты, комментарии и&nbsp;обсуждения на&nbsp;VC, DTF, Pikabu, TenChat, Дзен, а&nbsp;также онлайн-отзывы на&nbsp;Otzovik, IRecommend, Яндекс&nbsp;Картах и&nbsp;прочих отзовиках.</p>
+        <p class="lead">Наш контент <b>неотличим</b> от&nbsp;обычных пользовательских материалов — без&nbsp;ссылок, без&nbsp;рекламных маркеров. Только натуральные тексты постов, комментариев и&nbsp;отзывов, продвигающих ваш бренд.</p>
       </div>
 
-      <!-- platforms: full width -->
-      <div class="platforms">
-        <span class="chip on-c">VC</span>
-        <span class="chip">DTF</span>
-        <span class="chip">Pikabu</span>
-        <span class="chip">TenChat</span>
-        <span class="chip">Дзен</span>
-        <span class="chip on-o">Otzovik</span>
-        <span class="chip">IRecommend</span>
-        <span class="chip on-o">Яндекс Карты</span>
+      <div class="visual-col">
+        <div class="visual">
+          <div class="eye-wrap" aria-hidden="true">
+            <div id="eye"></div>
+          </div>
+          <div class="eye-tag t1"><b>AI</b>видит ваш бренд</div>
+          <div class="eye-tag t2"><b>★</b>натуральный контент</div>
+          <div class="eye-tag t3"><b>AI</b>показывает ваши преимущества</div>
+        </div>
+        <a href="#contact" class="btn btn-orange btn-lg">Заказать консультацию</a>
+      </div>
+    </div>
+
+    <div class="platforms">
+      <span class="chip on-c">VC</span>
+      <span class="chip">DTF</span>
+      <span class="chip">Pikabu</span>
+      <span class="chip">TenChat</span>
+      <span class="chip">Дзен</span>
+      <span class="chip on-o">Otzovik</span>
+      <span class="chip">IRecommend</span>
+      <span class="chip on-o">Яндекс Карты</span>
+    </div>
+
+  </main>
+
+  <!-- ===== MARQUEE ===== -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" aria-hidden="true">
+      <!-- repeated twice for seamless loop -->
+      <span class="marquee-item">Нейросети<span class="dot"></span>ChatGPT<span class="dot c"></span>Яндекс AI<span class="dot"></span>Google AI<span class="dot c"></span>UGC Контент<span class="dot"></span>GEO Оптимизация<span class="dot c"></span>AI Выдача<span class="dot"></span>Органический рост<span class="dot c"></span>Репутация в AI<span class="dot"></span>DeepSeek<span class="dot c"></span>Claude<span class="dot"></span></span>
+      <span class="marquee-item">Нейросети<span class="dot"></span>ChatGPT<span class="dot c"></span>Яндекс AI<span class="dot"></span>Google AI<span class="dot c"></span>UGC Контент<span class="dot"></span>GEO Оптимизация<span class="dot c"></span>AI Выдача<span class="dot"></span>Органический рост<span class="dot c"></span>Репутация в AI<span class="dot"></span>DeepSeek<span class="dot c"></span>Claude<span class="dot"></span></span>
+    </div>
+  </div>
+
+  <!-- ===== EXAMPLES ===== -->
+  <section class="section" id="examples">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="eyebrow">// Примеры</span>
+        <h2>Нейровыдача: <span class="hl-o">до</span> и&nbsp;<span class="hl-c">после</span></h2>
       </div>
 
-    </main>
-
-    <!-- ===== EXAMPLES ===== -->
-    <section class="section" id="examples">
-      <div class="section-inner">
-        <div class="section-header">
-          <span class="eyebrow">// Примеры</span>
-          <h2>Нейровыдача: <span class="hl-o">до</span> и&nbsp;<span class="hl-c">после</span></h2>
-        </div>
-
-        <div class="ex-split">
-          <!-- БЫЛО -->
-          <div class="bylo-col">
-            <span class="ex-col-head">✕ БЫЛО</span>
-
-            <div class="ai-mock">
-              <div class="ai-mock-bar">
-                <span class="ai-mock-icon">GPT</span>
-                <span class="ai-mock-q">Лучший CRM для малого бизнеса в России?</span>
-              </div>
-              <div class="ai-mock-body">Для малого бизнеса подойдут <span class="rival">AmoCRM</span>, <span class="rival">Bitrix24</span> и&nbsp;<span class="rival">Мегаплан</span>. Они предлагают базовые функции по доступной цене и интегрируются с популярными сервисами.</div>
-              <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
-            </div>
-
-            <div class="ai-mock">
-              <div class="ai-mock-bar">
-                <span class="ai-mock-icon">YA</span>
-                <span class="ai-mock-q">Где заказать разработку мобильного приложения?</span>
-              </div>
-              <div class="ai-mock-body">По отзывам и обсуждениям, за разработкой мобильных приложений обращаются в&nbsp;<span class="rival">Surf</span>, <span class="rival">Redmadrobot</span> и&nbsp;<span class="rival">Sibedge</span>. Стоимость зависит от функциональности и сроков.</div>
-              <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
-            </div>
-
-            <div class="ai-mock">
-              <div class="ai-mock-bar">
-                <span class="ai-mock-icon">GPT</span>
-                <span class="ai-mock-q">Какой сервис email-рассылок выбрать?</span>
-              </div>
-              <div class="ai-mock-body">Среди российских сервисов email-маркетинга выделяются <span class="rival">Unisender</span>, <span class="rival">SendPulse</span> и&nbsp;<span class="rival">DashaMail</span>. У каждого есть бесплатный тариф для старта.</div>
-              <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
-            </div>
+      <div class="examples-layout">
+        <!-- БЫЛО -->
+        <div class="ex-col bylo-col reveal" style="transition-delay:.05s">
+          <div class="ex-col-label">
+            <span class="lbadge">✕ БЫЛО</span>
+            <span style="color:var(--muted);font-family:var(--pix);font-size:11px;letter-spacing:.5px;">без присутствия в AI</span>
           </div>
 
-          <!-- СТАЛО -->
-          <div class="stalo-col">
-            <span class="ex-col-head">✓ СТАЛО</span>
-
-            <div class="ai-mock">
-              <div class="ai-mock-bar">
-                <span class="ai-mock-icon">GPT</span>
-                <span class="ai-mock-q">Лучший CRM для малого бизнеса в России?</span>
-              </div>
-              <div class="ai-mock-body">Пользователи VC и Pikabu активно рекомендуют <span class="b-hit">ВашБренд</span> — отмечают интуитивный интерфейс и оперативную поддержку. Также в обсуждениях упоминаются <span class="rival">AmoCRM</span> и&nbsp;<span class="rival">Bitrix24</span>.</div>
-              <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
+          <div class="spotlight-card bylo-col">
+            <div class="ai-mock-bar">
+              <span class="ai-mock-icon">GPT</span>
+              <span class="ai-mock-q">Лучший CRM для малого бизнеса в России?</span>
             </div>
+            <div class="ai-mock-body">Для малого бизнеса подойдут <span class="rival">AmoCRM</span>, <span class="rival">Bitrix24</span> и&nbsp;<span class="rival">Мегаплан</span>. Они предлагают базовые функции по доступной цене и интегрируются с популярными сервисами.</div>
+            <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
+          </div>
 
-            <div class="ai-mock">
-              <div class="ai-mock-bar">
-                <span class="ai-mock-icon">YA</span>
-                <span class="ai-mock-q">Где заказать разработку мобильного приложения?</span>
-              </div>
-              <div class="ai-mock-body">По многочисленным отзывам на тематических форумах, <span class="b-hit">ВашБренд</span> стабильно входит в топ рекомендаций: клиенты выделяют прозрачное ценообразование и соблюдение сроков.</div>
-              <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
+          <div class="spotlight-card bylo-col">
+            <div class="ai-mock-bar">
+              <span class="ai-mock-icon">YA</span>
+              <span class="ai-mock-q">Где заказать разработку мобильного приложения?</span>
             </div>
+            <div class="ai-mock-body">По отзывам и обсуждениям, за разработкой мобильных приложений обращаются в&nbsp;<span class="rival">Surf</span>, <span class="rival">Redmadrobot</span> и&nbsp;<span class="rival">Sibedge</span>. Стоимость зависит от функциональности и сроков.</div>
+            <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
+          </div>
 
-            <div class="ai-mock">
-              <div class="ai-mock-bar">
-                <span class="ai-mock-icon">GPT</span>
-                <span class="ai-mock-q">Какой сервис email-рассылок выбрать?</span>
-              </div>
-              <div class="ai-mock-body">Судя по обсуждениям в профессиональных сообществах, <span class="b-hit">ВашБренд</span> чаще всего называют первым выбором: удобная аналитика, высокая доставляемость и русскоязычная поддержка.</div>
-              <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
+          <div class="spotlight-card bylo-col">
+            <div class="ai-mock-bar">
+              <span class="ai-mock-icon">GPT</span>
+              <span class="ai-mock-q">Какой сервис email-рассылок выбрать?</span>
             </div>
+            <div class="ai-mock-body">Среди российских сервисов email-маркетинга выделяются <span class="rival">Unisender</span>, <span class="rival">SendPulse</span> и&nbsp;<span class="rival">DashaMail</span>. У каждого есть бесплатный тариф для старта.</div>
+            <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
           </div>
         </div>
 
-        <!-- principle + conclusion -->
-        <div class="principle-wrap">
-          <div class="principle-card">
-            <h3>В чём наш принцип работы?</h3>
-            <p class="lead">AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов (натуральный пользовательский опыт) они воспринимают как трастовые источники — и включают в&nbsp;свои ответы.</p>
-            <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда. <b>Именно это мы и&nbsp;берём на&nbsp;себя.</b></p>
+        <!-- СТАЛО -->
+        <div class="ex-col stalo-col reveal" style="transition-delay:.15s">
+          <div class="ex-col-label">
+            <span class="lbadge">✓ СТАЛО</span>
+            <span style="color:var(--cyan);font-family:var(--pix);font-size:11px;letter-spacing:.5px;">после работы с нами</span>
           </div>
-          <div class="conclusion-card">
-            <span class="c-icon">⚡</span>
-            <p><b>Результат:</b> AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах: <b>Google&nbsp;AI, Яндекс&nbsp;AI (Алиса), ChatGPT, Claude, DeepSeek</b> и&nbsp;прочих.</p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ===== HOW IT WORKS ===== -->
-    <section class="section section-alt" id="how">
-      <div class="section-inner">
-        <div class="section-header">
-          <span class="eyebrow">// Как это работает</span>
-          <h2>Четыре шага до&nbsp;AI&#8209;выдачи</h2>
-        </div>
-        <div class="steps-grid">
-          <div class="step">
-            <span class="step-n">01</span>
-            <h3>Анализ ниши</h3>
-            <p class="lead">Выясняем, как нужно писать про ваш бренд,&nbsp;чтобы AI начал рекомендовать его.</p>
+          <div class="spotlight-card stalo-col">
+            <div class="ai-mock-bar">
+              <span class="ai-mock-icon">GPT</span>
+              <span class="ai-mock-q">Лучший CRM для малого бизнеса в России?</span>
+            </div>
+            <div class="ai-mock-body">Пользователи VC и Pikabu активно рекомендуют <span class="b-hit">ВашБренд</span> — отмечают интуитивный интерфейс и оперативную поддержку. Также в обсуждениях упоминаются <span class="rival">AmoCRM</span> и&nbsp;<span class="rival">Bitrix24</span>.</div>
+            <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
           </div>
-          <div class="step">
-            <span class="step-n">02</span>
-            <h3>Создание контента</h3>
-            <p class="lead">Пишем посты, отзывы, комментарии и&nbsp;тематические обсуждения — в&nbsp;стиле каждой платформы, без рекламного следа, от лица обычных пользователей.</p>
+
+          <div class="spotlight-card stalo-col">
+            <div class="ai-mock-bar">
+              <span class="ai-mock-icon">YA</span>
+              <span class="ai-mock-q">Где заказать разработку мобильного приложения?</span>
+            </div>
+            <div class="ai-mock-body">По многочисленным отзывам на тематических форумах, <span class="b-hit">ВашБренд</span> стабильно входит в топ рекомендаций: клиенты выделяют прозрачное ценообразование и соблюдение сроков.</div>
+            <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
           </div>
-          <div class="step">
-            <span class="step-n">03</span>
-            <h3>Публикация</h3>
-            <p class="lead">Публикуем так, как публикуют живые пользователи. Платформы не банят. AI засчитывает как честный сигнал.</p>
-          </div>
-          <div class="step">
-            <span class="step-n">04</span>
-            <h3>Мониторинг и отчётность</h3>
-            <p class="lead">Каждый месяц присылаем отчёт: объём контента + скриншоты нейроответов, в&nbsp;которых появился ваш бренд по целевым запросам.</p>
+
+          <div class="spotlight-card stalo-col">
+            <div class="ai-mock-bar">
+              <span class="ai-mock-icon">GPT</span>
+              <span class="ai-mock-q">Какой сервис email-рассылок выбрать?</span>
+            </div>
+            <div class="ai-mock-body">Судя по обсуждениям в профессиональных сообществах, <span class="b-hit">ВашБренд</span> чаще всего называют первым выбором: удобная аналитика, высокая доставляемость и русскоязычная поддержка.</div>
+            <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- ===== DIFFERENTIATION ===== -->
-    <section class="section" id="diff">
-      <div class="section-inner">
-        <div class="section-header">
-          <span class="eyebrow">// Позиционирование</span>
-          <h2>Не просто контент-маркетинг,<br>не просто ORM.</h2>
+      <div class="principle-wrap">
+        <div class="principle-card reveal" style="transition-delay:.05s">
+          <h3>В чём наш принцип работы?</h3>
+          <p class="lead">AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов (натуральный пользовательский опыт) они воспринимают как трастовые источники — и включают в&nbsp;свои ответы.</p>
+          <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда. <b>Именно это мы и&nbsp;берём на&nbsp;себя.</b></p>
         </div>
-        <div class="diff-grid">
-          <div class="diff-card">
-            <div class="diff-who">Контент- и PR-агентства</div>
-            <p class="lead">Ведут VC и DTF — но не строят присутствие в AI-выдаче. <b>У них нет такой задачи.</b></p>
-          </div>
-          <div class="diff-card">
-            <div class="diff-who">GEO-агентства</div>
-            <p class="lead">Оптимизируют сайт и пишут статьи на внешних площадках — но не работают с нативным UGC в community-форматах, <b>там, где AI реально берёт данные.</b></p>
-          </div>
-          <div class="diff-card ours">
-            <div class="diff-who">// Мы</div>
-            <p class="lead">Специализируемся на нативном UGC для GEO — только на российских community-платформах. <b>Единственные на рынке с таким фокусом</b> — вы получаете специализацию, а не адаптацию чужого процесса под вашу задачу.</p>
-          </div>
+        <div class="conclusion-card reveal" style="transition-delay:.15s">
+          <span class="c-icon">⚡</span>
+          <p><b>Результат:</b> AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах: <b>Google&nbsp;AI, Яндекс&nbsp;AI (Алиса), ChatGPT, Claude, DeepSeek</b> и&nbsp;прочих.</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===== FAQ ===== -->
-    <section class="section section-alt" id="faq">
-      <div class="section-inner">
-        <div class="section-header">
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="section section-alt" id="how">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="eyebrow">// Процесс</span>
+        <h2>Четыре шага до&nbsp;AI&#8209;выдачи</h2>
+      </div>
+      <div class="steps-timeline">
+        <div class="step reveal" style="transition-delay:.0s">
+          <span class="step-n">01</span>
+          <h3>Анализ ниши</h3>
+          <p class="lead">Выясняем, как нужно писать про ваш бренд,&nbsp;чтобы AI начал рекомендовать его.</p>
+          <div class="step-dot"></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.1s">
+          <span class="step-n">02</span>
+          <h3>Создание контента</h3>
+          <p class="lead">Пишем посты, отзывы, комментарии и&nbsp;тематические обсуждения — в&nbsp;стиле каждой платформы, без рекламного следа.</p>
+          <div class="step-dot"></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.2s">
+          <span class="step-n">03</span>
+          <h3>Публикация</h3>
+          <p class="lead">Публикуем так, как публикуют живые пользователи. Платформы не банят. AI засчитывает как честный сигнал.</p>
+          <div class="step-dot"></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.3s">
+          <span class="step-n">04</span>
+          <h3>Мониторинг и отчётность</h3>
+          <p class="lead">Каждый месяц присылаем отчёт: объём контента + скриншоты нейроответов с упоминанием вашего бренда.</p>
+          <div class="step-dot"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DIFFERENTIATION ===== -->
+  <section class="section" id="diff">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="eyebrow">// Позиционирование</span>
+        <h2>Не просто контент-маркетинг,<br>не просто ORM.</h2>
+      </div>
+      <div class="bento-grid">
+        <div class="bento-card reveal" style="transition-delay:.0s">
+          <div class="diff-who"><span class="who-dot"></span>Контент- и PR-агентства</div>
+          <p class="lead">Ведут VC и DTF — но не строят присутствие в AI-выдаче. <b>У них нет такой задачи.</b></p>
+        </div>
+        <div class="bento-card reveal" style="transition-delay:.1s">
+          <div class="diff-who"><span class="who-dot"></span>GEO-агентства</div>
+          <p class="lead">Оптимизируют сайт и пишут статьи на внешних площадках — но не работают с нативным UGC в community-форматах, <b>там, где AI реально берёт данные.</b></p>
+        </div>
+        <div class="bento-card reveal" style="transition-delay:.2s">
+          <div class="diff-who"><span class="who-dot"></span>SEO-агентства</div>
+          <p class="lead">Двигают страницы в Яндекс и Google — но алгоритмы AI-ответов устроены иначе. <b>Ссылочный вес здесь не работает.</b></p>
+        </div>
+        <div class="bento-card ours reveal" style="transition-delay:.1s">
+          <div class="diff-who"><span class="who-dot"></span>// Мы</div>
+          <p class="lead">Специализируемся на нативном UGC для GEO — только на российских community-платформах. <b>Единственные на рынке с таким фокусом</b> — вы получаете специализацию, а не адаптацию чужого процесса под вашу задачу.</p>
+          <div class="ours-badge">★ уникальный фокус на рынке</div>
+          <div class="bento-corner">// our edge</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section section-alt" id="faq">
+    <div class="section-inner">
+      <div class="faq-layout">
+        <div class="faq-sidebar reveal">
           <span class="eyebrow">// FAQ</span>
-          <h2>Частые вопросы</h2>
+          <h2>Частые<br>вопросы</h2>
+          <p class="faq-sidebar-text">Всё, что обычно спрашивают до старта. Если не нашли ответ — напишите, разберём вашу ситуацию лично.</p>
         </div>
-        <div class="faq-list">
+        <div class="faq-list reveal" style="transition-delay:.1s">
           <div class="faq-item">
             <button class="faq-q" aria-expanded="false">
               Как измерить результат?
@@ -754,84 +965,115 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- ===== FINAL CTA ===== -->
-    <section class="cta-section" id="contact">
-      <div class="cta-inner">
-        <span class="eyebrow" style="justify-content:center;margin-bottom:16px;">// Финальный шаг</span>
-        <h2>Пока конкуренты не&nbsp;заняли AI&#8209;выдачу по&nbsp;вашей нише — это можно исправить.</h2>
-        <p class="cta-sub">Когда займут — отыграть будет сложно.</p>
-        <a href="#" class="btn btn-orange btn-xl">Обсудить нишу&nbsp;→</a>
-        <p class="cta-fine">Оставьте заявку — ответим в рабочий день, разберём вашу нишу и&nbsp;покажем, что сейчас выдаёт AI по вашим ключевым запросам.</p>
-      </div>
-    </section>
-
-    <!-- ===== jagged cyan accent ===== -->
-    <svg class="teeth" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 10 L0 6 L4 0 L8 6 L12 0 L16 6 L20 0 L24 6 L28 0 L32 6 L36 0 L40 6 L44 0 L48 6 L52 0 L56 6 L60 0 L64 6 L68 0 L72 6 L76 0 L80 6 L84 0 L88 6 L92 0 L96 6 L100 0 L100 10 Z" fill="currentColor"/>
-    </svg>
-    <div class="footstrip">
-      <span>© AI Brand Advocacy</span>
-      <span>Глас народа для нейросетей</span>
     </div>
+  </section>
 
+  <!-- ===== FINAL CTA ===== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-bg"></div>
+    <div class="cta-inner reveal">
+      <span class="eyebrow" style="justify-content:center;margin-bottom:20px;">// Финальный шаг</span>
+      <h2>Пока конкуренты не&nbsp;заняли AI&#8209;выдачу по&nbsp;вашей нише — это&nbsp;можно&nbsp;исправить.</h2>
+      <p class="cta-sub">Когда займут — отыграть будет сложно.</p>
+      <a href="#" class="btn btn-orange btn-xl">Обсудить нишу&nbsp;→</a>
+      <p class="cta-fine">Оставьте заявку — ответим в рабочий день, разберём вашу нишу и&nbsp;покажем, что сейчас выдаёт AI по вашим ключевым запросам.</p>
+    </div>
+  </section>
+
+  <!-- ===== jagged cyan accent ===== -->
+  <svg class="teeth" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 10 L0 6 L4 0 L8 6 L12 0 L16 6 L20 0 L24 6 L28 0 L32 6 L36 0 L40 6 L44 0 L48 6 L52 0 L56 6 L60 0 L64 6 L68 0 L72 6 L76 0 L80 6 L84 0 L88 6 L92 0 L96 6 L100 0 L100 10 Z" fill="currentColor"/>
+  </svg>
+  <div class="footstrip">
+    <span>© AI Brand Advocacy</span>
+    <span>Глас народа для нейросетей</span>
+    <span class="credit">Motion effects inspired by vue-bits by DavidHDev (MIT)</span>
   </div>
+
+</div><!-- /stage -->
 
 <script>
 (function(){
-  const COLS=32, ROWS=20, CELL=12;
-  const W=COLS*CELL, H=ROWS*CELL;
-  const cx=15.5, cy=9.5;
-
-  const R=19, k=13;
-  const Ri=12, ki=8;
-
-  const inA=(x,y,r,kk)=>{
-    const a=(x-cx)**2+(y-(cy+kk))**2<=r*r;
-    const b=(x-cx)**2+(y-(cy-kk))**2<=r*r;
-    return a&&b;
-  };
-  const outline=(x,y,r,kk)=>{
-    if(!inA(x,y,r,kk)) return false;
-    return !(inA(x-1,y,r,kk)&&inA(x+1,y,r,kk)&&inA(x,y-1,r,kk)&&inA(x,y+1,r,kk));
-  };
+  /* ---- pixel eye ---- */
+  const COLS=32,ROWS=20,CELL=12;
+  const W=COLS*CELL,H=ROWS*CELL;
+  const cx=15.5,cy=9.5;
+  const R=19,k=13,Ri=12,ki=8;
+  const inA=(x,y,r,kk)=>{const a=(x-cx)**2+(y-(cy+kk))**2<=r*r;const b=(x-cx)**2+(y-(cy-kk))**2<=r*r;return a&&b;};
+  const outline=(x,y,r,kk)=>{if(!inA(x,y,r,kk))return false;return!(inA(x-1,y,r,kk)&&inA(x+1,y,r,kk)&&inA(x,y-1,r,kk)&&inA(x,y+1,r,kk));};
   const dist=(x,y)=>Math.hypot(x-cx,y-cy);
-
-  const ORANGE='#ff5a00', CYAN='#1fd1f0', WHITE='#f4f3ee';
+  const ORANGE='#ff5a00',CYAN='#1fd1f0',WHITE='#f4f3ee';
   let rects='';
   const px=(c,r,fill)=>{rects+=`<rect x="${c*CELL}" y="${r*CELL}" width="${CELL}" height="${CELL}" fill="${fill}"/>`;};
+  for(let r=0;r<ROWS;r++){for(let c=0;c<COLS;c++){const d=dist(c,r);if(d<2.6){px(c,r,ORANGE);continue;}if(d>=4&&d<5.3){px(c,r,CYAN);continue;}if(outline(c,r,Ri,ki)){px(c,r,ORANGE);continue;}if(outline(c,r,R,k)){px(c,r,ORANGE);continue;}}}
+  px(Math.round(cx)-2,Math.round(cy)-1,WHITE);
+  document.getElementById('eye').innerHTML=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
 
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      const d=dist(c,r);
-      if(d<2.6){ px(c,r,ORANGE); continue; }
-      if(d>=4 && d<5.3){ px(c,r,CYAN); continue; }
-      if(outline(c,r,Ri,ki)){ px(c,r,ORANGE); continue; }
-      if(outline(c,r,R,k)){ px(c,r,ORANGE); continue; }
-    }
-  }
-  px(Math.round(cx)-2, Math.round(cy)-1, WHITE);
+  /* ---- scroll progress ---- */
+  const bar=document.getElementById('scrollProgress');
+  function updateProgress(){bar.style.transform=`scaleX(${window.scrollY/(document.body.scrollHeight-window.innerHeight)||0})`;}
+  window.addEventListener('scroll',updateProgress,{passive:true});
 
-  document.getElementById('eye').innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
-})();
+  /* ---- sticky header ---- */
+  const hdr=document.getElementById('mainHeader');
+  window.addEventListener('scroll',()=>{hdr.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
 
-// FAQ accordion
-document.querySelectorAll('.faq-q').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const item=btn.closest('.faq-item');
-    const wasOpen=item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(el=>{
-      el.classList.remove('open');
-      el.querySelector('.faq-q').setAttribute('aria-expanded','false');
+  /* ---- cursor glow (hover devices only) ---- */
+  if(window.matchMedia('(hover:hover)').matches){
+    const glow=document.getElementById('cursorGlow');
+    glow.style.opacity='1';
+    let rafId;
+    document.addEventListener('mousemove',e=>{
+      cancelAnimationFrame(rafId);
+      rafId=requestAnimationFrame(()=>{
+        glow.style.left=e.clientX+'px';
+        glow.style.top=e.clientY+'px';
+      });
     });
-    if(!wasOpen){
-      item.classList.add('open');
-      btn.setAttribute('aria-expanded','true');
-    }
+  }
+
+  /* ---- scroll reveal ---- */
+  const revealObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');revealObs.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal,.reveal-scale').forEach(el=>revealObs.observe(el));
+
+  /* ---- spotlight cards ---- */
+  document.querySelectorAll('.spotlight-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+    });
   });
-});
+
+  /* ---- bento spotlight ---- */
+  document.querySelectorAll('.bento-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width*100;
+      const y=(e.clientY-r.top)/r.height*100;
+      card.style.setProperty('--gx',x+'%');
+      card.style.setProperty('--gy',y+'%');
+    });
+  });
+
+  /* ---- FAQ accordion (smooth height) ---- */
+  document.querySelectorAll('.faq-q').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const item=btn.closest('.faq-item');
+      const wasOpen=item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(el=>{
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded','false');
+      });
+      if(!wasOpen){
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+})();
 </script>
 </body>
 </html>
