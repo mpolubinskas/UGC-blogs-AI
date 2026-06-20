@@ -34,7 +34,7 @@
     overflow-x:hidden;
   }
 
-  /* ---- ambient background: flat dark + faint dot grid + corner glows ---- */
+  /* ---- ambient background ---- */
   .stage{
     position:relative;
     min-height:100vh;
@@ -104,19 +104,24 @@
   }
   .btn-orange{background:var(--orange); color:#0c0c0e; border-color:var(--orange);}
   .btn-orange:hover{background:var(--orange-soft); border-color:var(--orange-soft); transform:translateY(-2px);}
-  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--orange);}
-  .btn-ghost:hover{background:rgba(255,90,0,.12); transform:translateY(-2px);}
   .header-cta{padding:11px 24px}
 
   /* ============ HERO ============ */
   .hero{
     flex:1 1 auto;
-    display:grid;
-    grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
-    align-items:center;
-    gap:clamp(28px,5vw,72px);
+    display:flex;
+    flex-direction:column;
+    gap:clamp(24px,3.5vh,44px);
     padding:clamp(28px,5vh,64px) clamp(20px,4vw,56px);
     max-width:1320px; width:100%; margin:0 auto;
+  }
+
+  /* -- heading block: full width, centered -- */
+  .hero-top{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
   }
 
   .eyebrow{
@@ -135,28 +140,33 @@
     font-family:var(--body); font-weight:800;
     font-size:clamp(2.05rem, 4.6vw, 3.7rem);
     line-height:1.1; letter-spacing:-1px;
-    margin-bottom:26px;
   }
   h1 .hl-o{color:var(--orange)}
   h1 .hl-c{color:var(--cyan)}
-  h1 .q{color:var(--orange)}
+
+  /* -- two-column area -- */
+  .hero-cols{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    align-items:start;
+    gap:clamp(28px,5vw,72px);
+  }
 
   .lead{
     color:#cfcfd4; font-size:clamp(.98rem,1.15vw,1.08rem);
-    line-height:1.65; max-width:54ch;
+    line-height:1.65;
   }
   .lead b{color:var(--ink); font-weight:700}
   .lead i{color:var(--cyan); font-style:normal; font-weight:600}
 
+  /* -- method card -- */
   .method-card{
-    margin:26px 0 30px;
     padding:22px 24px;
     background:linear-gradient(145deg, rgba(255,90,0,.06) 0%, rgba(31,209,240,.04) 100%);
     border:1px solid rgba(255,255,255,.1);
     border-radius:8px;
     position:relative;
     overflow:hidden;
-    max-width:54ch;
   }
   .method-card::before{
     content:"";
@@ -178,9 +188,9 @@
     border-top:1px solid var(--line);
   }
 
+  /* -- platforms row: full width -- */
   .platforms{
     display:flex; flex-wrap:wrap; gap:9px;
-    margin:26px 0 30px;
   }
   .chip{
     font-family:var(--body); font-weight:700; font-size:12px;
@@ -192,14 +202,17 @@
   .chip.on-o{border-color:rgba(255,90,0,.55); color:#ffd2b8}
   .chip.on-c{border-color:rgba(31,209,240,.5); color:#bdf2fb}
 
-  .actions{display:flex; flex-wrap:wrap; gap:14px;}
-  .btn-lg{padding:16px 30px; font-size:14.5px}
-
-  /* ---- right column: pixel eye signature ---- */
+  /* -- visual column -- */
+  .visual-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:24px;
+  }
   .visual{
     position:relative;
     display:flex; align-items:center; justify-content:center;
-    min-height:0;
+    width:100%;
   }
   .eye-wrap{
     position:relative; width:100%; max-width:430px;
@@ -224,6 +237,8 @@
     50%{transform:translateY(-12px)}
   }
 
+  .btn-lg{padding:16px 30px; font-size:14.5px}
+
   /* ============ jagged cyan bottom accent ============ */
   .teeth{
     width:100%; height:30px; display:block; color:var(--cyan);
@@ -241,8 +256,8 @@
 
   /* ============ RESPONSIVE ============ */
   @media (max-width:960px){
-    .hero{grid-template-columns:1fr; gap:34px;}
-    .visual{order:-1}
+    .hero-cols{grid-template-columns:1fr;}
+    .visual-col{order:-1}
     .eye-wrap{max-width:360px}
   }
   @media (max-width:760px){
@@ -252,7 +267,6 @@
   @media (max-width:520px){
     .eye-tag{display:none}
     .eye-wrap{max-width:300px}
-    .actions .btn-lg{flex:1 1 100%}
   }
 
   a:focus-visible, .btn:focus-visible{
@@ -285,43 +299,46 @@
 
     <!-- ===== HERO ===== -->
     <main class="hero">
-      <div class="hero-copy">
+
+      <!-- heading: full width, centered -->
+      <div class="hero-top">
         <span class="eyebrow">// Видимость в нейросетях</span>
-
         <h1>Ваш бренд есть в&nbsp;ответах <span class="hl-o">ChatGPT</span> и&nbsp;<span class="hl-c">Яндекс&nbsp;AI</span>?</h1>
+      </div>
 
+      <!-- two columns -->
+      <div class="hero-cols">
         <div class="method-card">
           <div class="card-label"><span>// Как это работает</span></div>
           <p class="lead">Создаём <i>«глас народа»</i> — контент, необходимый для продвижения в&nbsp;<b>нейросетях</b>. Это посты, комментарии и&nbsp;обсуждения на&nbsp;VC, DTF, Pikabu, TenChat, Дзен, а&nbsp;также онлайн-отзывы на&nbsp;Otzovik, IRecommend, Яндекс&nbsp;Картах и&nbsp;прочих отзовиках.</p>
           <p class="lead">Контент <b>неотличим</b> от&nbsp;обычных пользовательских материалов — без&nbsp;ссылок, без&nbsp;рекламных маркеров. Только натуральные тексты постов, комментариев и&nbsp;отзывов, продвигающих ваш бренд.</p>
         </div>
 
-        <div class="platforms">
-          <span class="chip on-c">VC</span>
-          <span class="chip">DTF</span>
-          <span class="chip">Pikabu</span>
-          <span class="chip">TenChat</span>
-          <span class="chip">Дзен</span>
-          <span class="chip on-o">Otzovik</span>
-          <span class="chip">IRecommend</span>
-          <span class="chip on-o">Яндекс Карты</span>
-        </div>
-
-        <div class="actions">
+        <div class="visual-col">
+          <div class="visual">
+            <div class="eye-wrap" aria-hidden="true">
+              <div id="eye"></div>
+            </div>
+            <div class="eye-tag t1"><b>AI</b>видит ваш бренд</div>
+            <div class="eye-tag t2"><b>★</b>натуральный контент</div>
+            <div class="eye-tag t3">ваши преимущества</div>
+          </div>
           <a href="#" class="btn btn-orange btn-lg">Заказать консультацию</a>
-          <a href="#" class="btn btn-ghost btn-lg">Узнать больше о методе</a>
         </div>
       </div>
 
-      <!-- pixel-art eye: signature element -->
-      <div class="visual">
-        <div class="eye-wrap" aria-hidden="true">
-          <div id="eye"></div>
-        </div>
-        <div class="eye-tag t1"><b>AI</b>видит ваш бренд</div>
-        <div class="eye-tag t2"><b>★</b>натуральный контент</div>
-        <div class="eye-tag t3">ваши преимущества</div>
+      <!-- platforms: full width -->
+      <div class="platforms">
+        <span class="chip on-c">VC</span>
+        <span class="chip">DTF</span>
+        <span class="chip">Pikabu</span>
+        <span class="chip">TenChat</span>
+        <span class="chip">Дзен</span>
+        <span class="chip on-o">Otzovik</span>
+        <span class="chip">IRecommend</span>
+        <span class="chip on-o">Яндекс Карты</span>
       </div>
+
     </main>
 
     <!-- ===== jagged cyan accent ===== -->
@@ -336,15 +353,13 @@
   </div>
 
 <script>
-/* Build a chunky pixel-art eye on a grid (echoes the reference style). */
 (function(){
   const COLS=32, ROWS=20, CELL=12;
   const W=COLS*CELL, H=ROWS*CELL;
   const cx=15.5, cy=9.5;
 
-  // outer almond = intersection of two vertically offset circles
   const R=19, k=13;
-  const Ri=12, ki=8; // inner almond ring
+  const Ri=12, ki=8;
 
   const inA=(x,y,r,kk)=>{
     const a=(x-cx)**2+(y-(cy+kk))**2<=r*r;
@@ -364,13 +379,12 @@
   for(let r=0;r<ROWS;r++){
     for(let c=0;c<COLS;c++){
       const d=dist(c,r);
-      if(d<2.6){ px(c,r,ORANGE); continue; }              // pupil
-      if(d>=4 && d<5.3){ px(c,r,CYAN); continue; }          // iris ring
-      if(outline(c,r,Ri,ki)){ px(c,r,ORANGE); continue; }   // inner almond
-      if(outline(c,r,R,k)){ px(c,r,ORANGE); continue; }     // outer almond
+      if(d<2.6){ px(c,r,ORANGE); continue; }
+      if(d>=4 && d<5.3){ px(c,r,CYAN); continue; }
+      if(outline(c,r,Ri,ki)){ px(c,r,ORANGE); continue; }
+      if(outline(c,r,R,k)){ px(c,r,ORANGE); continue; }
     }
   }
-  // highlight in pupil
   px(Math.round(cx)-2, Math.round(cy)-1, WHITE);
 
   document.getElementById('eye').innerHTML =
