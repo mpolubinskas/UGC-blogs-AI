@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Brand Advocacy — видимость бренда в нейросетях</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0e;
+    --bg-2:#101013;
+    --orange:#ff5a00;
+    --orange-soft:#ff7a2e;
+    --cyan:#1fd1f0;
+    --cyan-soft:#5fe1ff;
+    --ink:#f4f3ee;
+    --muted:#8b8b93;
+    --line:rgba(255,255,255,.08);
+    --pix:'Pixelify Sans', system-ui, sans-serif;
+    --body:'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:var(--bg);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ---- ambient background: flat dark + faint dot grid + corner glows ---- */
+  .stage{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    isolation:isolate;
+  }
+  .stage::before{
+    content:"";
+    position:absolute; inset:0; z-index:-2;
+    background:
+      radial-gradient(620px 420px at 8% 6%, rgba(255,90,0,.10), transparent 60%),
+      radial-gradient(680px 520px at 100% 30%, rgba(31,209,240,.10), transparent 62%),
+      var(--bg);
+  }
+  .stage::after{
+    content:"";
+    position:absolute; inset:0; z-index:-1;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);
+    background-size:26px 26px;
+    background-position:center;
+    mask-image:linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
+    pointer-events:none;
+  }
+
+  /* ============ HEADER ============ */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:24px;
+    padding:20px clamp(20px,4vw,56px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{
+    width:38px; height:38px; flex:none;
+    display:grid; place-items:center;
+    background:var(--orange);
+    color:#0c0c0e;
+    font-family:var(--pix); font-weight:700; font-size:16px;
+    box-shadow:4px 4px 0 rgba(31,209,240,.9);
+  }
+  .brand-name{
+    font-family:var(--pix); font-weight:600;
+    font-size:15px; line-height:1.05; letter-spacing:.5px;
+    text-transform:uppercase;
+  }
+  .brand-name span{color:var(--cyan)}
+
+  nav{display:flex; align-items:center; gap:30px;}
+  nav a{
+    color:var(--muted); text-decoration:none;
+    font-size:14px; font-weight:600; letter-spacing:.3px;
+    text-transform:uppercase;
+    transition:color .15s ease;
+  }
+  nav a:hover{color:var(--ink)}
+
+  .btn{
+    font-family:var(--body); font-weight:700;
+    text-transform:uppercase; letter-spacing:.6px;
+    font-size:13.5px;
+    border:2px solid transparent; border-radius:999px;
+    padding:12px 22px; cursor:pointer; text-decoration:none;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform .12s ease, background .15s ease, color .15s ease, border-color .15s ease;
+    white-space:nowrap;
+  }
+  .btn-orange{background:var(--orange); color:#0c0c0e; border-color:var(--orange);}
+  .btn-orange:hover{background:var(--orange-soft); border-color:var(--orange-soft); transform:translateY(-2px);}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--orange);}
+  .btn-ghost:hover{background:rgba(255,90,0,.12); transform:translateY(-2px);}
+  .header-cta{padding:11px 24px}
+
+  /* ============ HERO ============ */
+  .hero{
+    flex:1 1 auto;
+    display:grid;
+    grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+    align-items:center;
+    gap:clamp(28px,5vw,72px);
+    padding:clamp(28px,5vh,64px) clamp(20px,4vw,56px);
+    max-width:1320px; width:100%; margin:0 auto;
+  }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--pix); font-weight:500;
+    font-size:13px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--cyan);
+    margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:""; width:26px; height:3px; background:var(--cyan);
+    box-shadow:0 5px 0 var(--orange);
+  }
+
+  h1{
+    font-family:var(--pix); font-weight:700;
+    font-size:clamp(2.05rem, 4.6vw, 3.7rem);
+    line-height:1.12; letter-spacing:.5px;
+    margin-bottom:26px;
+  }
+  h1 .hl-o{color:var(--orange)}
+  h1 .hl-c{color:var(--cyan)}
+  h1 .q{color:var(--orange)}
+
+  .lead{
+    color:#cfcfd4; font-size:clamp(.98rem,1.15vw,1.08rem);
+    line-height:1.65; max-width:54ch;
+  }
+  .lead + .lead{margin-top:16px}
+  .lead b{color:var(--ink); font-weight:700}
+  .lead i{color:var(--cyan); font-style:normal; font-weight:600}
+
+  .platforms{
+    display:flex; flex-wrap:wrap; gap:9px;
+    margin:26px 0 30px;
+  }
+  .chip{
+    font-family:var(--body); font-weight:700; font-size:12px;
+    letter-spacing:.4px; color:#cdcdd2;
+    padding:7px 12px; border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    border-radius:4px;
+  }
+  .chip.on-o{border-color:rgba(255,90,0,.55); color:#ffd2b8}
+  .chip.on-c{border-color:rgba(31,209,240,.5); color:#bdf2fb}
+
+  .actions{display:flex; flex-wrap:wrap; gap:14px;}
+  .btn-lg{padding:16px 30px; font-size:14.5px}
+
+  /* ---- right column: pixel eye signature ---- */
+  .visual{
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    min-height:0;
+  }
+  .eye-wrap{
+    position:relative; width:100%; max-width:430px;
+    filter:drop-shadow(0 0 26px rgba(255,90,0,.22));
+    animation:float 7s ease-in-out infinite;
+  }
+  .eye-wrap svg{width:100%; height:auto; display:block; shape-rendering:crispEdges;}
+  .eye-tag{
+    position:absolute; font-family:var(--pix); font-size:12px;
+    letter-spacing:.5px; padding:6px 11px; border-radius:4px;
+    background:#101014; border:1px solid var(--line); color:#dfe7ea;
+    animation:float 7s ease-in-out infinite;
+  }
+  .eye-tag b{color:#0c0c0e; background:var(--cyan); padding:1px 5px; margin-right:6px; border-radius:2px;}
+  .t1{top:2%; right:0; border-color:rgba(31,209,240,.45)}
+  .t2{bottom:6%; left:-2%; animation-delay:-2.3s; border-color:rgba(255,90,0,.5)}
+  .t2 b{background:var(--orange)}
+  .t3{bottom:38%; right:-3%; animation-delay:-4.1s}
+
+  @keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+  }
+
+  /* ============ jagged cyan bottom accent ============ */
+  .teeth{
+    width:100%; height:30px; display:block; color:var(--cyan);
+    margin-top:auto;
+  }
+  .footstrip{
+    background:var(--cyan); color:#06222a;
+    font-family:var(--pix); font-size:13px; letter-spacing:1px;
+    text-transform:uppercase;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:10px clamp(20px,4vw,56px);
+    flex-wrap:wrap;
+  }
+  .footstrip span{font-weight:600}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:960px){
+    .hero{grid-template-columns:1fr; gap:34px;}
+    .visual{order:-1}
+    .eye-wrap{max-width:360px}
+  }
+  @media (max-width:760px){
+    nav{display:none}
+    .footstrip{justify-content:center; text-align:center}
+  }
+  @media (max-width:520px){
+    .eye-tag{display:none}
+    .eye-wrap{max-width:300px}
+    .actions .btn-lg{flex:1 1 100%}
+  }
+
+  a:focus-visible, .btn:focus-visible{
+    outline:3px solid var(--cyan); outline-offset:3px;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .eye-wrap,.eye-tag{animation:none}
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- ===== HEADER ===== -->
+    <header>
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div class="brand-name">AI Brand<br><span>Advocacy</span></div>
+      </div>
+      <nav>
+        <a href="#">Услуги</a>
+        <a href="#">Примеры</a>
+        <a href="#">FAQ</a>
+        <a href="#">Блог</a>
+      </nav>
+      <a href="#" class="btn btn-orange header-cta">Связаться</a>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <main class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">// Видимость в нейросетях</span>
+
+        <h1>Ваш бренд есть в&nbsp;ответах <span class="hl-o">ChatGPT</span> и&nbsp;<span class="hl-c">Яндекс&nbsp;AI</span>?</h1>
+
+        <p class="lead">Создаём <i>«глас народа»</i> — контент, необходимый для продвижения в&nbsp;<b>нейросетях</b>. Это посты, комментарии и&nbsp;обсуждения на&nbsp;VC, DTF, Pikabu, TenChat, Дзен, а&nbsp;также онлайн-отзывы на&nbsp;Otzovik, IRecommend, Яндекс&nbsp;Картах и&nbsp;прочих отзовиках.</p>
+
+        <p class="lead">Контент <b>неотличим</b> от&nbsp;обычных пользовательских материалов — без&nbsp;ссылок, без&nbsp;рекламных маркеров. Только натуральные тексты постов, комментариев и&nbsp;отзывов, продвигающих ваш бренд.</p>
+
+        <div class="platforms">
+          <span class="chip on-c">VC</span>
+          <span class="chip">DTF</span>
+          <span class="chip">Pikabu</span>
+          <span class="chip">TenChat</span>
+          <span class="chip">Дзен</span>
+          <span class="chip on-o">Otzovik</span>
+          <span class="chip">IRecommend</span>
+          <span class="chip on-o">Яндекс Карты</span>
+        </div>
+
+        <div class="actions">
+          <a href="#" class="btn btn-orange btn-lg">Заказать консультацию</a>
+          <a href="#" class="btn btn-ghost btn-lg">Узнать больше о методе</a>
+        </div>
+      </div>
+
+      <!-- pixel-art eye: signature element -->
+      <div class="visual">
+        <div class="eye-wrap" aria-hidden="true">
+          <div id="eye"></div>
+        </div>
+        <div class="eye-tag t1"><b>AI</b>видит ваш бренд</div>
+        <div class="eye-tag t2"><b>★</b>натуральный контент</div>
+        <div class="eye-tag t3">ваши преимущества</div>
+      </div>
+    </main>
+
+    <!-- ===== jagged cyan accent ===== -->
+    <svg class="teeth" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 10 L0 6 L4 0 L8 6 L12 0 L16 6 L20 0 L24 6 L28 0 L32 6 L36 0 L40 6 L44 0 L48 6 L52 0 L56 6 L60 0 L64 6 L68 0 L72 6 L76 0 L80 6 L84 0 L88 6 L92 0 L96 6 L100 0 L100 10 Z" fill="currentColor"/>
+    </svg>
+    <div class="footstrip">
+      <span>© AI Brand Advocacy</span>
+      <span>Глас народа для нейросетей</span>
+    </div>
+
+  </div>
+
+<script>
+/* Build a chunky pixel-art eye on a grid (echoes the reference style). */
+(function(){
+  const COLS=32, ROWS=20, CELL=12;
+  const W=COLS*CELL, H=ROWS*CELL;
+  const cx=15.5, cy=9.5;
+
+  // outer almond = intersection of two vertically offset circles
+  const R=19, k=13;
+  const Ri=12, ki=8; // inner almond ring
+
+  const inA=(x,y,r,kk)=>{
+    const a=(x-cx)**2+(y-(cy+kk))**2<=r*r;
+    const b=(x-cx)**2+(y-(cy-kk))**2<=r*r;
+    return a&&b;
+  };
+  const outline=(x,y,r,kk)=>{
+    if(!inA(x,y,r,kk)) return false;
+    return !(inA(x-1,y,r,kk)&&inA(x+1,y,r,kk)&&inA(x,y-1,r,kk)&&inA(x,y+1,r,kk));
+  };
+  const dist=(x,y)=>Math.hypot(x-cx,y-cy);
+
+  const ORANGE='#ff5a00', CYAN='#1fd1f0', WHITE='#f4f3ee';
+  let rects='';
+  const px=(c,r,fill)=>{rects+=`<rect x="${c*CELL}" y="${r*CELL}" width="${CELL}" height="${CELL}" fill="${fill}"/>`;};
+
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const d=dist(c,r);
+      if(d<2.6){ px(c,r,ORANGE); continue; }              // pupil
+      if(d>=4 && d<5.3){ px(c,r,CYAN); continue; }          // iris ring
+      if(outline(c,r,Ri,ki)){ px(c,r,ORANGE); continue; }   // inner almond
+      if(outline(c,r,R,k)){ px(c,r,ORANGE); continue; }     // outer almond
+    }
+  }
+  // highlight in pupil
+  px(Math.round(cx)-2, Math.round(cy)-1, WHITE);
+
+  document.getElementById('eye').innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
+})();
+</script>
+</body>
+</html>

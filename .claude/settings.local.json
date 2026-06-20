@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\mpolu\\\\Documents\\\\Landings\\\\UGC-blogs-AI\\\\.agents\")"
+    ]
+  }
+}
