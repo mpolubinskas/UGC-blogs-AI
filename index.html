@@ -277,6 +277,219 @@
     .eye-wrap,.eye-tag{animation:none}
     *{transition:none !important}
   }
+
+  /* ===== SECTIONS ===== */
+  .section{
+    padding:clamp(48px,8vh,88px) clamp(20px,4vw,56px);
+    border-top:1px solid var(--line);
+  }
+  .section-inner{max-width:1320px;margin:0 auto;}
+  .section-alt{background:rgba(255,255,255,.013);}
+  .section-header{
+    display:flex;flex-direction:column;align-items:center;
+    text-align:center;gap:12px;
+    margin-bottom:clamp(28px,4vh,48px);
+  }
+  .section-header .eyebrow{margin-bottom:0;}
+  h2{
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(1.55rem,2.8vw,2.5rem);
+    line-height:1.1;letter-spacing:-.5px;
+  }
+  h3{
+    font-family:var(--body);font-weight:700;
+    font-size:clamp(.96rem,1.2vw,1.12rem);
+    line-height:1.3;color:var(--ink);
+  }
+
+  /* ---- EXAMPLES ---- */
+  .ex-split{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(14px,2.5vw,36px);
+    margin-bottom:clamp(24px,4vh,40px);
+  }
+  .ex-col-head{
+    font-family:var(--pix);font-size:11.5px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;
+    padding:6px 13px;border-radius:4px;
+    display:inline-block;margin-bottom:12px;
+  }
+  .bylo-col .ex-col-head{
+    background:rgba(220,50,50,.12);color:#ff9090;
+    border:1px solid rgba(220,50,50,.25);
+  }
+  .stalo-col .ex-col-head{
+    background:rgba(31,209,240,.1);color:var(--cyan);
+    border:1px solid rgba(31,209,240,.3);
+  }
+  .ai-mock{
+    background:#0d0d10;border:1px solid var(--line);
+    border-radius:8px;overflow:hidden;margin-bottom:10px;
+  }
+  .ai-mock:last-of-type{margin-bottom:0;}
+  .ai-mock-bar{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 13px;background:#131317;
+    border-bottom:1px solid var(--line);
+  }
+  .ai-mock-icon{
+    font-family:var(--pix);font-size:10px;font-weight:700;
+    padding:2px 6px;border-radius:3px;flex:none;
+  }
+  .bylo-col .ai-mock-icon{background:#3a3a44;color:#777;}
+  .stalo-col .ai-mock-icon{background:var(--cyan);color:#06222a;}
+  .ai-mock-q{
+    font-size:11.5px;color:var(--muted);font-style:italic;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .ai-mock-body{
+    padding:10px 13px;font-size:12px;line-height:1.65;color:#808090;
+  }
+  .ai-mock-body .b-hit{
+    background:var(--cyan);color:#06222a;
+    font-weight:700;padding:1px 5px;border-radius:2px;
+  }
+  .ai-mock-body .rival{color:#c0c0ca;font-weight:600;}
+  .ai-mock-status{
+    padding:6px 13px;border-top:1px solid var(--line);
+    font-family:var(--pix);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
+  }
+  .bylo-col .ai-mock-status{color:#cc5555;}
+  .stalo-col .ai-mock-status{color:var(--cyan);}
+
+  .principle-wrap{
+    display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  }
+  .principle-card{
+    padding:22px 24px;border-radius:8px;
+    background:linear-gradient(145deg,rgba(255,90,0,.05),rgba(31,209,240,.03));
+    border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;
+  }
+  .principle-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+  }
+  .principle-card h3{margin-bottom:14px;}
+  .principle-card .lead{font-size:13.5px;}
+  .principle-card .lead+.lead{
+    margin-top:12px;padding-top:12px;border-top:1px solid var(--line);
+  }
+  .conclusion-card{
+    padding:20px 22px;border-radius:8px;
+    background:rgba(31,209,240,.06);
+    border:1px solid rgba(31,209,240,.22);
+    display:flex;gap:14px;align-items:flex-start;
+  }
+  .conclusion-card .c-icon{font-size:22px;flex:none;margin-top:1px;}
+  .conclusion-card p{font-size:13.5px;line-height:1.75;color:#cfcfd4;}
+  .conclusion-card b{color:var(--ink);}
+
+  /* ---- STEPS ---- */
+  .steps-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:clamp(12px,2vw,22px);
+  }
+  .step{
+    background:#101013;border:1px solid var(--line);
+    border-radius:8px;padding:22px 18px;position:relative;
+  }
+  .step-n{
+    font-family:var(--pix);font-size:36px;font-weight:700;
+    color:transparent;-webkit-text-stroke:1.5px rgba(255,90,0,.35);
+    line-height:1;margin-bottom:12px;display:block;
+  }
+  .step h3{margin-bottom:8px;font-size:.96rem;}
+  .step .lead{font-size:13px;}
+  .steps-grid .step:not(:last-child)::after{
+    content:"→";
+    position:absolute;right:-14px;top:24px;
+    font-family:var(--pix);font-size:13px;
+    color:rgba(255,90,0,.4);pointer-events:none;
+  }
+
+  /* ---- DIFF ---- */
+  .diff-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:clamp(12px,2vw,22px);
+  }
+  .diff-card{
+    background:#101013;border:1px solid var(--line);
+    border-radius:8px;padding:22px;
+  }
+  .diff-card.ours{
+    border-color:rgba(255,90,0,.4);
+    background:linear-gradient(155deg,rgba(255,90,0,.07),rgba(31,209,240,.04));
+    position:relative;overflow:hidden;
+  }
+  .diff-card.ours::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+  }
+  .diff-who{
+    font-family:var(--pix);font-size:10.5px;letter-spacing:1px;
+    text-transform:uppercase;margin-bottom:12px;
+  }
+  .diff-card:not(.ours) .diff-who{color:var(--muted);}
+  .diff-card.ours .diff-who{color:var(--orange-soft);}
+  .diff-card .lead{font-size:13px;line-height:1.65;}
+
+  /* ---- FAQ ---- */
+  .faq-list{display:flex;flex-direction:column;gap:4px;}
+  .faq-item{border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+  .faq-q{
+    width:100%;text-align:left;background:#101013;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:17px 22px;font-family:var(--body);font-weight:600;
+    font-size:14px;color:var(--ink);transition:background .15s;
+  }
+  .faq-q:hover{background:#141418;}
+  .faq-toggle{
+    font-family:var(--pix);font-size:18px;color:var(--orange);
+    flex:none;transition:transform .18s;line-height:1;
+  }
+  .faq-item.open .faq-toggle{transform:rotate(45deg);}
+  .faq-a{
+    display:none;padding:6px 22px 18px;
+    font-size:13.5px;line-height:1.7;color:#a0a0b0;
+    background:#101013;border-top:1px solid var(--line);
+  }
+  .faq-item.open .faq-a{display:block;}
+  .faq-a b{color:var(--ink);}
+  .faq-note{margin-top:10px;font-size:12.5px;color:var(--muted);font-style:italic;}
+
+  /* ---- FINAL CTA ---- */
+  .cta-section{
+    padding:clamp(56px,10vh,108px) clamp(20px,4vw,56px);
+    text-align:center;border-top:1px solid var(--line);
+    background:linear-gradient(155deg,rgba(255,90,0,.08) 0%,rgba(31,209,240,.05) 100%);
+    position:relative;overflow:hidden;
+  }
+  .cta-section::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1.4px);
+    background-size:26px 26px;pointer-events:none;
+  }
+  .cta-inner{max-width:680px;margin:0 auto;position:relative;}
+  .cta-inner h2{margin-bottom:14px;}
+  .cta-sub{
+    font-size:clamp(.96rem,1.2vw,1.06rem);
+    color:var(--orange-soft);font-weight:600;
+    line-height:1.5;margin-bottom:clamp(24px,4vh,36px);
+  }
+  .btn-xl{padding:18px 42px;font-size:15px;}
+  .cta-fine{margin-top:18px;font-size:13px;color:var(--muted);line-height:1.6;}
+
+  /* ---- EXTRA RESPONSIVE ---- */
+  @media(max-width:960px){
+    .ex-split{grid-template-columns:1fr;}
+    .principle-wrap{grid-template-columns:1fr;}
+    .steps-grid{grid-template-columns:repeat(2,1fr);}
+    .steps-grid .step:not(:last-child)::after{display:none;}
+    .diff-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:600px){
+    .steps-grid{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
@@ -289,12 +502,12 @@
         <div class="brand-name">AI Brand<br><span>Advocacy</span></div>
       </div>
       <nav>
-        <a href="#">Услуги</a>
-        <a href="#">Примеры</a>
-        <a href="#">FAQ</a>
-        <a href="#">Блог</a>
+        <a href="#how">Услуги</a>
+        <a href="#examples">Примеры</a>
+        <a href="#faq">FAQ</a>
+        <a href="#diff">О нас</a>
       </nav>
-      <a href="#" class="btn btn-orange header-cta">Связаться</a>
+      <a href="#contact" class="btn btn-orange header-cta">Связаться</a>
     </header>
 
     <!-- ===== HERO ===== -->
@@ -323,7 +536,7 @@
             <div class="eye-tag t2"><b>★</b>натуральный контент</div>
             <div class="eye-tag t3">ваши преимущества</div>
           </div>
-          <a href="#" class="btn btn-orange btn-lg">Заказать консультацию</a>
+          <a href="#contact" class="btn btn-orange btn-lg">Заказать консультацию</a>
         </div>
       </div>
 
@@ -340,6 +553,219 @@
       </div>
 
     </main>
+
+    <!-- ===== EXAMPLES ===== -->
+    <section class="section" id="examples">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="eyebrow">// Примеры</span>
+          <h2>Нейровыдача: <span class="hl-o">до</span> и&nbsp;<span class="hl-c">после</span></h2>
+        </div>
+
+        <div class="ex-split">
+          <!-- БЫЛО -->
+          <div class="bylo-col">
+            <span class="ex-col-head">✕ БЫЛО</span>
+
+            <div class="ai-mock">
+              <div class="ai-mock-bar">
+                <span class="ai-mock-icon">GPT</span>
+                <span class="ai-mock-q">Лучший CRM для малого бизнеса в России?</span>
+              </div>
+              <div class="ai-mock-body">Для малого бизнеса подойдут <span class="rival">AmoCRM</span>, <span class="rival">Bitrix24</span> и&nbsp;<span class="rival">Мегаплан</span>. Они предлагают базовые функции по доступной цене и интегрируются с популярными сервисами.</div>
+              <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
+            </div>
+
+            <div class="ai-mock">
+              <div class="ai-mock-bar">
+                <span class="ai-mock-icon">YA</span>
+                <span class="ai-mock-q">Где заказать разработку мобильного приложения?</span>
+              </div>
+              <div class="ai-mock-body">По отзывам и обсуждениям, за разработкой мобильных приложений обращаются в&nbsp;<span class="rival">Surf</span>, <span class="rival">Redmadrobot</span> и&nbsp;<span class="rival">Sibedge</span>. Стоимость зависит от функциональности и сроков.</div>
+              <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
+            </div>
+
+            <div class="ai-mock">
+              <div class="ai-mock-bar">
+                <span class="ai-mock-icon">GPT</span>
+                <span class="ai-mock-q">Какой сервис email-рассылок выбрать?</span>
+              </div>
+              <div class="ai-mock-body">Среди российских сервисов email-маркетинга выделяются <span class="rival">Unisender</span>, <span class="rival">SendPulse</span> и&nbsp;<span class="rival">DashaMail</span>. У каждого есть бесплатный тариф для старта.</div>
+              <div class="ai-mock-status">✕ Ваш бренд не упомянут</div>
+            </div>
+          </div>
+
+          <!-- СТАЛО -->
+          <div class="stalo-col">
+            <span class="ex-col-head">✓ СТАЛО</span>
+
+            <div class="ai-mock">
+              <div class="ai-mock-bar">
+                <span class="ai-mock-icon">GPT</span>
+                <span class="ai-mock-q">Лучший CRM для малого бизнеса в России?</span>
+              </div>
+              <div class="ai-mock-body">Пользователи VC и Pikabu активно рекомендуют <span class="b-hit">ВашБренд</span> — отмечают интуитивный интерфейс и оперативную поддержку. Также в обсуждениях упоминаются <span class="rival">AmoCRM</span> и&nbsp;<span class="rival">Bitrix24</span>.</div>
+              <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
+            </div>
+
+            <div class="ai-mock">
+              <div class="ai-mock-bar">
+                <span class="ai-mock-icon">YA</span>
+                <span class="ai-mock-q">Где заказать разработку мобильного приложения?</span>
+              </div>
+              <div class="ai-mock-body">По многочисленным отзывам на тематических форумах, <span class="b-hit">ВашБренд</span> стабильно входит в топ рекомендаций: клиенты выделяют прозрачное ценообразование и соблюдение сроков.</div>
+              <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
+            </div>
+
+            <div class="ai-mock">
+              <div class="ai-mock-bar">
+                <span class="ai-mock-icon">GPT</span>
+                <span class="ai-mock-q">Какой сервис email-рассылок выбрать?</span>
+              </div>
+              <div class="ai-mock-body">Судя по обсуждениям в профессиональных сообществах, <span class="b-hit">ВашБренд</span> чаще всего называют первым выбором: удобная аналитика, высокая доставляемость и русскоязычная поддержка.</div>
+              <div class="ai-mock-status">✓ Ваш бренд в топе ответа</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- principle + conclusion -->
+        <div class="principle-wrap">
+          <div class="principle-card">
+            <h3>В чём наш принцип работы?</h3>
+            <p class="lead">AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов (натуральный пользовательский опыт) они воспринимают как трастовые источники — и включают в&nbsp;свои ответы.</p>
+            <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда. <b>Именно это мы и&nbsp;берём на&nbsp;себя.</b></p>
+          </div>
+          <div class="conclusion-card">
+            <span class="c-icon">⚡</span>
+            <p><b>Результат:</b> AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах: <b>Google&nbsp;AI, Яндекс&nbsp;AI (Алиса), ChatGPT, Claude, DeepSeek</b> и&nbsp;прочих.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="section section-alt" id="how">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="eyebrow">// Как это работает</span>
+          <h2>Четыре шага до&nbsp;AI&#8209;выдачи</h2>
+        </div>
+        <div class="steps-grid">
+          <div class="step">
+            <span class="step-n">01</span>
+            <h3>Анализ ниши</h3>
+            <p class="lead">Смотрим, какие бренды появляются в&nbsp;AI-ответах по вашим запросам и откуда AI берёт эти данные.</p>
+          </div>
+          <div class="step">
+            <span class="step-n">02</span>
+            <h3>Создание контента</h3>
+            <p class="lead">Пишем посты, комментарии и&nbsp;тематические обсуждения — в&nbsp;стиле каждой платформы, без рекламного следа.</p>
+          </div>
+          <div class="step">
+            <span class="step-n">03</span>
+            <h3>Публикация</h3>
+            <p class="lead">Публикуем так, как публикуют живые пользователи — без ссылок, без упоминаний агентства. Платформы не банят. AI засчитывает как честный сигнал.</p>
+          </div>
+          <div class="step">
+            <span class="step-n">04</span>
+            <h3>Мониторинг и отчётность</h3>
+            <p class="lead">Каждый месяц присылаем отчёт: объём контента + скриншоты нейроответов, в&nbsp;которых появился ваш бренд по целевым запросам.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DIFFERENTIATION ===== -->
+    <section class="section" id="diff">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="eyebrow">// Позиционирование</span>
+          <h2>Не просто контент-маркетинг,<br>не просто ORM.</h2>
+        </div>
+        <div class="diff-grid">
+          <div class="diff-card">
+            <div class="diff-who">Контент- и PR-агентства</div>
+            <p class="lead">Ведут VC и DTF — но не строят присутствие в AI-выдаче. <b>У них нет такой задачи.</b></p>
+          </div>
+          <div class="diff-card">
+            <div class="diff-who">GEO-агентства</div>
+            <p class="lead">Оптимизируют сайт и пишут статьи на внешних площадках — но не работают с нативным UGC в community-форматах, <b>там, где AI реально берёт данные.</b></p>
+          </div>
+          <div class="diff-card ours">
+            <div class="diff-who">// Мы</div>
+            <p class="lead">Специализируемся на нативном UGC для GEO — только на российских community-платформах. <b>Единственные на рынке с таким фокусом</b> — вы получаете специализацию, а не адаптацию чужого процесса под вашу задачу.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="section section-alt" id="faq">
+      <div class="section-inner">
+        <div class="section-header">
+          <span class="eyebrow">// FAQ</span>
+          <h2>Частые вопросы</h2>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Как измерить результат?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Ежемесячный отчёт: скриншоты AI-ответов по целевым запросам, в которых появился ваш бренд. Видите конкретные нейроответы ChatGPT и Яндекс AI — до и после.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Это законно? Нас не забанят?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Нативный контент без ссылок и рекламных маркеров — стандартный пользовательский формат. Не нарушает правила платформ. AI воспринимает его как честный сигнал: нет коммерческих маркеров — нет причин игнорировать.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              У нас уже есть контент- или PR-агентство.
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Они решают другую задачу. Работаем параллельно, не вместо.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Когда будет результат?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Первые упоминания бренда в AI-ответах — через <b>4–8 недель</b>. Накопленный контент продолжает работать месяцами.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Это подойдёт, если нам нужны быстрые лиды?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Нет. Это инвестиция в присутствие и репутацию — как появление в авторитетных СМИ. Если нужен трафик сегодня — мы не тот инструмент.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Как выйти, если не подойдёт?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">
+              Работаем по ежемесячным пакетам без долгосрочных обязательств. Не устраивает — просто не продлеваете.
+              <p class="faq-note">Стоимость: пакеты по объёму контента, без скрытых платежей.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FINAL CTA ===== -->
+    <section class="cta-section" id="contact">
+      <div class="cta-inner">
+        <span class="eyebrow" style="justify-content:center;margin-bottom:16px;">// Финальный шаг</span>
+        <h2>Пока конкуренты не&nbsp;заняли AI&#8209;выдачу по&nbsp;вашей нише — это можно исправить.</h2>
+        <p class="cta-sub">Когда займут — отыграть будет сложно.</p>
+        <a href="#" class="btn btn-orange btn-xl">Обсудить нишу&nbsp;→</a>
+        <p class="cta-fine">Оставьте заявку — ответим в рабочий день, разберём вашу нишу и&nbsp;покажем, что сейчас выдаёт AI по вашим ключевым запросам.</p>
+      </div>
+    </section>
 
     <!-- ===== jagged cyan accent ===== -->
     <svg class="teeth" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
@@ -390,6 +816,22 @@
   document.getElementById('eye').innerHTML =
     `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
 })();
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.closest('.faq-item');
+    const wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el=>{
+      el.classList.remove('open');
+      el.querySelector('.faq-q').setAttribute('aria-expanded','false');
+    });
+    if(!wasOpen){
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+    }
+  });
+});
 </script>
 </body>
 </html>
