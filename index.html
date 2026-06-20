@@ -333,23 +333,57 @@
   .reveal-scale.in-view{opacity:1;transform:scale(1);}
 
   /* ============ EXAMPLES ============ */
-  .examples-layout{
+  .col-labels{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:24px;
-    margin-bottom:clamp(28px,4vh,48px);
+    grid-template-columns:1fr 52px 1fr;
+    gap:0;
+    margin-bottom:12px;
+    max-width:920px;
+    margin-left:auto;
+    margin-right:auto;
   }
-  .ex-col{display:flex;flex-direction:column;gap:12px;}
-  .ex-col-label{
-    display:flex;align-items:center;gap:10px;
-    font-family:var(--pix);font-size:11px;letter-spacing:1.5px;
-    text-transform:uppercase;margin-bottom:4px;
+  .col-lbl{
+    font-family:var(--pix);font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;
   }
-  .ex-col-label .lbadge{
-    padding:4px 10px;border-radius:3px;font-size:10px;font-weight:700;
+  .col-lbl.left{justify-content:flex-start;}
+  .col-lbl.right{justify-content:flex-end;}
+  .col-lbl .lbadge{padding:4px 10px;border-radius:3px;font-size:10px;font-weight:700;}
+  .col-lbl.left .lbadge{background:rgba(200,50,50,.15);color:#ff8080;border:1px solid rgba(200,50,50,.25);}
+  .col-lbl.right .lbadge{background:rgba(var(--cyan-rgb),.12);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .col-lbl .sub{color:var(--muted);}
+  .col-lbl.right .sub{color:rgba(var(--cyan-rgb),.6);}
+
+  .compare-rows{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    max-width:920px;
+    margin:0 auto clamp(28px,4vh,48px);
   }
-  .bylo-col .lbadge{background:rgba(200,50,50,.15);color:#ff8080;border:1px solid rgba(200,50,50,.25);}
-  .stalo-col .lbadge{background:rgba(var(--cyan-rgb),.12);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .compare-row{
+    display:grid;
+    grid-template-columns:1fr 52px 1fr;
+    gap:0;
+    align-items:stretch;
+  }
+  .bylo-col,.stalo-col{display:flex;flex-direction:column;}
+
+  .cr-arrow{
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:4px;
+    position:relative;
+  }
+  .cr-arrow::before{
+    content:'';display:block;width:1px;height:100%;
+    position:absolute;top:0;left:50%;
+    background:linear-gradient(180deg,transparent 0%,rgba(var(--orange-rgb),.18) 30%,rgba(var(--orange-rgb),.18) 70%,transparent 100%);
+  }
+  .cr-arrow-icon{
+    font-family:var(--pix);font-size:22px;
+    color:var(--orange);text-shadow:0 0 20px rgba(var(--orange-rgb),.6);
+    position:relative;z-index:1;line-height:1;
+  }
 
   /* ---- chat window (dialog bubble style) ---- */
   .chat-win{
@@ -357,6 +391,7 @@
     border:1px solid var(--line);
     background:#0d0d10;
     transition:border-color .25s ease, box-shadow .25s ease;
+    display:flex;flex-direction:column;height:100%;
   }
   .bylo-col .chat-win{border-color:rgba(200,50,50,.22);}
   .stalo-col .chat-win{
@@ -444,6 +479,7 @@
     padding:7px 14px;
     font-family:var(--pix);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
     display:flex;align-items:center;gap:6px;
+    margin-top:auto;
   }
   .bylo-col .chat-foot{
     color:#884040;background:rgba(200,50,50,.05);
@@ -457,6 +493,7 @@
   /* principle + conclusion */
   .principle-wrap{
     display:grid;grid-template-columns:1fr 1fr;gap:20px;
+    max-width:920px;margin:0 auto;
   }
   .principle-card{
     padding:28px;border-radius:var(--radius);
@@ -699,7 +736,9 @@
     .hero-cols{grid-template-columns:1fr;}
     .visual-col{order:-1}
     .eye-wrap{max-width:360px}
-    .examples-layout{grid-template-columns:1fr;}
+    .col-labels,.compare-row{grid-template-columns:1fr;}
+    .cr-arrow{padding:8px 0;flex-direction:row;}
+    .cr-arrow::before{width:100%;height:1px;top:50%;left:0;}
     .principle-wrap{grid-template-columns:1fr;}
     .steps-timeline{grid-template-columns:repeat(2,1fr);}
     .steps-timeline::before{display:none;}
@@ -813,100 +852,88 @@
         <h2>Нейровыдача: <span class="hl-o">до</span> и&nbsp;<span class="hl-c">после</span></h2>
       </div>
 
-      <div class="examples-layout">
-        <!-- БЫЛО -->
-        <div class="ex-col bylo-col reveal" style="transition-delay:.05s">
-          <div class="ex-col-label">
-            <span class="lbadge">✕ БЫЛО</span>
-            <span style="color:var(--muted);font-family:var(--pix);font-size:11px;letter-spacing:.5px;">без присутствия в AI</span>
-          </div>
+      <!-- Заголовки колонок -->
+      <div class="col-labels reveal">
+        <div class="col-lbl left">
+          <span class="lbadge">✕ БЫЛО</span>
+          <span class="sub">без присутствия в AI</span>
+        </div>
+        <div></div>
+        <div class="col-lbl right">
+          <span class="sub">после работы с нами</span>
+          <span class="lbadge">✓ СТАЛО</span>
+        </div>
+      </div>
 
-          <div class="chat-win">
-            <div class="chat-win-head">
-              <span class="chat-badge">GPT</span>
-              <span class="chat-ai-name">ChatGPT</span>
-              <div class="chat-win-dots"><i></i><i></i><i></i></div>
-            </div>
-            <div class="chat-msgs">
-              <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
-              <div class="b-bubble b-ai">Для малого бизнеса подойдут <span class="rival">AmoCRM</span>, <span class="rival">Bitrix24</span> и&nbsp;<span class="rival">Мегаплан</span>. Они предлагают базовые функции по доступной цене.</div>
-            </div>
-            <div class="chat-foot">✕ Ваш бренд не упомянут</div>
-          </div>
+      <!-- Строки сравнения -->
+      <div class="compare-rows">
 
-          <div class="chat-win">
-            <div class="chat-win-head">
-              <span class="chat-badge">ЯА</span>
-              <span class="chat-ai-name">Яндекс AI</span>
-              <div class="chat-win-dots"><i></i><i></i><i></i></div>
+        <!-- Строка 1: ChatGPT -->
+        <div class="compare-row reveal" style="transition-delay:.05s">
+          <div class="bylo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">GPT</span>
+                <span class="chat-ai-name">ChatGPT</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
+                <div class="b-bubble b-ai">Для малого бизнеса подойдут <span class="rival">AmoCRM</span>, <span class="rival">Bitrix24</span> и&nbsp;<span class="rival">Мегаплан</span>. Они предлагают базовые функции по доступной цене.</div>
+              </div>
+              <div class="chat-foot">✕ Ваш бренд не упомянут</div>
             </div>
-            <div class="chat-msgs">
-              <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
-              <div class="b-bubble b-ai">По отзывам и обсуждениям, за разработкой обращаются в&nbsp;<span class="rival">Surf</span>, <span class="rival">Redmadrobot</span> и&nbsp;<span class="rival">Sibedge</span>.</div>
-            </div>
-            <div class="chat-foot">✕ Ваш бренд не упомянут</div>
           </div>
-
-          <div class="chat-win">
-            <div class="chat-win-head">
-              <span class="chat-badge">GPT</span>
-              <span class="chat-ai-name">ChatGPT</span>
-              <div class="chat-win-dots"><i></i><i></i><i></i></div>
+          <div class="cr-arrow"><span class="cr-arrow-icon">→</span></div>
+          <div class="stalo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">GPT</span>
+                <span class="chat-ai-name">ChatGPT</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
+                <div class="b-bubble b-ai">Пользователи VC и Pikabu активно рекомендуют <span class="b-hit">ВашБренд</span> — интуитивный интерфейс и поддержка. Также упоминаются <span class="rival">AmoCRM</span> и&nbsp;<span class="rival">Bitrix24</span>.</div>
+              </div>
+              <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
             </div>
-            <div class="chat-msgs">
-              <div class="b-bubble b-user">Какой сервис email-рассылок выбрать?</div>
-              <div class="b-bubble b-ai">Выделяются <span class="rival">Unisender</span>, <span class="rival">SendPulse</span> и&nbsp;<span class="rival">DashaMail</span>. У каждого есть бесплатный тариф для старта.</div>
-            </div>
-            <div class="chat-foot">✕ Ваш бренд не упомянут</div>
           </div>
         </div>
 
-        <!-- СТАЛО -->
-        <div class="ex-col stalo-col reveal" style="transition-delay:.15s">
-          <div class="ex-col-label">
-            <span class="lbadge">✓ СТАЛО</span>
-            <span style="color:var(--cyan);font-family:var(--pix);font-size:11px;letter-spacing:.5px;">после работы с нами</span>
+        <!-- Строка 2: Яндекс AI -->
+        <div class="compare-row reveal" style="transition-delay:.15s">
+          <div class="bylo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">ЯА</span>
+                <span class="chat-ai-name">Яндекс AI</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
+                <div class="b-bubble b-ai">По отзывам и обсуждениям, за разработкой обращаются в&nbsp;<span class="rival">Surf</span>, <span class="rival">Redmadrobot</span> и&nbsp;<span class="rival">Sibedge</span>.</div>
+              </div>
+              <div class="chat-foot">✕ Ваш бренд не упомянут</div>
+            </div>
           </div>
-
-          <div class="chat-win">
-            <div class="chat-win-head">
-              <span class="chat-badge">GPT</span>
-              <span class="chat-ai-name">ChatGPT</span>
-              <div class="chat-win-dots"><i></i><i></i><i></i></div>
+          <div class="cr-arrow"><span class="cr-arrow-icon">→</span></div>
+          <div class="stalo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">ЯА</span>
+                <span class="chat-ai-name">Яндекс AI</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
+                <div class="b-bubble b-ai">По отзывам на форумах, <span class="b-hit">ВашБренд</span> стабильно в топе: прозрачное ценообразование и соблюдение сроков.</div>
+              </div>
+              <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
             </div>
-            <div class="chat-msgs">
-              <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
-              <div class="b-bubble b-ai">Пользователи VC и Pikabu активно рекомендуют <span class="b-hit">ВашБренд</span> — интуитивный интерфейс и поддержка. Также упоминаются <span class="rival">AmoCRM</span> и&nbsp;<span class="rival">Bitrix24</span>.</div>
-            </div>
-            <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
-          </div>
-
-          <div class="chat-win">
-            <div class="chat-win-head">
-              <span class="chat-badge">ЯА</span>
-              <span class="chat-ai-name">Яндекс AI</span>
-              <div class="chat-win-dots"><i></i><i></i><i></i></div>
-            </div>
-            <div class="chat-msgs">
-              <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
-              <div class="b-bubble b-ai">По отзывам на форумах, <span class="b-hit">ВашБренд</span> стабильно в топе: прозрачное ценообразование и соблюдение сроков.</div>
-            </div>
-            <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
-          </div>
-
-          <div class="chat-win">
-            <div class="chat-win-head">
-              <span class="chat-badge">GPT</span>
-              <span class="chat-ai-name">ChatGPT</span>
-              <div class="chat-win-dots"><i></i><i></i><i></i></div>
-            </div>
-            <div class="chat-msgs">
-              <div class="b-bubble b-user">Какой сервис email-рассылок выбрать?</div>
-              <div class="b-bubble b-ai">В профессиональных сообществах <span class="b-hit">ВашБренд</span> чаще всего называют первым выбором: аналитика, доставляемость, русская поддержка.</div>
-            </div>
-            <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
           </div>
         </div>
+
       </div>
 
       <div class="principle-wrap">

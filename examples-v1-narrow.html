@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Примеры — v1: Узкий центрированный</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0e;--bg-2:#101013;--bg-3:#131317;
+  --orange:#ff5a00;--orange-soft:#ff7a2e;--orange-rgb:255,90,0;
+  --cyan:#1fd1f0;--cyan-soft:#5fe1ff;--cyan-rgb:31,209,240;
+  --ink:#f4f3ee;--muted:#8b8b93;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --pix:'Pixelify Sans',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,sans-serif;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ---- label ---- */
+.variant-label{
+  text-align:center;padding:18px 20px;
+  font-family:var(--pix);font-size:12px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--orange);background:rgba(255,90,0,.06);border-bottom:1px solid rgba(255,90,0,.15);
+}
+
+/* ---- section ---- */
+.section{padding:clamp(56px,9vh,100px) clamp(20px,4vw,56px);border-top:1px solid var(--line);position:relative;overflow:hidden;}
+.section-inner{max-width:1320px;margin:0 auto;position:relative;z-index:1;}
+.section-header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-bottom:clamp(36px,6vh,64px);}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--pix);font-weight:500;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
+.eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+h2{font-family:var(--body);font-weight:800;font-size:clamp(1.7rem,3.2vw,2.9rem);line-height:1.08;letter-spacing:-.6px;}
+h2 .hl-o{color:var(--orange)}
+h2 .hl-c{color:var(--cyan)}
+h3{font-family:var(--body);font-weight:700;font-size:clamp(.96rem,1.2vw,1.12rem);line-height:1.3;color:var(--ink);}
+.lead{color:#cfcfd4;font-size:clamp(.98rem,1.15vw,1.08rem);line-height:1.65;}
+.lead b{color:var(--ink);font-weight:700}
+
+/* ============ KEY CHANGE: компактный центрированный контейнер ============ */
+.examples-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-bottom:clamp(28px,4vh,48px);
+  /* ГЛАВНОЕ ИЗМЕНЕНИЕ: ограничиваем ширину и центрируем */
+  max-width:860px;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:clamp(28px,4vh,48px);
+}
+
+.ex-col{display:flex;flex-direction:column;gap:10px;}
+.ex-col-label{display:flex;align-items:center;gap:10px;font-family:var(--pix);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.ex-col-label .lbadge{padding:4px 10px;border-radius:3px;font-size:10px;font-weight:700;}
+.bylo-col .lbadge{background:rgba(200,50,50,.15);color:#ff8080;border:1px solid rgba(200,50,50,.25);}
+.stalo-col .lbadge{background:rgba(var(--cyan-rgb),.12);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+
+/* chat win - чуть компактнее */
+.chat-win{border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#0d0d10;transition:border-color .25s,box-shadow .25s;}
+.bylo-col .chat-win{border-color:rgba(200,50,50,.22);}
+.stalo-col .chat-win{border-color:rgba(var(--cyan-rgb),.22);box-shadow:0 2px 24px rgba(var(--cyan-rgb),.04),inset 0 1px 0 rgba(var(--cyan-rgb),.05);}
+.chat-win-head{display:flex;align-items:center;gap:8px;padding:8px 11px;border-bottom:1px solid var(--line);}
+.bylo-col .chat-win-head{background:linear-gradient(90deg,rgba(200,50,50,.1) 0%,#0f0f12 100%);border-bottom-color:rgba(200,50,50,.15);}
+.stalo-col .chat-win-head{background:linear-gradient(90deg,rgba(var(--cyan-rgb),.07) 0%,#0f0f12 100%);border-bottom-color:rgba(var(--cyan-rgb),.12);}
+.chat-badge{font-family:var(--pix);font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.5px;flex:none;}
+.bylo-col .chat-badge{background:rgba(200,50,50,.25);color:#ff8080;border:1px solid rgba(200,50,50,.35);}
+.stalo-col .chat-badge{background:var(--cyan);color:#06222a;}
+.chat-ai-name{font-size:10.5px;font-family:var(--pix);letter-spacing:.3px;}
+.bylo-col .chat-ai-name{color:rgba(200,100,100,.6);}
+.stalo-col .chat-ai-name{color:rgba(var(--cyan-rgb),.55);}
+.chat-win-dots{margin-left:auto;display:flex;gap:5px;align-items:center;}
+.chat-win-dots i{display:block;width:6px;height:6px;border-radius:50%;font-style:normal;}
+.bylo-col .chat-win-dots i{background:rgba(200,50,50,.3);}
+.stalo-col .chat-win-dots i{background:rgba(var(--cyan-rgb),.14);}
+.chat-win-dots i:nth-child(1){opacity:.3;}
+.chat-win-dots i:nth-child(2){opacity:.6;}
+.chat-msgs{padding:11px 12px 8px;display:flex;flex-direction:column;gap:8px;}
+.b-bubble{max-width:90%;padding:7px 11px;font-size:11.5px;line-height:1.6;}
+.b-bubble.b-user{align-self:flex-end;background:rgba(255,90,0,.1);border:1px solid rgba(255,90,0,.17);color:#887060;border-radius:10px 10px 3px 10px;}
+.b-bubble.b-ai{align-self:flex-start;border-radius:10px 10px 10px 3px;}
+.bylo-col .b-ai{background:rgba(200,50,50,.07);border:1px solid rgba(200,50,50,.18);color:#b08080;}
+.stalo-col .b-ai{background:rgba(var(--cyan-rgb),.07);border:1px solid rgba(var(--cyan-rgb),.18);color:#7ab8c0;}
+.b-ai .b-hit{background:var(--cyan);color:#06222a;font-weight:700;padding:1px 4px;border-radius:3px;}
+.b-ai .rival{font-weight:600;}
+.bylo-col .b-ai .rival{color:#7a5050;}
+.stalo-col .b-ai .rival{color:#4e7a82;}
+.chat-foot{padding:6px 12px;font-family:var(--pix);font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.bylo-col .chat-foot{color:#884040;background:rgba(200,50,50,.05);border-top:1px solid rgba(200,50,50,.1);}
+.stalo-col .chat-foot{color:var(--cyan);background:rgba(var(--cyan-rgb),.05);border-top:1px solid rgba(var(--cyan-rgb),.12);}
+
+/* principle + conclusion — тоже ограничиваем */
+.principle-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:860px;margin:0 auto;}
+.principle-card{padding:24px;border-radius:var(--radius);background:linear-gradient(145deg,rgba(255,90,0,.05),rgba(31,209,240,.03));border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;transition:border-color .25s,box-shadow .25s;}
+.principle-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--cyan));}
+.principle-card h3{margin-bottom:12px;font-size:.98rem;}
+.principle-card .lead{font-size:13px;}
+.principle-card .lead+.lead{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);}
+.conclusion-card{padding:20px;border-radius:var(--radius);background:rgba(var(--cyan-rgb),.055);border:1px solid rgba(var(--cyan-rgb),.22);display:flex;gap:12px;align-items:flex-start;}
+.conclusion-card .c-icon{font-size:22px;flex:none;margin-top:1px;}
+.conclusion-card p{font-size:13px;line-height:1.75;color:#cfcfd4;}
+.conclusion-card b{color:var(--ink);}
+
+@media(max-width:700px){
+  .examples-layout,.principle-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="variant-label">Вариант 1 — Компактный + центрированный (max-width: 860px)</div>
+
+<section class="section" id="examples">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="eyebrow">// Примеры</span>
+      <h2>Нейровыдача: <span class="hl-o">до</span> и&nbsp;<span class="hl-c">после</span></h2>
+    </div>
+
+    <div class="examples-layout">
+      <!-- БЫЛО -->
+      <div class="ex-col bylo-col">
+        <div class="ex-col-label">
+          <span class="lbadge">✕ БЫЛО</span>
+          <span style="color:var(--muted);font-family:var(--pix);font-size:11px;letter-spacing:.5px;">без присутствия в AI</span>
+        </div>
+
+        <div class="chat-win">
+          <div class="chat-win-head">
+            <span class="chat-badge">GPT</span>
+            <span class="chat-ai-name">ChatGPT</span>
+            <div class="chat-win-dots"><i></i><i></i><i></i></div>
+          </div>
+          <div class="chat-msgs">
+            <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
+            <div class="b-bubble b-ai">Для малого бизнеса подойдут <span class="rival">AmoCRM</span>, <span class="rival">Bitrix24</span> и&nbsp;<span class="rival">Мегаплан</span>. Они предлагают базовые функции по доступной цене.</div>
+          </div>
+          <div class="chat-foot">✕ Ваш бренд не упомянут</div>
+        </div>
+
+        <div class="chat-win">
+          <div class="chat-win-head">
+            <span class="chat-badge">ЯА</span>
+            <span class="chat-ai-name">Яндекс AI</span>
+            <div class="chat-win-dots"><i></i><i></i><i></i></div>
+          </div>
+          <div class="chat-msgs">
+            <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
+            <div class="b-bubble b-ai">По отзывам и обсуждениям, за разработкой обращаются в&nbsp;<span class="rival">Surf</span>, <span class="rival">Redmadrobot</span> и&nbsp;<span class="rival">Sibedge</span>.</div>
+          </div>
+          <div class="chat-foot">✕ Ваш бренд не упомянут</div>
+        </div>
+      </div>
+
+      <!-- СТАЛО -->
+      <div class="ex-col stalo-col">
+        <div class="ex-col-label">
+          <span class="lbadge">✓ СТАЛО</span>
+          <span style="color:var(--cyan);font-family:var(--pix);font-size:11px;letter-spacing:.5px;">после работы с нами</span>
+        </div>
+
+        <div class="chat-win">
+          <div class="chat-win-head">
+            <span class="chat-badge">GPT</span>
+            <span class="chat-ai-name">ChatGPT</span>
+            <div class="chat-win-dots"><i></i><i></i><i></i></div>
+          </div>
+          <div class="chat-msgs">
+            <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
+            <div class="b-bubble b-ai">Пользователи VC и Pikabu активно рекомендуют <span class="b-hit">ВашБренд</span> — интуитивный интерфейс и поддержка. Также упоминаются <span class="rival">AmoCRM</span> и&nbsp;<span class="rival">Bitrix24</span>.</div>
+          </div>
+          <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
+        </div>
+
+        <div class="chat-win">
+          <div class="chat-win-head">
+            <span class="chat-badge">ЯА</span>
+            <span class="chat-ai-name">Яндекс AI</span>
+            <div class="chat-win-dots"><i></i><i></i><i></i></div>
+          </div>
+          <div class="chat-msgs">
+            <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
+            <div class="b-bubble b-ai">По отзывам на форумах, <span class="b-hit">ВашБренд</span> стабильно в топе: прозрачное ценообразование и соблюдение сроков.</div>
+          </div>
+          <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle-wrap">
+      <div class="principle-card">
+        <h3>В чём наш принцип работы?</h3>
+        <p class="lead">AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов они воспринимают как трастовые источники — и включают в&nbsp;свои ответы.</p>
+        <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей. <b>Именно это мы и&nbsp;берём на&nbsp;себя.</b></p>
+      </div>
+      <div class="conclusion-card">
+        <span class="c-icon">⚡</span>
+        <p><b>Результат:</b> AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах: <b>Google&nbsp;AI, Яндекс&nbsp;AI, ChatGPT, Claude, DeepSeek</b> и&nbsp;прочих.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
