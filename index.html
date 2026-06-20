@@ -132,9 +132,9 @@
   }
 
   h1{
-    font-family:var(--pix); font-weight:700;
+    font-family:var(--body); font-weight:800;
     font-size:clamp(2.05rem, 4.6vw, 3.7rem);
-    line-height:1.12; letter-spacing:.5px;
+    line-height:1.1; letter-spacing:-1px;
     margin-bottom:26px;
   }
   h1 .hl-o{color:var(--orange)}
@@ -145,9 +145,38 @@
     color:#cfcfd4; font-size:clamp(.98rem,1.15vw,1.08rem);
     line-height:1.65; max-width:54ch;
   }
-  .lead + .lead{margin-top:16px}
   .lead b{color:var(--ink); font-weight:700}
   .lead i{color:var(--cyan); font-style:normal; font-weight:600}
+
+  .method-card{
+    margin:26px 0 30px;
+    padding:22px 24px;
+    background:linear-gradient(145deg, rgba(255,90,0,.06) 0%, rgba(31,209,240,.04) 100%);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:8px;
+    position:relative;
+    overflow:hidden;
+    max-width:54ch;
+  }
+  .method-card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--orange) 0%, var(--cyan) 100%);
+  }
+  .card-label{
+    font-family:var(--pix);
+    font-size:11px; letter-spacing:1.2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .card-label span{color:var(--orange-soft)}
+  .method-card .lead+.lead{
+    margin-top:0;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
 
   .platforms{
     display:flex; flex-wrap:wrap; gap:9px;
@@ -261,9 +290,11 @@
 
         <h1>Ваш бренд есть в&nbsp;ответах <span class="hl-o">ChatGPT</span> и&nbsp;<span class="hl-c">Яндекс&nbsp;AI</span>?</h1>
 
-        <p class="lead">Создаём <i>«глас народа»</i> — контент, необходимый для продвижения в&nbsp;<b>нейросетях</b>. Это посты, комментарии и&nbsp;обсуждения на&nbsp;VC, DTF, Pikabu, TenChat, Дзен, а&nbsp;также онлайн-отзывы на&nbsp;Otzovik, IRecommend, Яндекс&nbsp;Картах и&nbsp;прочих отзовиках.</p>
-
-        <p class="lead">Контент <b>неотличим</b> от&nbsp;обычных пользовательских материалов — без&nbsp;ссылок, без&nbsp;рекламных маркеров. Только натуральные тексты постов, комментариев и&nbsp;отзывов, продвигающих ваш бренд.</p>
+        <div class="method-card">
+          <div class="card-label"><span>// Как это работает</span></div>
+          <p class="lead">Создаём <i>«глас народа»</i> — контент, необходимый для продвижения в&nbsp;<b>нейросетях</b>. Это посты, комментарии и&nbsp;обсуждения на&nbsp;VC, DTF, Pikabu, TenChat, Дзен, а&nbsp;также онлайн-отзывы на&nbsp;Otzovik, IRecommend, Яндекс&nbsp;Картах и&nbsp;прочих отзовиках.</p>
+          <p class="lead">Контент <b>неотличим</b> от&nbsp;обычных пользовательских материалов — без&nbsp;ссылок, без&nbsp;рекламных маркеров. Только натуральные тексты постов, комментариев и&nbsp;отзывов, продвигающих ваш бренд.</p>
+        </div>
 
         <div class="platforms">
           <span class="chip on-c">VC</span>
