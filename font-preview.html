@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Font Preview — AI Brand Advocacy</title>
+
+<!-- Вариант 1: Manrope + Onest -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700&family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@700;800;900&family=TT+Commons+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #0c0c0e;
+  --bg-2: #101013;
+  --orange: #ff5a00;
+  --orange-soft: #ff7a2e;
+  --cyan: #1fd1f0;
+  --ink: #f4f3ee;
+  --muted: #8b8b93;
+  --line: rgba(255,255,255,.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ---- SWITCHER ---- */
+.switcher {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 999;
+  background: rgba(12,12,14,.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 24px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.switcher-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-right: 8px;
+  font-family: system-ui, sans-serif;
+}
+
+.sw-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.15);
+  color: var(--muted);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: system-ui, sans-serif;
+  transition: all .15s;
+  letter-spacing: .3px;
+}
+.sw-btn:hover { color: var(--ink); border-color: rgba(255,255,255,.3); }
+.sw-btn.active { background: var(--orange); border-color: var(--orange); color: #0c0c0e; }
+
+/* ---- PANELS ---- */
+.panel { display: none; padding-top: 72px; }
+.panel.active { display: block; }
+
+/* ---- DEMO LAYOUT ---- */
+.demo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 40px 80px;
+}
+
+.font-badge {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 48px;
+  padding: 10px 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.font-badge span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  font-family: system-ui, sans-serif;
+}
+.font-badge .head-label { color: var(--orange); }
+.font-badge .body-label { color: var(--cyan); }
+.font-badge .sep { color: var(--muted); }
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: "";
+  width: 24px; height: 3px;
+  background: var(--cyan);
+  box-shadow: 0 5px 0 var(--orange);
+}
+
+h1.demo-h1 {
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin-bottom: 28px;
+}
+h1.demo-h1 .hl-o { color: var(--orange); }
+h1.demo-h1 .hl-c { color: var(--cyan); }
+
+.lead {
+  font-size: clamp(.95rem, 1.1vw, 1.07rem);
+  line-height: 1.68;
+  color: #cfd0d4;
+  max-width: 600px;
+  margin-bottom: 40px;
+}
+.lead b { color: var(--ink); font-weight: 700; }
+.lead i { color: var(--cyan); font-style: normal; font-weight: 600; }
+
+.cta-row { display: flex; gap: 14px; align-items: center; margin-bottom: 64px; }
+
+.btn {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  font-size: 13px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  padding: 13px 26px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-orange { background: var(--orange); color: #0c0c0e; border-color: var(--orange); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: rgba(255,255,255,.2); }
+
+.divider { height: 1px; background: var(--line); margin-bottom: 48px; }
+
+.section-h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -.8px;
+  margin-bottom: 14px;
+}
+
+.section-lead {
+  font-size: .97rem;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 520px;
+  margin-bottom: 36px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.card {
+  padding: 22px 20px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.card-num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 10px;
+  font-family: system-ui, sans-serif;
+}
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.card-body {
+  font-size: .88rem;
+  line-height: 1.62;
+  color: var(--muted);
+}
+
+/* ============================================
+   VARIANT 1: Manrope + Onest
+   ============================================ */
+#v1 h1.demo-h1,
+#v1 h2.section-h2,
+#v1 .card-title {
+  font-family: 'Manrope', sans-serif;
+}
+#v1 .lead,
+#v1 .section-lead,
+#v1 .card-body,
+#v1 .btn,
+#v1 .eyebrow {
+  font-family: 'Onest', sans-serif;
+}
+
+/* ============================================
+   VARIANT 2: RF Dewi + ALS Hauss
+   — не на Google Fonts, показываем системный + описание
+   ============================================ */
+#v2 h1.demo-h1,
+#v2 h2.section-h2,
+#v2 .card-title {
+  font-family: 'Georgia', serif;
+  letter-spacing: -1px;
+}
+#v2 .lead,
+#v2 .section-lead,
+#v2 .card-body,
+#v2 .btn,
+#v2 .eyebrow {
+  font-family: 'Arial', 'Helvetica Neue', sans-serif;
+}
+
+/* ============================================
+   VARIANT 3: TT Travels + TT Commons Pro
+   — TT Commons Pro доступен, TT Travels нет на Google — используем Unbounded как closest match
+   ============================================ */
+#v3 h1.demo-h1,
+#v3 h2.section-h2,
+#v3 .card-title {
+  font-family: 'Unbounded', sans-serif;
+  letter-spacing: -2px;
+  font-weight: 900;
+}
+#v3 .lead,
+#v3 .section-lead,
+#v3 .card-body,
+#v3 .btn,
+#v3 .eyebrow {
+  font-family: 'Manrope', sans-serif;
+}
+
+/* ============================================
+   VARIANT 4: Orchidea Pro + Formular
+   — не на Google Fonts, показываем serif + Onest
+   ============================================ */
+#v4 h1.demo-h1,
+#v4 h2.section-h2,
+#v4 .card-title {
+  font-family: 'Times New Roman', serif;
+  font-style: italic;
+  letter-spacing: -1px;
+  font-weight: 700;
+}
+#v4 .lead,
+#v4 .section-lead,
+#v4 .card-body,
+#v4 .btn,
+#v4 .eyebrow {
+  font-family: 'Onest', sans-serif;
+}
+
+/* ============================================
+   VARIANT 5: Golos Text + Unbounded
+   ============================================ */
+#v5 h1.demo-h1,
+#v5 h2.section-h2,
+#v5 .card-title {
+  font-family: 'Unbounded', sans-serif;
+  letter-spacing: -2px;
+  font-weight: 800;
+}
+#v5 .lead,
+#v5 .section-lead,
+#v5 .card-body,
+#v5 .btn,
+#v5 .eyebrow {
+  font-family: 'Golos Text', sans-serif;
+}
+
+/* ---- responsive ---- */
+@media (max-width: 700px) {
+  .cards { grid-template-columns: 1fr; }
+  .demo { padding: 48px 20px 60px; }
+}
+
+.unavailable-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 5px 12px;
+  background: rgba(255, 90, 0, .08);
+  border: 1px solid rgba(255,90,0,.2);
+  border-radius: 6px;
+  color: var(--orange-soft);
+  margin-bottom: 20px;
+  font-family: system-ui, sans-serif;
+  letter-spacing: .3px;
+}
+</style>
+</head>
+<body>
+
+<!-- SWITCHER -->
+<div class="switcher">
+  <div class="switcher-label">Шрифты →</div>
+  <button class="sw-btn active" onclick="show('v1')">1 · Manrope + Onest</button>
+  <button class="sw-btn" onclick="show('v2')">2 · RF Dewi + ALS Hauss</button>
+  <button class="sw-btn" onclick="show('v3')">3 · TT Travels + TT Commons</button>
+  <button class="sw-btn" onclick="show('v4')">4 · Orchidea Pro + Formular</button>
+  <button class="sw-btn" onclick="show('v5')">5 · Golos Text + Unbounded</button>
+</div>
+
+<!-- ================================================ PANEL 1 ================================================ -->
+<div class="panel active" id="v1">
+  <div class="demo">
+    <div class="font-badge">
+      <span class="head-label">Manrope ExtraBold</span>
+      <span class="sep">/</span>
+      <span class="body-label">Onest Regular</span>
+      <span class="sep">·</span>
+      <span style="color:var(--muted);font-size:11px">Tech / SaaS / Digital</span>
+    </div>
+
+    <div class="eyebrow">AI Brand Advocacy · новый канал</div>
+
+    <h1 class="demo-h1">
+      Бренд, которого<br>
+      <span class="hl-o">видит</span> нейросеть —<br>
+      <span class="hl-c">выбирает</span> клиент
+    </h1>
+
+    <p class="lead">
+      Мы создаём <b>UGC-блоги, которые читают ChatGPT, Perplexity и Gemini</b>.
+      Ваш бренд появляется в ответах нейросетей <i>раньше конкурентов</i> —
+      без платной рекламы и манипуляций с алгоритмами.
+    </p>
+
+    <div class="cta-row">
+      <button class="btn btn-orange" style="font-family:'Onest',sans-serif">Получить стратегию бесплатно →</button>
+      <button class="btn btn-ghost" style="font-family:'Onest',sans-serif">Смотреть кейсы</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-h2">Как работает AI Visibility</h2>
+    <p class="section-lead">Три шага — от стратегии до первых упоминаний в нейросетях</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-title">Аудит AI-присутствия</div>
+        <div class="card-body">Анализируем, что сейчас отвечают GPT-4, Claude и Gemini на запросы вашей аудитории. Находим белые пятна.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-title">Стратегия контента</div>
+        <div class="card-body">Создаём карту тем и форматов, которые нейросети цитируют в первую очередь. Ваш экспертный голос.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-title">Публикация и рост</div>
+        <div class="card-body">Запускаем UGC-сеть, которая растёт и индексируется. Отчёты по AI-упоминаниям каждые две недели.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ PANEL 2 ================================================ -->
+<div class="panel" id="v2">
+  <div class="demo">
+    <div class="font-badge">
+      <span class="head-label">RF Dewi</span>
+      <span class="sep">/</span>
+      <span class="body-label">ALS Hauss</span>
+      <span class="sep">·</span>
+      <span style="color:var(--muted);font-size:11px">Agency / B2B / High-ticket</span>
+    </div>
+
+    <div class="unavailable-note">
+      ⚠ RF Dewi + ALS Hauss — платные кириллические гарнитуры. Здесь показан приближённый вид через системный serif + sans.
+    </div>
+
+    <div class="eyebrow">AI Brand Advocacy · новый канал</div>
+
+    <h1 class="demo-h1">
+      Бренд, которого<br>
+      <span class="hl-o">видит</span> нейросеть —<br>
+      <span class="hl-c">выбирает</span> клиент
+    </h1>
+
+    <p class="lead">
+      Мы создаём <b>UGC-блоги, которые читают ChatGPT, Perplexity и Gemini</b>.
+      Ваш бренд появляется в ответах нейросетей <i>раньше конкурентов</i> —
+      без платной рекламы и манипуляций с алгоритмами.
+    </p>
+
+    <div class="cta-row">
+      <button class="btn btn-orange" style="font-family:Arial,sans-serif">Получить стратегию бесплатно →</button>
+      <button class="btn btn-ghost" style="font-family:Arial,sans-serif">Смотреть кейсы</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-h2">Как работает AI Visibility</h2>
+    <p class="section-lead">Три шага — от стратегии до первых упоминаний в нейросетях</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-title">Аудит AI-присутствия</div>
+        <div class="card-body">Анализируем, что сейчас отвечают GPT-4, Claude и Gemini на запросы вашей аудитории. Находим белые пятна.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-title">Стратегия контента</div>
+        <div class="card-body">Создаём карту тем и форматов, которые нейросети цитируют в первую очередь. Ваш экспертный голос.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-title">Публикация и рост</div>
+        <div class="card-body">Запускаем UGC-сеть, которая растёт и индексируется. Отчёты по AI-упоминаниям каждые две недели.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ PANEL 3 ================================================ -->
+<div class="panel" id="v3">
+  <div class="demo">
+    <div class="font-badge">
+      <span class="head-label">TT Travels Next (→ Unbounded)</span>
+      <span class="sep">/</span>
+      <span class="body-label">TT Commons Pro (→ Manrope)</span>
+      <span class="sep">·</span>
+      <span style="color:var(--muted);font-size:11px">Edgy / Brutalist / Performance</span>
+    </div>
+
+    <div class="unavailable-note">
+      ⚠ TT Travels + TT Commons Pro — платные. Здесь Unbounded + Manrope как ближайший аналог по характеру.
+    </div>
+
+    <div class="eyebrow">AI Brand Advocacy · новый канал</div>
+
+    <h1 class="demo-h1">
+      Бренд, которого<br>
+      <span class="hl-o">видит</span> нейросеть —<br>
+      <span class="hl-c">выбирает</span> клиент
+    </h1>
+
+    <p class="lead">
+      Мы создаём <b>UGC-блоги, которые читают ChatGPT, Perplexity и Gemini</b>.
+      Ваш бренд появляется в ответах нейросетей <i>раньше конкурентов</i> —
+      без платной рекламы и манипуляций с алгоритмами.
+    </p>
+
+    <div class="cta-row">
+      <button class="btn btn-orange" style="font-family:'Manrope',sans-serif">Получить стратегию бесплатно →</button>
+      <button class="btn btn-ghost" style="font-family:'Manrope',sans-serif">Смотреть кейсы</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-h2">Как работает AI Visibility</h2>
+    <p class="section-lead">Три шага — от стратегии до первых упоминаний в нейросетях</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-title">Аудит AI-присутствия</div>
+        <div class="card-body">Анализируем, что сейчас отвечают GPT-4, Claude и Gemini на запросы вашей аудитории. Находим белые пятна.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-title">Стратегия контента</div>
+        <div class="card-body">Создаём карту тем и форматов, которые нейросети цитируют в первую очередь. Ваш экспертный голос.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-title">Публикация и рост</div>
+        <div class="card-body">Запускаем UGC-сеть, которая растёт и индексируется. Отчёты по AI-упоминаниям каждые две недели.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ PANEL 4 ================================================ -->
+<div class="panel" id="v4">
+  <div class="demo">
+    <div class="font-badge">
+      <span class="head-label">Orchidea Pro</span>
+      <span class="sep">/</span>
+      <span class="body-label">Formular</span>
+      <span class="sep">·</span>
+      <span style="color:var(--muted);font-size:11px">Premium / Luxury / Editorial</span>
+    </div>
+
+    <div class="unavailable-note">
+      ⚠ Orchidea Pro + Formular — платные гарнитуры. Здесь показан приближённый характер через italic serif + Onest.
+    </div>
+
+    <div class="eyebrow">AI Brand Advocacy · новый канал</div>
+
+    <h1 class="demo-h1">
+      Бренд, которого<br>
+      <span class="hl-o">видит</span> нейросеть —<br>
+      <span class="hl-c">выбирает</span> клиент
+    </h1>
+
+    <p class="lead">
+      Мы создаём <b>UGC-блоги, которые читают ChatGPT, Perplexity и Gemini</b>.
+      Ваш бренд появляется в ответах нейросетей <i>раньше конкурентов</i> —
+      без платной рекламы и манипуляций с алгоритмами.
+    </p>
+
+    <div class="cta-row">
+      <button class="btn btn-orange" style="font-family:'Onest',sans-serif">Получить стратегию бесплатно →</button>
+      <button class="btn btn-ghost" style="font-family:'Onest',sans-serif">Смотреть кейсы</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-h2">Как работает AI Visibility</h2>
+    <p class="section-lead">Три шага — от стратегии до первых упоминаний в нейросетях</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-title">Аудит AI-присутствия</div>
+        <div class="card-body">Анализируем, что сейчас отвечают GPT-4, Claude и Gemini на запросы вашей аудитории. Находим белые пятна.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-title">Стратегия контента</div>
+        <div class="card-body">Создаём карту тем и форматов, которые нейросети цитируют в первую очередь. Ваш экспертный голос.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-title">Публикация и рост</div>
+        <div class="card-body">Запускаем UGC-сеть, которая растёт и индексируется. Отчёты по AI-упоминаниям каждые две недели.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ PANEL 5 ================================================ -->
+<div class="panel" id="v5">
+  <div class="demo">
+    <div class="font-badge">
+      <span class="head-label">Unbounded Black</span>
+      <span class="sep">/</span>
+      <span class="body-label">Golos Text Regular</span>
+      <span class="sep">·</span>
+      <span style="color:var(--muted);font-size:11px">Underrated / Характер + Читаемость</span>
+    </div>
+
+    <div class="eyebrow">AI Brand Advocacy · новый канал</div>
+
+    <h1 class="demo-h1">
+      Бренд, которого<br>
+      <span class="hl-o">видит</span> нейросеть —<br>
+      <span class="hl-c">выбирает</span> клиент
+    </h1>
+
+    <p class="lead">
+      Мы создаём <b>UGC-блоги, которые читают ChatGPT, Perplexity и Gemini</b>.
+      Ваш бренд появляется в ответах нейросетей <i>раньше конкурентов</i> —
+      без платной рекламы и манипуляций с алгоритмами.
+    </p>
+
+    <div class="cta-row">
+      <button class="btn btn-orange" style="font-family:'Golos Text',sans-serif">Получить стратегию бесплатно →</button>
+      <button class="btn btn-ghost" style="font-family:'Golos Text',sans-serif">Смотреть кейсы</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2 class="section-h2">Как работает AI Visibility</h2>
+    <p class="section-lead">Три шага — от стратегии до первых упоминаний в нейросетях</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-title">Аудит AI-присутствия</div>
+        <div class="card-body">Анализируем, что сейчас отвечают GPT-4, Claude и Gemini на запросы вашей аудитории. Находим белые пятна.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-title">Стратегия контента</div>
+        <div class="card-body">Создаём карту тем и форматов, которые нейросети цитируют в первую очередь. Ваш экспертный голос.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-title">Публикация и рост</div>
+        <div class="card-body">Запускаем UGC-сеть, которая растёт и индексируется. Отчёты по AI-упоминаниям каждые две недели.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sw-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
