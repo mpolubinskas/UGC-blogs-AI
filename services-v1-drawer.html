@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Услуги — Вариант 1: Карточки + drawer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0e;--bg-2:#101013;--bg-3:#131317;
+    --orange:#ff5a00;--orange-soft:#ff7a2e;--orange-rgb:255,90,0;
+    --cyan:#1fd1f0;--cyan-soft:#5fe1ff;--cyan-rgb:31,209,240;
+    --ink:#f4f3ee;--muted:#8b8b93;
+    --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+    --pix:'Pixelify Sans',system-ui,sans-serif;
+    --body:'Inter',system-ui,-apple-system,sans-serif;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+  .section{padding:clamp(56px,9vh,100px) clamp(20px,4vw,56px);position:relative;}
+  .section-inner{max-width:1200px;margin:0 auto;}
+  .section-header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-bottom:clamp(36px,6vh,56px);}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--pix);font-weight:500;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
+  .eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+  h2{font-family:var(--body);font-weight:800;font-size:clamp(1.7rem,3.2vw,2.9rem);line-height:1.08;letter-spacing:-.6px;}
+  h2 .hl-o{color:var(--orange)} h2 .hl-c{color:var(--cyan)}
+  .section-sub{color:var(--muted);font-size:.95rem;max-width:540px;text-align:center;line-height:1.6;}
+
+  /* ---- cards grid ---- */
+  .pkg-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+  }
+  .pkg-card{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 16px 18px;
+    cursor:pointer;
+    position:relative;overflow:hidden;
+    transition:border-color .2s,transform .2s,box-shadow .2s;
+    display:flex;flex-direction:column;gap:8px;
+    outline:none;
+    user-select:none;
+  }
+  .pkg-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--line);transition:background .2s;
+  }
+  .pkg-card:hover{border-color:rgba(255,255,255,.2);transform:translateY(-4px);box-shadow:0 10px 36px rgba(0,0,0,.3);}
+  .pkg-card.active{border-color:rgba(var(--orange-rgb),.5);box-shadow:0 0 30px rgba(var(--orange-rgb),.12);}
+  .pkg-card.active::before{background:linear-gradient(90deg,var(--orange),var(--cyan));}
+  .pkg-card.c-free{border-color:rgba(var(--cyan-rgb),.25);}
+  .pkg-card.c-free::before{background:linear-gradient(90deg,var(--cyan),var(--cyan-soft));}
+  .pkg-card.c-free:hover,.pkg-card.c-free.active{border-color:rgba(var(--cyan-rgb),.55);box-shadow:0 0 30px rgba(var(--cyan-rgb),.1);}
+  .pkg-card:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;}
+
+  .pkg-badge{
+    font-family:var(--pix);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+    padding:3px 8px;border-radius:3px;width:fit-content;
+  }
+  .pkg-badge.bfree{background:rgba(var(--cyan-rgb),.15);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .pkg-badge.bpaid{background:rgba(var(--orange-rgb),.12);color:var(--orange-soft);border:1px solid rgba(var(--orange-rgb),.25);}
+
+  .pkg-name{font-weight:700;font-size:.9rem;line-height:1.2;}
+  .pkg-tagline{font-size:11.5px;color:var(--muted);line-height:1.4;}
+  .pkg-price{font-family:var(--pix);font-size:.95rem;font-weight:700;color:var(--ink);margin-top:auto;padding-top:6px;}
+  .c-free .pkg-price{color:var(--cyan);}
+  .pkg-hint{font-family:var(--pix);font-size:11px;color:var(--orange);margin-top:2px;display:flex;align-items:center;gap:4px;transition:gap .15s;}
+  .c-free .pkg-hint{color:var(--cyan);}
+  .pkg-card:hover .pkg-hint{gap:8px;}
+
+  /* ---- drawer overlay ---- */
+  .d-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .d-overlay.open{opacity:1;pointer-events:all;}
+
+  /* ---- drawer panel ---- */
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(460px,100vw);
+    background:var(--bg-2);border-left:1px solid var(--line-strong);
+    z-index:201;transform:translateX(110%);
+    transition:transform .38s cubic-bezier(.16,1,.3,1);
+    display:flex;flex-direction:column;
+  }
+  .drawer.open{transform:translateX(0);}
+
+  .d-head{
+    padding:28px 28px 22px;border-bottom:1px solid var(--line);
+    position:relative;flex:none;
+  }
+  .d-head::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+  }
+  .d-close{
+    position:absolute;top:18px;right:18px;
+    width:32px;height:32px;border-radius:50%;
+    border:1px solid var(--line);background:transparent;
+    color:var(--muted);cursor:pointer;font-size:16px;
+    display:grid;place-items:center;
+    transition:border-color .15s,color .15s,background .15s;
+  }
+  .d-close:hover{border-color:var(--orange);color:var(--orange);background:rgba(var(--orange-rgb),.08);}
+
+  .d-badge{font-family:var(--pix);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 9px;border-radius:3px;display:inline-block;margin-bottom:10px;}
+  .d-badge.bfree{background:rgba(var(--cyan-rgb),.15);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .d-badge.bpaid{background:rgba(var(--orange-rgb),.12);color:var(--orange-soft);border:1px solid rgba(var(--orange-rgb),.25);}
+
+  .d-title{font-weight:800;font-size:1.55rem;margin-bottom:6px;line-height:1.1;}
+  .d-price{font-family:var(--pix);font-size:1.25rem;font-weight:700;color:var(--orange);}
+  .d-price.free{color:var(--cyan);}
+
+  .d-body{padding:24px 28px;flex:1;overflow-y:auto;}
+  .d-label{font-family:var(--pix);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+
+  .feat-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
+  .feat-item{display:flex;align-items:flex-start;gap:12px;font-size:13.5px;color:#cfcfd4;line-height:1.5;}
+  .f-icon{
+    width:22px;height:22px;border-radius:50%;
+    background:rgba(var(--cyan-rgb),.09);border:1px solid rgba(var(--cyan-rgb),.22);
+    display:flex;align-items:center;justify-content:center;flex:none;
+    font-size:11px;color:var(--cyan);font-family:var(--pix);font-weight:700;
+  }
+  .f-icon.orange{background:rgba(var(--orange-rgb),.09);border-color:rgba(var(--orange-rgb),.22);color:var(--orange-soft);font-size:9px;}
+  .f-num{font-family:var(--pix);font-weight:700;color:var(--ink);}
+
+  .d-foot{padding:20px 28px;border-top:1px solid var(--line);flex:none;}
+  .btn{
+    font-family:var(--body);font-weight:700;text-transform:uppercase;letter-spacing:.6px;font-size:13.5px;
+    border:2px solid transparent;border-radius:999px;padding:14px 28px;
+    cursor:pointer;text-decoration:none;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    transition:transform .12s,background .15s,color .15s,border-color .15s,box-shadow .15s;
+    white-space:nowrap;width:100%;
+  }
+  .btn-o{background:var(--orange);color:#0c0c0e;border-color:var(--orange);}
+  .btn-o:hover{background:var(--orange-soft);border-color:var(--orange-soft);transform:translateY(-2px);box-shadow:0 6px 24px rgba(var(--orange-rgb),.35);}
+  .btn-c{background:var(--cyan);color:#06222a;border-color:var(--cyan);}
+  .btn-c:hover{background:var(--cyan-soft);border-color:var(--cyan-soft);transform:translateY(-2px);box-shadow:0 6px 24px rgba(var(--cyan-rgb),.35);}
+
+  @media(max-width:900px){.pkg-grid{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:580px){.pkg-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<section class="section" id="services">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="eyebrow">// Услуги</span>
+      <h2>Пакеты под&nbsp;<span class="hl-o">вашу</span>&nbsp;<span class="hl-c">задачу</span></h2>
+      <p class="section-sub">Нажмите на пакет, чтобы увидеть полный состав и заказать.</p>
+    </div>
+
+    <div class="pkg-grid">
+      <div class="pkg-card c-free" data-pkg="free" role="button" tabindex="0" aria-label="Открыть пакет Аудит">
+        <span class="pkg-badge bfree">FREE</span>
+        <div class="pkg-name">Аудит AI-выдачи</div>
+        <div class="pkg-tagline">Как вас видят нейросети прямо сейчас</div>
+        <div class="pkg-price">Бесплатно</div>
+        <div class="pkg-hint">Подробнее →</div>
+      </div>
+      <div class="pkg-card" data-pkg="start" role="button" tabindex="0" aria-label="Открыть пакет Хорошее начало">
+        <span class="pkg-badge bpaid">20К</span>
+        <div class="pkg-name">Хорошее начало</div>
+        <div class="pkg-tagline">Стратегия присутствия в нейросетях</div>
+        <div class="pkg-price">20 000 ₽</div>
+        <div class="pkg-hint">Подробнее →</div>
+      </div>
+      <div class="pkg-card" data-pkg="base" role="button" tabindex="0" aria-label="Открыть пакет Основной">
+        <span class="pkg-badge bpaid">70К</span>
+        <div class="pkg-name">Основной</div>
+        <div class="pkg-tagline">Первый поток контента для AI</div>
+        <div class="pkg-price">70 000 ₽</div>
+        <div class="pkg-hint">Подробнее →</div>
+      </div>
+      <div class="pkg-card" data-pkg="premium" role="button" tabindex="0" aria-label="Открыть пакет Премиум">
+        <span class="pkg-badge bpaid">120К</span>
+        <div class="pkg-name">Премиум</div>
+        <div class="pkg-tagline">Уверенное присутствие в AI-выдаче</div>
+        <div class="pkg-price">120 000 ₽</div>
+        <div class="pkg-hint">Подробнее →</div>
+      </div>
+      <div class="pkg-card" data-pkg="max" role="button" tabindex="0" aria-label="Открыть пакет Максимум">
+        <span class="pkg-badge bpaid">MAX</span>
+        <div class="pkg-name">Максимум</div>
+        <div class="pkg-tagline">Доминирование в нейровыдаче</div>
+        <div class="pkg-price">200 000 ₽</div>
+        <div class="pkg-hint">Подробнее →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="d-overlay" id="dOverlay"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <div class="d-head">
+    <button class="d-close" id="dClose" aria-label="Закрыть">✕</button>
+    <div class="d-badge" id="dBadge"></div>
+    <div class="d-title" id="dTitle"></div>
+    <div class="d-price" id="dPrice"></div>
+  </div>
+  <div class="d-body">
+    <div class="d-label">Что входит в пакет</div>
+    <ul class="feat-list" id="dFeats"></ul>
+  </div>
+  <div class="d-foot">
+    <a href="#contact" class="btn btn-o" id="dCta"></a>
+  </div>
+</div>
+
+<script>
+const PKGS = {
+  free: {
+    badge:'FREE', bc:'bfree', name:'Аудит AI-выдачи', price:'Бесплатно', pc:'free',
+    cta:'Получить бесплатный аудит →', cc:'btn-c',
+    feats:[
+      {n:false, text:'Аудит AI-выдачи по вашим ключевым запросам'},
+      {n:false, text:'Мониторинг упоминаний бренда в нейросетях'},
+    ]
+  },
+  start: {
+    badge:'20К', bc:'bpaid', name:'Хорошее начало', price:'20 000 ₽',
+    cta:'Заказать стратегию →', cc:'btn-o',
+    feats:[
+      {n:false, text:'Анализ ниши и конкурентов в AI-выдаче'},
+      {n:false, text:'Стратегия: как, где и о чём писать про бренд, чтобы повлиять на AI-выдачу'},
+    ]
+  },
+  base: {
+    badge:'70К', bc:'bpaid', name:'Основной пакет', price:'70 000 ₽',
+    cta:'Начать работу →', cc:'btn-o',
+    feats:[
+      {n:false, text:'Анализ и подготовка стратегии'},
+      {n:true, num:'10', text:'отзывов на площадках'},
+      {n:true, num:'30', text:'комментариев на форумах и в блогах'},
+      {n:true, num:'2', text:'поста в community-блогах'},
+    ]
+  },
+  premium: {
+    badge:'120К', bc:'bpaid', name:'Премиум', price:'120 000 ₽',
+    cta:'Выбрать Премиум →', cc:'btn-o',
+    feats:[
+      {n:false, text:'Анализ и подготовка стратегии'},
+      {n:true, num:'30', text:'отзывов на площадках'},
+      {n:true, num:'60', text:'комментариев на форумах и в блогах'},
+      {n:true, num:'4', text:'поста в community-блогах'},
+      {n:false, text:'Мониторинг AI-выдачи по ключевым запросам'},
+      {n:false, text:'Контроль за упоминаниями бренда'},
+    ]
+  },
+  max: {
+    badge:'MAX', bc:'bpaid', name:'Пакет «Максимум»', price:'200 000 ₽',
+    cta:'Выбрать Максимум →', cc:'btn-o',
+    feats:[
+      {n:false, text:'Анализ и подготовка стратегии'},
+      {n:true, num:'50', text:'отзывов на площадках'},
+      {n:true, num:'80', text:'комментариев на форумах и в блогах'},
+      {n:true, num:'4', text:'поста в community-блогах'},
+      {n:true, num:'100', text:'соцсигналов'},
+      {n:false, text:'Мониторинг AI-выдачи'},
+      {n:false, text:'Контроль за упоминаниями бренда'},
+      {n:false, text:'Создание отдельного сайта с отзывами о компании'},
+    ]
+  }
+};
+
+const overlay=document.getElementById('dOverlay'),
+      drawer=document.getElementById('drawer'),
+      dBadge=document.getElementById('dBadge'),
+      dTitle=document.getElementById('dTitle'),
+      dPrice=document.getElementById('dPrice'),
+      dFeats=document.getElementById('dFeats'),
+      dCta=document.getElementById('dCta');
+
+function open(id){
+  const p=PKGS[id]; if(!p) return;
+  dBadge.textContent=p.badge; dBadge.className='d-badge '+p.bc;
+  dTitle.textContent=p.name; dTitle.id='dTitle';
+  dPrice.textContent=p.price; dPrice.className='d-price'+(p.pc?' '+p.pc:'');
+  dFeats.innerHTML=p.feats.map(f=>{
+    if(f.n) return `<li class="feat-item"><span class="f-icon orange">${f.num}</span><span><span class="f-num">${f.num}</span> ${f.text}</span></li>`;
+    return `<li class="feat-item"><span class="f-icon">✓</span><span>${f.text}</span></li>`;
+  }).join('');
+  dCta.textContent=p.cta; dCta.className='btn '+p.cc;
+  document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`[data-pkg="${id}"]`)?.classList.add('active');
+  overlay.classList.add('open'); drawer.classList.add('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('dClose').focus();
+}
+function close(){
+  overlay.classList.remove('open'); drawer.classList.remove('open');
+  document.body.style.overflow='';
+  document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('active'));
+}
+document.querySelectorAll('.pkg-card').forEach(c=>{
+  c.addEventListener('click',()=>open(c.dataset.pkg));
+  c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(c.dataset.pkg);}});
+});
+document.getElementById('dClose').addEventListener('click',close);
+overlay.addEventListener('click',close);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+</script>
+</body>
+</html>

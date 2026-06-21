@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Услуги — Вариант 3: Аккордеон</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0e;--bg-2:#101013;--bg-3:#131317;
+    --orange:#ff5a00;--orange-soft:#ff7a2e;--orange-rgb:255,90,0;
+    --cyan:#1fd1f0;--cyan-soft:#5fe1ff;--cyan-rgb:31,209,240;
+    --ink:#f4f3ee;--muted:#8b8b93;
+    --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+    --pix:'Pixelify Sans',system-ui,sans-serif;
+    --body:'Inter',system-ui,-apple-system,sans-serif;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+  .section{padding:clamp(56px,9vh,100px) clamp(20px,4vw,56px);}
+  .section-inner{max-width:860px;margin:0 auto;}
+  .section-header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-bottom:clamp(36px,6vh,56px);}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--pix);font-weight:500;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
+  .eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+  h2{font-family:var(--body);font-weight:800;font-size:clamp(1.7rem,3.2vw,2.9rem);line-height:1.08;letter-spacing:-.6px;}
+  h2 .hl-o{color:var(--orange)} h2 .hl-c{color:var(--cyan)}
+  .section-sub{color:var(--muted);font-size:.95rem;max-width:540px;text-align:center;line-height:1.6;}
+
+  /* ---- accordion list ---- */
+  .acc-list{
+    display:flex;flex-direction:column;gap:8px;
+  }
+
+  .acc-item{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    transition:border-color .2s,box-shadow .2s;
+    position:relative;
+  }
+  .acc-item::before{
+    content:"";position:absolute;top:0;left:0;bottom:0;width:2px;
+    background:var(--line);
+    transition:background .2s;
+  }
+  .acc-item.open{
+    border-color:rgba(var(--orange-rgb),.35);
+    box-shadow:0 4px 28px rgba(0,0,0,.2),0 0 0 0 transparent;
+  }
+  .acc-item.open::before{background:linear-gradient(180deg,var(--orange),var(--cyan));}
+  .acc-item.cyan-item{border-color:rgba(var(--cyan-rgb),.2);}
+  .acc-item.cyan-item::before{background:var(--cyan);}
+  .acc-item.cyan-item.open{border-color:rgba(var(--cyan-rgb),.5);box-shadow:0 4px 28px rgba(0,0,0,.2);}
+  .acc-item:not(.open):hover{border-color:rgba(255,255,255,.16);}
+
+  /* ---- trigger row ---- */
+  .acc-trigger{
+    width:100%;background:var(--bg-2);border:none;cursor:pointer;
+    display:grid;
+    grid-template-columns:auto 1fr auto auto;
+    align-items:center;
+    gap:16px;
+    padding:16px 20px;
+    text-align:left;
+    transition:background .15s;
+    outline:none;
+  }
+  .acc-trigger:hover{background:var(--bg-3);}
+  .acc-item.open .acc-trigger{background:var(--bg-3);}
+  .acc-trigger:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px;}
+
+  .acc-badge{
+    font-family:var(--pix);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    padding:3px 9px;border-radius:3px;flex:none;
+  }
+  .acc-badge.bfree{background:rgba(var(--cyan-rgb),.15);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .acc-badge.bpaid{background:rgba(var(--orange-rgb),.12);color:var(--orange-soft);border:1px solid rgba(var(--orange-rgb),.25);}
+
+  .acc-meta{display:flex;flex-direction:column;gap:2px;}
+  .acc-name{font-weight:700;font-size:.96rem;color:var(--ink);}
+  .acc-summary{font-size:12px;color:var(--muted);line-height:1.3;}
+
+  .acc-price{
+    font-family:var(--pix);font-weight:700;font-size:.95rem;
+    color:var(--ink);white-space:nowrap;flex:none;
+  }
+  .cyan-item .acc-price{color:var(--cyan);}
+  .acc-item.open .acc-price{color:var(--orange);}
+  .cyan-item.open .acc-price{color:var(--cyan);}
+
+  .acc-toggle{
+    width:30px;height:30px;border-radius:50%;flex:none;
+    border:1.5px solid rgba(255,255,255,.12);
+    display:grid;place-items:center;
+    font-family:var(--pix);font-size:18px;color:var(--orange);
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1),background .15s,border-color .15s;
+    line-height:1;
+  }
+  .cyan-item .acc-toggle{color:var(--cyan);}
+  .acc-item.open .acc-toggle{transform:rotate(45deg);background:rgba(var(--orange-rgb),.1);border-color:rgba(var(--orange-rgb),.35);}
+  .cyan-item.open .acc-toggle{background:rgba(var(--cyan-rgb),.1);border-color:rgba(var(--cyan-rgb),.35);}
+
+  /* ---- body ---- */
+  .acc-body{
+    max-height:0;overflow:hidden;
+    transition:max-height .38s cubic-bezier(.16,1,.3,1);
+    background:var(--bg-2);
+  }
+  .acc-item.open .acc-body{max-height:600px;}
+
+  .acc-inner{
+    padding:4px 20px 22px 20px;
+    border-top:1px solid var(--line);
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:20px 32px;
+    align-items:start;
+  }
+
+  .feat-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px 16px;
+    padding-top:16px;
+  }
+  .feat-item{
+    display:flex;align-items:flex-start;gap:10px;
+    font-size:13px;color:#cfcfd4;line-height:1.4;
+  }
+  .f-icon{
+    width:20px;height:20px;border-radius:50%;flex:none;margin-top:1px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-family:var(--pix);font-weight:700;
+  }
+  .f-icon.yes{background:rgba(var(--cyan-rgb),.09);border:1px solid rgba(var(--cyan-rgb),.22);color:var(--cyan);}
+  .f-icon.num{background:rgba(var(--orange-rgb),.09);border:1px solid rgba(var(--orange-rgb),.22);color:var(--orange-soft);}
+  .f-text b{color:var(--ink);}
+
+  .acc-cta-col{padding-top:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-end;min-width:160px;}
+  .btn{
+    font-family:var(--body);font-weight:700;text-transform:uppercase;letter-spacing:.6px;font-size:13px;
+    border:2px solid transparent;border-radius:999px;padding:13px 24px;
+    cursor:pointer;text-decoration:none;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    transition:transform .12s,background .15s,color .15s,border-color .15s,box-shadow .15s;
+    white-space:nowrap;
+  }
+  .btn-o{background:var(--orange);color:#0c0c0e;border-color:var(--orange);}
+  .btn-o:hover{background:var(--orange-soft);border-color:var(--orange-soft);transform:translateY(-2px);box-shadow:0 6px 20px rgba(var(--orange-rgb),.35);}
+  .btn-c{background:var(--cyan);color:#06222a;border-color:var(--cyan);}
+  .btn-c:hover{background:var(--cyan-soft);border-color:var(--cyan-soft);transform:translateY(-2px);box-shadow:0 6px 20px rgba(var(--cyan-rgb),.35);}
+
+  .acc-note{font-size:11.5px;color:var(--muted);line-height:1.5;text-align:right;max-width:160px;}
+
+  /* recommended strip */
+  .rec-strip{
+    display:flex;align-items:center;gap:7px;
+    font-family:var(--pix);font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;
+    color:var(--orange-soft);
+    padding:6px 20px;
+    background:rgba(var(--orange-rgb),.05);
+    border-bottom:1px solid rgba(var(--orange-rgb),.1);
+  }
+  .rec-strip::before{content:"★";color:var(--orange);}
+
+  @media(max-width:640px){
+    .acc-trigger{grid-template-columns:auto 1fr auto;}
+    .acc-price{display:none;}
+    .feat-grid{grid-template-columns:1fr;}
+    .acc-inner{grid-template-columns:1fr;}
+    .acc-cta-col{align-items:stretch;}
+    .acc-note{text-align:left;max-width:none;}
+  }
+</style>
+</head>
+<body>
+
+<section class="section" id="services">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="eyebrow">// Услуги</span>
+      <h2>Выберите&nbsp;<span class="hl-o">пакет</span>&nbsp;—&nbsp;раскройте&nbsp;<span class="hl-c">детали</span></h2>
+      <p class="section-sub">Нажмите на строку, чтобы увидеть полный состав пакета.</p>
+    </div>
+
+    <div class="acc-list">
+
+      <!-- FREE -->
+      <div class="acc-item cyan-item" id="acc-free">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="body-free">
+          <span class="acc-badge bfree">FREE</span>
+          <div class="acc-meta">
+            <span class="acc-name">Аудит AI-выдачи</span>
+            <span class="acc-summary">Аудит и мониторинг упоминаний</span>
+          </div>
+          <span class="acc-price">Бесплатно</span>
+          <span class="acc-toggle">+</span>
+        </button>
+        <div class="acc-body" id="body-free" role="region">
+          <div class="acc-inner">
+            <div class="feat-grid">
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Аудит AI-выдачи по вашим ключевым запросам</span></div>
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Мониторинг упоминаний бренда в нейросетях</span></div>
+            </div>
+            <div class="acc-cta-col">
+              <a href="#contact" class="btn btn-c">Получить бесплатно →</a>
+              <p class="acc-note">Без обязательств. Видите как вас видит AI.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 20к -->
+      <div class="acc-item" id="acc-start">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="body-start">
+          <span class="acc-badge bpaid">20К</span>
+          <div class="acc-meta">
+            <span class="acc-name">Хорошее начало</span>
+            <span class="acc-summary">Анализ ниши + стратегия контента</span>
+          </div>
+          <span class="acc-price">20 000 ₽</span>
+          <span class="acc-toggle">+</span>
+        </button>
+        <div class="acc-body" id="body-start" role="region">
+          <div class="acc-inner">
+            <div class="feat-grid">
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ ниши и конкурентов в AI-выдаче</span></div>
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Стратегия: как, где и о чём писать про бренд, чтобы повлиять на AI-выдачу</span></div>
+            </div>
+            <div class="acc-cta-col">
+              <a href="#contact" class="btn btn-o">Заказать →</a>
+              <p class="acc-note">Разовый проект. Контент под вашу нишу.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 70к -->
+      <div class="acc-item" id="acc-base">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="body-base">
+          <span class="acc-badge bpaid">70К</span>
+          <div class="acc-meta">
+            <span class="acc-name">Основной</span>
+            <span class="acc-summary">Стратегия · 10 отзывов · 30 комм · 2 поста</span>
+          </div>
+          <span class="acc-price">70 000 ₽</span>
+          <span class="acc-toggle">+</span>
+        </button>
+        <div class="acc-body" id="body-base" role="region">
+          <div class="acc-inner">
+            <div class="feat-grid">
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ и подготовка стратегии</span></div>
+              <div class="feat-item"><span class="f-icon num">10</span><span class="f-text"><b>10 отзывов</b> на Otzovik, IRecommend, Яндекс Картах</span></div>
+              <div class="feat-item"><span class="f-icon num">30</span><span class="f-text"><b>30 комментариев</b> на форумах и в блогах</span></div>
+              <div class="feat-item"><span class="f-icon num">2</span><span class="f-text"><b>2 поста</b> в VC, DTF, Дзен, Pikabu</span></div>
+            </div>
+            <div class="acc-cta-col">
+              <a href="#contact" class="btn btn-o">Заказать →</a>
+              <p class="acc-note">Ежемесячный пакет. Без долгосрочных обязательств.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 120к — recommended -->
+      <div class="acc-item" id="acc-premium">
+        <div class="rec-strip">Популярный выбор</div>
+        <button class="acc-trigger" aria-expanded="false" aria-controls="body-premium">
+          <span class="acc-badge bpaid">120К</span>
+          <div class="acc-meta">
+            <span class="acc-name">Премиум</span>
+            <span class="acc-summary">Стратегия · 30 отзывов · 60 комм · 4 поста · мониторинг</span>
+          </div>
+          <span class="acc-price">120 000 ₽</span>
+          <span class="acc-toggle">+</span>
+        </button>
+        <div class="acc-body" id="body-premium" role="region">
+          <div class="acc-inner">
+            <div class="feat-grid">
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ и подготовка стратегии</span></div>
+              <div class="feat-item"><span class="f-icon num">30</span><span class="f-text"><b>30 отзывов</b> на площадках</span></div>
+              <div class="feat-item"><span class="f-icon num">60</span><span class="f-text"><b>60 комментариев</b> на форумах и в блогах</span></div>
+              <div class="feat-item"><span class="f-icon num">4</span><span class="f-text"><b>4 поста</b> в community-блогах</span></div>
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Мониторинг AI-выдачи по ключевым запросам</span></div>
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Контроль за упоминаниями бренда</span></div>
+            </div>
+            <div class="acc-cta-col">
+              <a href="#contact" class="btn btn-o">Выбрать Премиум →</a>
+              <p class="acc-note">Ежемесячный пакет. Полный контроль присутствия.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 200к -->
+      <div class="acc-item" id="acc-max">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="body-max">
+          <span class="acc-badge bpaid">MAX</span>
+          <div class="acc-meta">
+            <span class="acc-name">Пакет «Максимум»</span>
+            <span class="acc-summary">50 отзывов · 80 комм · 4 поста · 100 соцсигналов · сайт</span>
+          </div>
+          <span class="acc-price">200 000 ₽</span>
+          <span class="acc-toggle">+</span>
+        </button>
+        <div class="acc-body" id="body-max" role="region">
+          <div class="acc-inner">
+            <div class="feat-grid">
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ и подготовка стратегии</span></div>
+              <div class="feat-item"><span class="f-icon num">50</span><span class="f-text"><b>50 отзывов</b> на площадках</span></div>
+              <div class="feat-item"><span class="f-icon num">80</span><span class="f-text"><b>80 комментариев</b> на форумах и в блогах</span></div>
+              <div class="feat-item"><span class="f-icon num">4</span><span class="f-text"><b>4 поста</b> в community-блогах</span></div>
+              <div class="feat-item"><span class="f-icon num">100</span><span class="f-text"><b>100 соцсигналов</b></span></div>
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Мониторинг AI-выдачи</span></div>
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Контроль за упоминаниями бренда</span></div>
+              <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Создание отдельного сайта с отзывами о компании</span></div>
+            </div>
+            <div class="acc-cta-col">
+              <a href="#contact" class="btn btn-o">Выбрать Максимум →</a>
+              <p class="acc-note">Максимальное присутствие и доминирование в нейровыдаче.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+document.querySelectorAll('.acc-trigger').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.closest('.acc-item');
+    const wasOpen=item.classList.contains('open');
+    // close all
+    document.querySelectorAll('.acc-item.open').forEach(el=>{
+      el.classList.remove('open');
+      el.querySelector('.acc-trigger').setAttribute('aria-expanded','false');
+    });
+    if(!wasOpen){
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+    }
+  });
+});
+</script>
+</body>
+</html>
