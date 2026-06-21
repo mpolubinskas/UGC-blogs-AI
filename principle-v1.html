@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Принцип v1 — Орбита</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0e;--bg-2:#101013;--bg-3:#131317;
+  --orange:#ff5a00;--orange-soft:#ff7a2e;--orange-rgb:255,90,0;
+  --cyan:#1fd1f0;--cyan-soft:#5fe1ff;--cyan-rgb:31,209,240;
+  --ink:#f4f3ee;--muted:#8b8b93;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --pix:'Pixelify Sans',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,sans-serif;
+  --radius:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--body);background:var(--bg);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;
+  padding:clamp(48px,8vh,88px) clamp(20px,4vw,56px);
+  position:relative;overflow:hidden;
+}
+body::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(700px 500px at 50% 50%,rgba(var(--cyan-rgb),.06),transparent 60%),
+    radial-gradient(500px 400px at 20% 30%,rgba(var(--orange-rgb),.05),transparent 60%);
+  pointer-events:none;
+}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--pix);font-weight:500;
+  font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);
+}
+.eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+h2{
+  font-family:var(--body);font-weight:800;
+  font-size:clamp(1.7rem,3.2vw,2.9rem);line-height:1.08;letter-spacing:-.6px;
+}
+.hl-o{color:var(--orange)}.hl-c{color:var(--cyan)}
+
+.section{width:100%;max-width:1200px;position:relative;z-index:1;}
+.section-header{
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;
+  margin-bottom:clamp(44px,6vh,68px);
+}
+
+/* ── ORBIT LAYOUT ── */
+.orbit{
+  display:grid;
+  grid-template-columns:1fr 260px 1fr;
+  gap:32px;
+  align-items:stretch;
+  position:relative;
+}
+
+/* central glow behind image */
+.orbit::after{
+  content:"";
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 320px 400px at 50% 50%,rgba(var(--cyan-rgb),.07),transparent 65%);
+  pointer-events:none;
+}
+
+/* LEFT column: cards 1 & 3 */
+.left-col{
+  display:flex;flex-direction:column;
+  gap:20px;justify-content:space-between;
+  padding:4px 0;
+}
+
+/* IMAGE column */
+.img-col{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+}
+.img-frame{
+  position:relative;width:100%;
+}
+.img-frame::before{
+  content:"";
+  position:absolute;inset:-2px;border-radius:18px;
+  background:linear-gradient(160deg,var(--orange),var(--cyan),var(--orange));
+  opacity:.35;z-index:0;
+}
+.img-frame img{
+  position:relative;z-index:1;
+  width:100%;
+  aspect-ratio:3/4;object-fit:cover;object-position:top center;
+  border-radius:16px;
+  display:block;
+  filter:brightness(.92) saturate(1.1);
+}
+
+/* RIGHT column: card 2 centered */
+.right-col{
+  display:flex;align-items:center;
+}
+
+/* CARDS */
+.orb-card{
+  padding:22px 22px;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  position:relative;overflow:hidden;
+  transition:border-color .25s,box-shadow .25s,transform .25s;
+}
+.orb-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--orange),var(--cyan));
+}
+.orb-card:hover{
+  border-color:rgba(var(--orange-rgb),.4);
+  box-shadow:0 8px 40px rgba(0,0,0,.3),0 0 0 1px rgba(var(--orange-rgb),.12);
+  transform:translateY(-3px);
+}
+
+/* connector dash from left cards toward center */
+.left-col .orb-card::after{
+  content:"";position:absolute;
+  right:-22px;top:50%;transform:translateY(-50%);
+  width:18px;height:1px;
+  background:linear-gradient(90deg,rgba(var(--orange-rgb),.45),transparent);
+}
+/* connector dot on right edge of left cards */
+.left-col .orb-card{border-right-color:rgba(var(--orange-rgb),.25);}
+
+/* connector dash from right card toward center */
+.right-col .orb-card::after{
+  content:"";position:absolute;
+  left:-22px;top:50%;transform:translateY(-50%);
+  width:18px;height:1px;
+  background:linear-gradient(-90deg,rgba(var(--cyan-rgb),.45),transparent);
+}
+.right-col .orb-card{border-left-color:rgba(var(--cyan-rgb),.25);}
+
+.card-num{
+  font-family:var(--pix);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:10px;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.c1 .card-num,.c3 .card-num{color:var(--orange-soft);}
+.c2 .card-num{color:var(--cyan-soft);}
+.card-num .n-badge{
+  width:22px;height:22px;border-radius:50%;
+  display:grid;place-items:center;
+  font-size:10px;font-weight:700;
+  border:1px solid;
+}
+.c1 .n-badge,.c3 .n-badge{background:rgba(var(--orange-rgb),.12);border-color:rgba(var(--orange-rgb),.35);color:var(--orange-soft);}
+.c2 .n-badge{background:rgba(var(--cyan-rgb),.12);border-color:rgba(var(--cyan-rgb),.35);color:var(--cyan-soft);}
+
+.orb-card h3{
+  font-family:var(--body);font-weight:700;font-size:15px;
+  line-height:1.3;color:var(--ink);margin-bottom:10px;
+}
+.orb-card p{font-size:13px;line-height:1.75;color:#a0a0b4;}
+.orb-card p b{color:var(--ink);}
+
+/* result badge on card 3 */
+.result-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--pix);font-size:9.5px;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(var(--orange-rgb),.12);color:var(--orange-soft);
+  border:1px solid rgba(var(--orange-rgb),.28);
+  padding:4px 10px;border-radius:3px;margin-top:12px;
+}
+
+/* AI list in card 3 */
+.ai-list{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;
+}
+.ai-chip{
+  font-family:var(--pix);font-size:10px;letter-spacing:.5px;
+  padding:3px 8px;border-radius:3px;
+  background:rgba(var(--cyan-rgb),.07);
+  border:1px solid rgba(var(--cyan-rgb),.2);
+  color:rgba(var(--cyan-rgb),.8);
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .orbit{grid-template-columns:1fr;gap:20px;}
+  .left-col{gap:20px;justify-content:flex-start;}
+  .img-col{order:-1;}
+  .img-frame img{aspect-ratio:4/3;object-position:center 25%;}
+  .left-col .orb-card::after,.right-col .orb-card::after{display:none;}
+  .left-col .orb-card{border-right-color:var(--line);}
+  .right-col .orb-card{border-left-color:var(--line);}
+}
+</style>
+</head>
+<body>
+<section class="section">
+
+  <div class="section-header">
+    <span class="eyebrow">// Принцип</span>
+    <h2>В чём наш <span class="hl-o">принцип</span> работы?</h2>
+  </div>
+
+  <div class="orbit">
+
+    <!-- LEFT: cards 1 & 3 -->
+    <div class="left-col">
+      <div class="orb-card c1">
+        <div class="card-num"><span class="n-badge">01</span> Механика AI</div>
+        <h3>AI доверяет органическому UGC</h3>
+        <p>AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов они воспринимают как трастовые источники — и&nbsp;включают в&nbsp;свои ответы.</p>
+      </div>
+      <div class="orb-card c3">
+        <div class="card-num"><span class="n-badge">03</span> Итог</div>
+        <h3>Ваш бренд в рекомендациях нейросетей</h3>
+        <p>AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах.</p>
+        <div class="ai-list">
+          <span class="ai-chip">Google AI</span>
+          <span class="ai-chip">Яндекс AI</span>
+          <span class="ai-chip">ChatGPT</span>
+          <span class="ai-chip">Claude</span>
+          <span class="ai-chip">DeepSeek</span>
+        </div>
+        <div class="result-badge">★ рост видимости</div>
+      </div>
+    </div>
+
+    <!-- CENTER: image -->
+    <div class="img-col">
+      <div class="img-frame">
+        <img src="woman_stars.png" alt="">
+      </div>
+    </div>
+
+    <!-- RIGHT: card 2 -->
+    <div class="right-col">
+      <div class="orb-card c2">
+        <div class="card-num"><span class="n-badge">02</span> Наш метод</div>
+        <h3>Нужен органичный голос пользователей</h3>
+        <p>Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами — с&nbsp;текстами, которые подсвечивают преимущества бренда.</p>
+        <p style="margin-top:12px;"><b>Именно это мы и&nbsp;берём на&nbsp;себя.</b></p>
+      </div>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>

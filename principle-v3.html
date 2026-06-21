@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Принцип v3 — Ступени с образом</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0e;--bg-2:#101013;--bg-3:#131317;
+  --orange:#ff5a00;--orange-soft:#ff7a2e;--orange-rgb:255,90,0;
+  --cyan:#1fd1f0;--cyan-soft:#5fe1ff;--cyan-rgb:31,209,240;
+  --ink:#f4f3ee;--muted:#8b8b93;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --pix:'Pixelify Sans',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,sans-serif;
+  --radius:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--body);background:var(--bg);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:clamp(48px,8vh,88px) clamp(20px,4vw,56px);
+  position:relative;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;
+  background:
+    radial-gradient(700px 600px at 70% 25%,rgba(var(--orange-rgb),.06),transparent 60%),
+    radial-gradient(600px 500px at 20% 70%,rgba(var(--cyan-rgb),.05),transparent 60%);
+  pointer-events:none;
+}
+/* dot grid bg */
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;
+  background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1.4px);
+  background-size:26px 26px;
+  mask-image:linear-gradient(180deg,#000 0%,#000 80%,transparent 100%);
+  pointer-events:none;
+}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--pix);font-weight:500;
+  font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);
+}
+.eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+h2{
+  font-family:var(--body);font-weight:800;
+  font-size:clamp(1.7rem,3.2vw,2.9rem);line-height:1.08;letter-spacing:-.6px;
+}
+.hl-o{color:var(--orange)}.hl-c{color:var(--cyan)}
+
+.section{
+  width:100%;max-width:1200px;
+  position:relative;z-index:1;
+}
+
+/* ── UPPER: header left + image right ── */
+.upper{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:clamp(32px,4vw,64px);
+  align-items:center;
+  margin-bottom:clamp(44px,6vh,64px);
+}
+.upper-text{}
+.upper-text .eyebrow{margin-bottom:16px;}
+.upper-text h2{text-align:left;}
+.upper-text .sub{
+  margin-top:18px;
+  font-size:clamp(.95rem,1.1vw,1.05rem);
+  line-height:1.65;color:#9090a6;
+  max-width:480px;
+}
+.upper-text .sub b{color:var(--ink);}
+
+/* image block */
+.upper-img{
+  position:relative;
+  width:clamp(200px,22vw,300px);
+  flex:none;
+}
+.upper-img::before{
+  content:"";
+  position:absolute;
+  inset:-3px;border-radius:14px;
+  background:linear-gradient(145deg,var(--orange),transparent 40%,var(--cyan));
+  opacity:.4;z-index:0;
+}
+.upper-img img{
+  position:relative;z-index:1;
+  width:100%;
+  aspect-ratio:3/4;object-fit:cover;object-position:top center;
+  border-radius:12px;
+  display:block;
+  filter:brightness(.88) saturate(1.1);
+}
+/* floating label over image */
+.img-overlay{
+  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+  z-index:2;white-space:nowrap;
+  font-family:var(--pix);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
+  background:rgba(6,12,14,.8);backdrop-filter:blur(8px);
+  border:1px solid rgba(var(--cyan-rgb),.25);
+  color:rgba(var(--cyan-rgb),.75);
+  padding:5px 12px;border-radius:4px;
+}
+
+/* ── LOWER: three step cards ── */
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  position:relative;
+}
+/* connecting line between cards */
+.steps::before{
+  content:"";
+  position:absolute;
+  top:36px;
+  left:calc(16.67% + 16px);
+  right:calc(16.67% + 16px);
+  height:1px;
+  background:linear-gradient(90deg,var(--orange),var(--cyan));
+  opacity:.3;
+  pointer-events:none;
+}
+
+.step-card{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:28px 24px 24px;
+  position:relative;overflow:hidden;
+  transition:border-color .25s,box-shadow .25s,transform .3s;
+}
+.step-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 16px 48px rgba(0,0,0,.3);
+}
+.step-card:nth-child(1){border-color:rgba(var(--orange-rgb),.2);}
+.step-card:nth-child(1):hover{border-color:rgba(var(--orange-rgb),.45);box-shadow:0 16px 48px rgba(0,0,0,.3),0 0 0 1px rgba(var(--orange-rgb),.15);}
+.step-card:nth-child(2){border-color:rgba(255,255,255,.1);}
+.step-card:nth-child(2):hover{border-color:rgba(255,255,255,.22);}
+.step-card:nth-child(3){border-color:rgba(var(--cyan-rgb),.2);}
+.step-card:nth-child(3):hover{border-color:rgba(var(--cyan-rgb),.45);box-shadow:0 16px 48px rgba(0,0,0,.3),0 0 0 1px rgba(var(--cyan-rgb),.12);}
+
+/* top accent line */
+.step-card:nth-child(1)::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--orange);}
+.step-card:nth-child(2)::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--cyan));}
+.step-card:nth-child(3)::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);}
+
+/* number dot */
+.step-dot{
+  width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;
+  font-family:var(--pix);font-size:14px;font-weight:700;
+  margin-bottom:18px;position:relative;z-index:1;
+}
+.step-card:nth-child(1) .step-dot{
+  background:rgba(var(--orange-rgb),.12);
+  border:1.5px solid rgba(var(--orange-rgb),.4);
+  color:var(--orange-soft);
+  box-shadow:0 0 16px rgba(var(--orange-rgb),.2);
+}
+.step-card:nth-child(2) .step-dot{
+  background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.18);
+  color:var(--muted);
+}
+.step-card:nth-child(3) .step-dot{
+  background:rgba(var(--cyan-rgb),.1);
+  border:1.5px solid rgba(var(--cyan-rgb),.35);
+  color:var(--cyan-soft);
+  box-shadow:0 0 16px rgba(var(--cyan-rgb),.15);
+}
+
+.step-card h3{
+  font-family:var(--body);font-weight:700;font-size:15px;
+  line-height:1.3;color:var(--ink);margin-bottom:10px;
+}
+.step-card p{font-size:13px;line-height:1.75;color:#9090a6;}
+.step-card p b{color:var(--ink);}
+.step-card p + p{margin-top:8px;}
+
+/* platform chips for card 3 */
+.p-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;}
+.p-chip{
+  font-family:var(--pix);font-size:10px;letter-spacing:.4px;
+  padding:3px 8px;border-radius:3px;
+  background:rgba(var(--cyan-rgb),.06);
+  border:1px solid rgba(var(--cyan-rgb),.17);
+  color:rgba(var(--cyan-rgb),.65);
+}
+
+/* own-badge */
+.own-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--pix);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(var(--orange-rgb),.1);color:var(--orange-soft);
+  border:1px solid rgba(var(--orange-rgb),.25);
+  padding:4px 9px;border-radius:3px;margin-top:12px;
+}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .upper{grid-template-columns:1fr;}
+  .upper-img{
+    width:100%;max-width:340px;
+    aspect-ratio:16/7;
+  }
+  .upper-img img{aspect-ratio:16/7;object-position:center 20%;}
+  .steps{grid-template-columns:1fr;}
+  .steps::before{display:none;}
+}
+@media(min-width:961px) and (max-width:1100px){
+  .steps{grid-template-columns:1fr 1fr;}
+  .step-card:nth-child(3){grid-column:1/-1;}
+  .steps::before{right:50%;}
+}
+</style>
+</head>
+<body>
+<section class="section">
+
+  <!-- UPPER: header + image -->
+  <div class="upper">
+    <div class="upper-text">
+      <span class="eyebrow">// Принцип</span>
+      <h2 style="margin-top:16px;">В чём наш <span class="hl-o">принцип</span><br>работы?</h2>
+      <p class="sub">Мы не просто создаём контент — мы формируем информационное поле вокруг вашего бренда, которое AI-модели считывают как сигнал доверия. <b>Три шага, которые делают это возможным:</b></p>
+    </div>
+    <div class="upper-img">
+      <img src="woman_stars.png" alt="">
+      <div class="img-overlay">// AI visibility</div>
+    </div>
+  </div>
+
+  <!-- LOWER: step cards -->
+  <div class="steps">
+
+    <div class="step-card">
+      <div class="step-dot">01</div>
+      <h3>AI доверяет органическому UGC</h3>
+      <p>AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов они воспринимают как трастовые источники — и&nbsp;включают в&nbsp;свои ответы.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-dot">02</div>
+      <h3>Нужен голос обычных пользователей</h3>
+      <p>Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, которые подсвечивают преимущества бренда.</p>
+      <div class="own-badge">★ именно это мы берём на&nbsp;себя</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-dot">03</div>
+      <h3>Результат: рекомендации в нейросетях</h3>
+      <p>AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах:</p>
+      <div class="p-chips">
+        <span class="p-chip">Google AI</span>
+        <span class="p-chip">Яндекс AI</span>
+        <span class="p-chip">ChatGPT</span>
+        <span class="p-chip">Claude</span>
+        <span class="p-chip">DeepSeek</span>
+        <span class="p-chip">Алиса</span>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+</body>
+</html>

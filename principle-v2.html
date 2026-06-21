@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Принцип v2 — Редакционный сплит</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0e;--bg-2:#101013;--bg-3:#131317;
+  --orange:#ff5a00;--orange-soft:#ff7a2e;--orange-rgb:255,90,0;
+  --cyan:#1fd1f0;--cyan-soft:#5fe1ff;--cyan-rgb:31,209,240;
+  --ink:#f4f3ee;--muted:#8b8b93;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --pix:'Pixelify Sans',system-ui,sans-serif;
+  --body:'Inter',system-ui,-apple-system,sans-serif;
+  --radius:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--body);background:var(--bg);color:var(--ink);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;
+  padding:clamp(48px,8vh,88px) clamp(20px,4vw,56px);
+  position:relative;overflow:hidden;
+}
+body::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(600px 500px at 75% 50%,rgba(var(--cyan-rgb),.07),transparent 60%),
+    radial-gradient(400px 300px at 10% 20%,rgba(var(--orange-rgb),.05),transparent 60%);
+  pointer-events:none;
+}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--pix);font-weight:500;
+  font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);
+}
+.eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+h2{
+  font-family:var(--body);font-weight:800;
+  font-size:clamp(1.7rem,3vw,2.7rem);line-height:1.08;letter-spacing:-.6px;
+}
+.hl-o{color:var(--orange)}.hl-c{color:var(--cyan)}
+
+.section{width:100%;max-width:1200px;position:relative;z-index:1;}
+
+/* ── SPLIT LAYOUT ── */
+.split{
+  display:grid;
+  grid-template-columns:55fr 45fr;
+  gap:0;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+}
+
+/* LEFT: header + cards */
+.split-left{
+  padding:clamp(32px,4vw,52px);
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--line);
+}
+.split-header{
+  margin-bottom:clamp(28px,4vh,44px);
+}
+.split-header .eyebrow{margin-bottom:14px;}
+.split-header h2{text-align:left;}
+
+/* timeline cards */
+.timeline{
+  display:flex;flex-direction:column;
+  gap:0;
+  position:relative;
+  flex:1;
+}
+/* vertical line */
+.timeline::before{
+  content:"";
+  position:absolute;
+  left:19px;top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(180deg,var(--orange) 0%,var(--cyan) 100%);
+  opacity:.3;
+}
+
+.t-card{
+  display:flex;gap:20px;align-items:flex-start;
+  padding:20px 0;
+  position:relative;
+}
+.t-card:not(:last-child){
+  border-bottom:1px solid var(--line);
+}
+
+/* number badge with vertical line interruption */
+.t-num{
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;flex:none;
+  font-family:var(--pix);font-size:13px;font-weight:700;
+  position:relative;z-index:1;
+  border:1.5px solid;
+  transition:box-shadow .25s;
+}
+.t-card:nth-child(1) .t-num{
+  background:rgba(var(--orange-rgb),.1);
+  border-color:rgba(var(--orange-rgb),.4);
+  color:var(--orange-soft);
+}
+.t-card:nth-child(2) .t-num{
+  background:rgba(255,255,255,.04);
+  border-color:rgba(255,255,255,.2);
+  color:var(--muted);
+}
+.t-card:nth-child(3) .t-num{
+  background:rgba(var(--cyan-rgb),.1);
+  border-color:rgba(var(--cyan-rgb),.4);
+  color:var(--cyan-soft);
+}
+
+.t-body{flex:1;padding-top:4px;}
+.t-label{
+  font-family:var(--pix);font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.t-card:nth-child(1) .t-label{color:var(--orange-soft);}
+.t-card:nth-child(2) .t-label{color:var(--muted);}
+.t-card:nth-child(3) .t-label{color:var(--cyan-soft);}
+
+.t-body h3{
+  font-family:var(--body);font-weight:700;font-size:15px;
+  line-height:1.3;color:var(--ink);margin-bottom:8px;
+}
+.t-body p{font-size:13px;line-height:1.75;color:#9090a6;}
+.t-body p b{color:var(--ink);}
+
+/* AI chips on last card */
+.t-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+.t-chip{
+  font-family:var(--pix);font-size:10px;letter-spacing:.4px;
+  padding:3px 8px;border-radius:3px;
+  background:rgba(var(--cyan-rgb),.06);
+  border:1px solid rgba(var(--cyan-rgb),.18);
+  color:rgba(var(--cyan-rgb),.7);
+}
+
+/* RIGHT: image */
+.split-right{
+  position:relative;overflow:hidden;
+  min-height:520px;
+}
+.split-right img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;object-position:top center;
+  filter:brightness(.85) saturate(1.05);
+}
+/* gradient overlays */
+.split-right::before{
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(
+    90deg,
+    var(--bg) 0%,
+    rgba(12,12,14,.2) 30%,
+    transparent 60%
+  );
+}
+.split-right::after{
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(
+    180deg,
+    transparent 50%,
+    rgba(12,12,14,.6) 100%
+  );
+}
+/* corner label */
+.img-label{
+  position:absolute;bottom:20px;right:20px;z-index:2;
+  font-family:var(--pix);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  color:rgba(var(--cyan-rgb),.5);
+  padding:5px 10px;border-radius:4px;
+  border:1px solid rgba(var(--cyan-rgb),.15);
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(8px);
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .split{grid-template-columns:1fr;}
+  .split-right{min-height:300px;order:-1;}
+  .split-right::before{
+    background:linear-gradient(180deg,transparent 40%,var(--bg) 100%);
+  }
+  .split-left{border-right:none;border-top:1px solid var(--line);}
+  .split-header h2{text-align:left;}
+}
+</style>
+</head>
+<body>
+<section class="section">
+
+  <div class="split">
+
+    <!-- LEFT: header + timeline cards -->
+    <div class="split-left">
+      <div class="split-header">
+        <span class="eyebrow">// Принцип</span>
+        <h2 style="margin-top:14px;">В чём наш <span class="hl-o">принцип</span> работы?</h2>
+      </div>
+
+      <div class="timeline">
+
+        <div class="t-card">
+          <div class="t-num">01</div>
+          <div class="t-body">
+            <div class="t-label">Механика</div>
+            <h3>AI доверяет органическому UGC</h3>
+            <p>AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов они воспринимают как трастовые источники — и&nbsp;включают в&nbsp;свои ответы.</p>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <div class="t-num">02</div>
+          <div class="t-body">
+            <div class="t-label">Наш метод</div>
+            <h3>Нужен органичный голос пользователей</h3>
+            <p>Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда. <b>Именно это мы берём на&nbsp;себя.</b></p>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <div class="t-num">03</div>
+          <div class="t-body">
+            <div class="t-label">Результат</div>
+            <h3>Рекомендации во всех нейросетях</h3>
+            <p>AI-модели начинают рекомендовать ваш бренд — улучшается видимость компании в&nbsp;нейросистемах:</p>
+            <div class="t-chips">
+              <span class="t-chip">Google AI</span>
+              <span class="t-chip">Яндекс AI</span>
+              <span class="t-chip">ChatGPT</span>
+              <span class="t-chip">Claude</span>
+              <span class="t-chip">DeepSeek</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: image -->
+    <div class="split-right">
+      <img src="woman_stars.png" alt="">
+      <div class="img-label">// AI sees your brand</div>
+    </div>
+
+  </div>
+
+</section>
+</body>
+</html>
