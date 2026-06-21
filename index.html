@@ -490,36 +490,95 @@
     border-top:1px solid rgba(var(--cyan-rgb),.12);
   }
 
-  /* principle + conclusion */
-  .principle-wrap{
-    display:grid;grid-template-columns:1fr 1fr;gap:20px;
-    max-width:920px;margin:0 auto;
+  /* ============ PRINCIPLE SPLIT ============ */
+  .p2-split{
+    display:grid;
+    grid-template-columns:55fr 45fr;
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
   }
-  .principle-card{
-    padding:28px;border-radius:var(--radius);
-    background:linear-gradient(145deg,rgba(255,90,0,.05),rgba(31,209,240,.03));
-    border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;
-    transition:border-color .25s,box-shadow .25s;
+  .p2-left{
+    padding:clamp(28px,3.5vw,48px);
+    display:flex;flex-direction:column;
+    border-right:1px solid var(--line);
   }
-  .principle-card:hover{border-color:rgba(255,255,255,.2);box-shadow:0 0 40px rgba(var(--orange-rgb),.07);}
-  .principle-card::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,var(--orange),var(--cyan));
+  .p2-timeline{
+    display:flex;flex-direction:column;
+    position:relative;flex:1;
   }
-  .principle-card h3{margin-bottom:14px;font-size:1.05rem;}
-  .principle-card .lead{font-size:13.5px;}
-  .principle-card .lead+.lead{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
-  .conclusion-card{
-    padding:24px;border-radius:var(--radius);
-    background:rgba(var(--cyan-rgb),.055);
-    border:1px solid rgba(var(--cyan-rgb),.22);
-    display:flex;gap:14px;align-items:flex-start;
-    transition:background .25s,border-color .25s;
+  .p2-timeline::before{
+    content:"";
+    position:absolute;left:18px;top:0;bottom:0;width:1px;
+    background:linear-gradient(180deg,var(--orange),var(--cyan));
+    opacity:.28;
   }
-  .conclusion-card:hover{background:rgba(var(--cyan-rgb),.08);border-color:rgba(var(--cyan-rgb),.35);}
-  .conclusion-card .c-icon{font-size:24px;flex:none;margin-top:1px;}
-  .conclusion-card p{font-size:13.5px;line-height:1.8;color:#cfcfd4;}
-  .conclusion-card b{color:var(--ink);}
+  .p2-tcard{
+    display:flex;gap:18px;align-items:flex-start;
+    padding:20px 0;position:relative;
+  }
+  .p2-tcard:not(:last-child){border-bottom:1px solid var(--line);}
+  .p2-tnum{
+    width:36px;height:36px;border-radius:50%;flex:none;
+    display:grid;place-items:center;
+    font-family:var(--pix);font-size:12px;font-weight:700;
+    position:relative;z-index:1;border:1.5px solid;
+  }
+  .p2-tcard:nth-child(1) .p2-tnum{background:rgba(var(--orange-rgb),.1);border-color:rgba(var(--orange-rgb),.4);color:var(--orange-soft);}
+  .p2-tcard:nth-child(2) .p2-tnum{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.18);color:var(--muted);}
+  .p2-tcard:nth-child(3) .p2-tnum{background:rgba(var(--cyan-rgb),.1);border-color:rgba(var(--cyan-rgb),.38);color:var(--cyan-soft);}
+  .p2-tbody{flex:1;padding-top:2px;}
+  .p2-tlabel{
+    font-family:var(--pix);font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .p2-tcard:nth-child(1) .p2-tlabel{color:var(--orange-soft);}
+  .p2-tcard:nth-child(2) .p2-tlabel{color:var(--muted);}
+  .p2-tcard:nth-child(3) .p2-tlabel{color:var(--cyan-soft);}
+  .p2-tbody h3{margin-bottom:8px;font-size:15px;}
+  .p2-tbody .lead{font-size:13px;color:#9090a6;}
+  .p2-tbody .lead b{color:var(--ink);}
+  .p2-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+  .p2-chip{
+    font-family:var(--pix);font-size:10px;letter-spacing:.4px;
+    padding:3px 8px;border-radius:3px;
+    background:rgba(var(--cyan-rgb),.06);
+    border:1px solid rgba(var(--cyan-rgb),.17);
+    color:rgba(var(--cyan-rgb),.7);
+  }
+  .p2-own{
+    display:inline-flex;align-items:center;gap:5px;
+    font-family:var(--pix);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+    background:rgba(var(--orange-rgb),.1);color:var(--orange-soft);
+    border:1px solid rgba(var(--orange-rgb),.25);
+    padding:4px 9px;border-radius:3px;margin-top:10px;
+  }
+  .p2-right{
+    position:relative;overflow:hidden;
+    min-height:480px;
+  }
+  .p2-right img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:top center;
+    filter:brightness(.85) saturate(1.05);
+  }
+  .p2-right::before{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(90deg,var(--bg) 0%,rgba(12,12,14,.15) 30%,transparent 60%);
+  }
+  .p2-right::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,transparent 55%,rgba(12,12,14,.65) 100%);
+  }
+  .p2-img-label{
+    position:absolute;bottom:18px;right:18px;z-index:2;
+    font-family:var(--pix);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    color:rgba(var(--cyan-rgb),.55);
+    padding:5px 10px;border-radius:4px;
+    border:1px solid rgba(var(--cyan-rgb),.14);
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(8px);
+  }
 
   /* ============ HOW IT WORKS ============ */
   .steps-timeline{
@@ -739,7 +798,10 @@
     .col-labels,.compare-row{grid-template-columns:1fr;}
     .cr-arrow{padding:8px 0;flex-direction:row;}
     .cr-arrow::before{width:100%;height:1px;top:50%;left:0;}
-    .principle-wrap{grid-template-columns:1fr;}
+    .p2-split{grid-template-columns:1fr;}
+    .p2-right{min-height:280px;order:-1;}
+    .p2-right::before{background:linear-gradient(180deg,transparent 40%,var(--bg) 100%);}
+    .p2-left{border-right:none;border-top:1px solid var(--line);}
     .steps-timeline{grid-template-columns:repeat(2,1fr);}
     .steps-timeline::before{display:none;}
     .bento-grid{grid-template-columns:1fr 1fr;}
@@ -936,14 +998,60 @@
 
       </div>
 
-      <div class="principle-wrap">
-        <div class="principle-card reveal" style="transition-delay:.05s">
-          <h3>В чём наш принцип работы?</h3>
-          <p class="lead">AI-модели обучаются на контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов (натуральный пользовательский опыт) они воспринимают как трастовые источники — и включают в&nbsp;свои ответы.</p>
-          <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда. <b>Именно это мы и&nbsp;берём на&nbsp;себя.</b></p>
-          <p class="lead"><b>Результат:</b> AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах: <b>Google&nbsp;AI, Яндекс&nbsp;AI (Алиса), ChatGPT, Claude, DeepSeek</b> и&nbsp;прочих.</p>
+      <div class="section-header reveal" style="margin-top:clamp(44px,6vh,68px);">
+        <span class="eyebrow">// Принцип</span>
+        <h2>В чём наш <span class="hl-o">принцип</span> работы?</h2>
+      </div>
 
+      <div class="p2-split reveal" style="transition-delay:.08s">
+
+        <div class="p2-left">
+          <div class="p2-timeline">
+
+            <div class="p2-tcard">
+              <div class="p2-tnum">01</div>
+              <div class="p2-tbody">
+                <div class="p2-tlabel">Механика</div>
+                <h3>AI доверяет органическому UGC</h3>
+                <p class="lead">AI-модели обучаются на&nbsp;контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов они воспринимают как трастовые источники — и&nbsp;включают в&nbsp;свои ответы.</p>
+              </div>
+            </div>
+
+            <div class="p2-tcard">
+              <div class="p2-tnum">02</div>
+              <div class="p2-tbody">
+                <div class="p2-tlabel">Наш метод</div>
+                <h3>Нужен органичный голос пользователей</h3>
+                <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда.</p>
+                <div class="p2-own">★ именно это мы берём на&nbsp;себя</div>
+              </div>
+            </div>
+
+            <div class="p2-tcard">
+              <div class="p2-tnum">03</div>
+              <div class="p2-tbody">
+                <div class="p2-tlabel">Результат</div>
+                <h3>Рекомендации во всех нейросетях</h3>
+                <p class="lead">AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах:</p>
+                <div class="p2-chips">
+                  <span class="p2-chip">Google AI</span>
+                  <span class="p2-chip">Яндекс AI</span>
+                  <span class="p2-chip">ChatGPT</span>
+                  <span class="p2-chip">Claude</span>
+                  <span class="p2-chip">DeepSeek</span>
+                  <span class="p2-chip">Алиса</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
+
+        <div class="p2-right">
+          <img src="woman_stars.png" alt="">
+          <div class="p2-img-label">// AI sees your brand</div>
+        </div>
+
       </div>
     </div>
   </section>
