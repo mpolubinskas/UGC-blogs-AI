@@ -900,6 +900,10 @@
   .rec-strip::before{content:"★";color:var(--orange);}
 
   /* ============ RESPONSIVE ============ */
+  @media (max-width:760px){
+    .desktop-only{display:none;}
+  }
+
   @media (max-width:960px){
     .hero-cols{grid-template-columns:1fr;}
     .visual-col{order:-1}
@@ -1080,7 +1084,7 @@
         </div>
 
         <!-- Строка 2: Яндекс AI -->
-        <div class="compare-row reveal" style="transition-delay:.15s">
+        <div class="compare-row reveal desktop-only" style="transition-delay:.15s">
           <div class="bylo-col">
             <div class="chat-win">
               <div class="chat-win-head">
@@ -1213,7 +1217,7 @@
     <div class="section-inner">
       <div class="section-header reveal">
         <span class="eyebrow">// Услуги</span>
-        <h2>Выберите&nbsp;<span class="hl-o">пакет</span>&nbsp;—&nbsp;раскройте&nbsp;<span class="hl-c">детали</span></h2>
+        <h2>Выберите <span class="hl-o">пакет</span> — раскройте <span class="hl-c">детали</span></h2>
         <p class="section-sub">Нажмите на строку, чтобы увидеть полный состав пакета.</p>
       </div>
 
