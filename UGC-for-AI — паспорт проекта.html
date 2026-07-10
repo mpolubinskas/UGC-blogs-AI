@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UGC for AI — паспорт проекта</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap&subset=cyrillic,latin" rel="stylesheet">
+<style>
+:root{
+  --ink:#0F1115;
+  --ink-2:#1A1E27;
+  --paper:#E7E8E6;
+  --surface:#FFFFFF;
+  --cobalt:#1E3AE8;
+  --cobalt-soft:#DEE2FB;
+  --amber:#B8760F;
+  --mute:#6E727C;
+  --line:rgba(15,17,21,.13);
+  --line-strong:rgba(15,17,21,.28);
+  --rail:248px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,Segoe UI,Roboto,sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:"Unbounded",sans-serif;font-weight:600;letter-spacing:-.02em;margin:0}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+a{color:inherit}
+
+/* ---------- shell ---------- */
+.wrap{display:flex;align-items:flex-start}
+.rail{
+  width:var(--rail);flex:0 0 var(--rail);position:sticky;top:0;height:100vh;
+  padding:32px 24px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:28px;
+}
+.brand{font-family:"Unbounded";font-weight:800;font-size:15px;letter-spacing:-.03em;line-height:1.25}
+.brand span{display:block;font-family:"JetBrains Mono";font-weight:400;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-top:8px}
+.rail nav{display:flex;flex-direction:column;gap:2px;margin-top:auto;margin-bottom:auto}
+.rail nav a{
+  display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:baseline;
+  text-decoration:none;padding:9px 8px;border-radius:4px;font-size:14px;color:var(--mute);
+  transition:color .18s,background .18s;
+}
+.rail nav a i{font-family:"JetBrains Mono";font-style:normal;font-size:11px}
+.rail nav a:hover{color:var(--ink);background:rgba(15,17,21,.05)}
+.rail nav a.on{color:var(--ink);background:var(--cobalt-soft)}
+.rail nav a.on i{color:var(--cobalt)}
+.rail .foot{font-family:"JetBrains Mono";font-size:10.5px;color:var(--mute);letter-spacing:.05em;line-height:1.7}
+main{flex:1;min-width:0}
+
+/* ---------- hero ---------- */
+.hero{background:var(--ink);color:#F3F3F1;padding:88px 56px 64px;position:relative;overflow:hidden}
+.eyebrow{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A8FA0}
+.hero h1{font-size:clamp(34px,4.4vw,62px);font-weight:800;line-height:1.02;margin:20px 0 0;max-width:15ch}
+.hero h1 em{font-style:normal;color:#7C8BFF}
+.hero p.lead{max-width:56ch;color:#B9BCC6;font-size:17px;margin:24px 0 0}
+
+.answer{
+  margin:48px 0 0;max-width:660px;background:#181C25;border:1px solid #2A2F3B;border-radius:8px;overflow:hidden;
+}
+.answer .bar{display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid #2A2F3B;font-family:"JetBrains Mono";font-size:11px;color:#767C8C}
+.dot{width:7px;height:7px;border-radius:50%;background:#2F3542}
+.answer .prompt{padding:16px 18px 4px;font-family:"JetBrains Mono";font-size:12.5px;color:#8A90A0}
+.answer .prompt b{color:#E6E7EA;font-weight:400}
+.answer ol{margin:6px 0 0;padding:0 18px 18px 40px}
+.answer li{padding:7px 0;color:#DDDFE4;font-size:15px}
+.answer li.us{
+  color:#fff;opacity:0;transform:translateY(6px);
+  animation:pop .5s cubic-bezier(.2,.7,.2,1) 1.2s forwards;
+}
+.answer li.us strong{color:#fff;font-weight:600;box-shadow:inset 0 -9px 0 rgba(124,139,255,.32)}
+@keyframes pop{to{opacity:1;transform:none}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{font-family:"JetBrains Mono";font-size:10px;color:#9AA0B0;border:1px solid #333947;border-radius:3px;padding:2px 6px}
+.caption{font-family:"JetBrains Mono";font-size:11px;color:#767C8C;margin-top:14px;max-width:60ch;line-height:1.7}
+
+.stats{display:flex;flex-wrap:wrap;gap:1px;margin-top:56px;background:#2A2F3B;border:1px solid #2A2F3B;border-radius:6px;overflow:hidden}
+.stat{background:var(--ink);padding:18px 22px;flex:1 1 150px}
+.stat b{display:block;font-family:"Unbounded";font-size:26px;font-weight:600;letter-spacing:-.03em}
+.stat span{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:#767C8C}
+
+/* ---------- sections ---------- */
+section{padding:80px 56px;border-bottom:1px solid var(--line)}
+.shead{display:flex;gap:18px;align-items:baseline;margin-bottom:8px}
+.shead i{font-family:"JetBrains Mono";font-style:normal;font-size:12px;color:var(--cobalt);letter-spacing:.1em}
+.shead h2{font-size:clamp(24px,2.4vw,34px);font-weight:600}
+.sdesc{color:var(--mute);max-width:64ch;margin:0 0 44px;font-size:16px}
+
+h3.blk{font-size:15px;font-weight:600;letter-spacing:0;margin:0 0 16px;display:flex;align-items:center;gap:10px}
+h3.blk::before{content:"";width:16px;height:1px;background:var(--line-strong)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:24px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+/* audience */
+.seg{display:grid;grid-template-columns:1fr 220px;gap:28px;align-items:start;margin-bottom:56px}
+.prio{border:1px solid var(--line);border-radius:6px;padding:18px;background:var(--surface)}
+.prio .n{font-family:"Unbounded";font-size:38px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.prio .n small{font-size:15px;color:var(--mute);font-weight:400}
+.prio .lbl{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.bar{height:4px;background:var(--line);border-radius:2px;margin-top:14px;overflow:hidden}
+.bar em{display:block;height:100%;width:80%;background:var(--cobalt)}
+
+.persona{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.persona .full{grid-column:1/-1}
+dl{margin:0}
+dt{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);margin-top:14px}
+dt:first-child{margin-top:0}
+dd{margin:5px 0 0;font-size:15px}
+ul.tight{margin:6px 0 0;padding-left:18px}
+ul.tight li{margin:5px 0;font-size:15px}
+ul.tight li::marker{color:var(--cobalt)}
+
+.quote{
+  grid-column:1/-1;background:var(--ink);color:#EDEDEB;border-radius:6px;padding:36px 40px;
+}
+.quote p{font-family:"Unbounded";font-weight:400;font-size:clamp(17px,1.7vw,23px);line-height:1.45;margin:0;letter-spacing:-.02em}
+.quote footer{font-family:"JetBrains Mono";font-size:11px;color:#767C8C;margin-top:18px;letter-spacing:.08em;text-transform:uppercase}
+
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pill{font-size:13px;border:1px solid var(--line-strong);border-radius:20px;padding:4px 12px;background:transparent}
+.pill.b{border-color:var(--cobalt);color:var(--cobalt)}
+
+/* competitors */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.filters button{
+  font-family:"JetBrains Mono";font-size:11.5px;letter-spacing:.06em;cursor:pointer;
+  border:1px solid var(--line-strong);background:transparent;color:var(--ink);
+  padding:8px 14px;border-radius:20px;transition:.15s;
+}
+.filters button:hover{border-color:var(--ink)}
+.filters button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.comps{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.comp{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px;display:flex;flex-direction:column}
+.comp .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.comp h4{font-size:17px;letter-spacing:-.02em}
+.comp .price{font-family:"JetBrains Mono";font-size:12px;color:var(--cobalt);white-space:nowrap}
+.comp .tag{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:10px}
+.comp .role{font-size:13.5px;color:var(--mute);margin:8px 0 16px;font-style:italic}
+.swot{display:grid;gap:10px;margin-top:auto}
+.swot div{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:14px;line-height:1.5}
+.swot b{font-family:"JetBrains Mono";font-weight:500;font-size:11px;width:20px;height:20px;display:grid;place-items:center;border-radius:3px}
+.s b{background:#E4EDE5;color:#2C6B37}
+.w b{background:#F2E7E7;color:#95403F}
+.o b{background:var(--cobalt-soft);color:var(--cobalt)}
+.t b{background:#F5EBDB;color:var(--amber)}
+.comp a.src{font-family:"JetBrains Mono";font-size:10.5px;color:var(--mute);margin-top:16px;text-decoration:none;border-bottom:1px solid var(--line);align-self:flex-start}
+.comp a.src:hover{color:var(--cobalt);border-color:var(--cobalt)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line)}
+thead th{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-weight:400;background:rgba(15,17,21,.02)}
+tbody tr:last-child td{border-bottom:none}
+td:first-child,th:first-child{position:sticky;left:0;background:var(--surface);font-weight:500}
+thead th:first-child{background:#F5F5F4}
+.us-col{background:var(--cobalt-soft) !important;color:var(--cobalt);font-weight:600}
+
+.swotgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.q{border:1px solid var(--line);border-radius:6px;padding:22px;background:var(--surface)}
+.q .h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.q .h em{font-family:"JetBrains Mono";font-style:normal;font-size:11px;width:24px;height:24px;display:grid;place-items:center;border-radius:3px}
+.q .h span{font-family:"Unbounded";font-size:14px;font-weight:600}
+.q.s .h em{background:#E4EDE5;color:#2C6B37}
+.q.w .h em{background:#F2E7E7;color:#95403F}
+.q.o .h em{background:var(--cobalt-soft);color:var(--cobalt)}
+.q.t .h em{background:#F5EBDB;color:var(--amber)}
+
+.narr{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.narr blockquote{margin:0;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--cobalt);border-radius:0 6px 6px 0;padding:22px}
+.narr blockquote .from{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:12px}
+.narr blockquote p{margin:0;font-size:15px;line-height:1.6}
+
+/* product */
+.vp{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:56px}
+.vp .card{padding:32px}
+.vp .card p{margin:12px 0 0;font-size:17px;line-height:1.5}
+.vp .card.dark{background:var(--ink);color:#EDEDEB;border-color:var(--ink)}
+.vp .card.dark .lbl{color:#767C8C}
+.lbl{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute)}
+
+.ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:stretch}
+.tier{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;position:relative}
+.tier.core{border:1.5px solid var(--cobalt);box-shadow:0 6px 28px -14px rgba(30,58,232,.5)}
+.tier .step{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.tier.core .step{color:var(--cobalt)}
+.tier h4{font-size:16px;margin:10px 0 4px}
+.tier .p{font-family:"Unbounded";font-weight:600;font-size:20px;letter-spacing:-.03em;margin:6px 0 16px}
+.tier ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.tier li{font-size:13.5px;display:grid;grid-template-columns:14px 1fr;gap:8px;line-height:1.45}
+.tier li::before{content:"—";color:var(--cobalt);font-family:"JetBrains Mono";font-size:11px;line-height:1.6}
+.tier .how{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--mute);line-height:1.5}
+.badge{position:absolute;top:-9px;left:20px;background:var(--cobalt);color:#fff;font-family:"JetBrains Mono";font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px}
+
+footer.end{padding:56px;color:var(--mute);font-family:"JetBrains Mono";font-size:11px;letter-spacing:.06em;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+
+.reveal{opacity:0;transform:translateY(14px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px}
+
+@media (max-width:1180px){
+  .ladder{grid-template-columns:repeat(2,1fr)}
+  .g4{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:900px){
+  .rail{position:static;width:100%;flex:1 1 100%;height:auto;border-right:none;border-bottom:1px solid var(--line);flex-direction:row;align-items:center;justify-content:space-between;padding:16px 20px;gap:16px;flex-wrap:wrap}
+  .wrap{flex-direction:column}
+  .rail nav{flex-direction:row;margin:0;flex-wrap:wrap;gap:4px}
+  .rail nav a{grid-template-columns:auto;padding:6px 10px}
+  .rail nav a i{display:none}
+  .rail .foot{display:none}
+  .hero{padding:56px 24px 48px}
+  section{padding:56px 24px}
+  .seg,.persona,.g2,.g3,.g4,.vp,.swotgrid,.ladder{grid-template-columns:1fr}
+  .comps{grid-template-columns:1fr}
+  footer.end{padding:32px 24px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+  .reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+  .answer li.us{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <aside class="rail">
+    <div class="brand">UGC for AI<span>Паспорт проекта</span></div>
+    <nav id="nav">
+      <a href="#ca" class="on"><i>01</i><span>Целевая аудитория</span></a>
+      <a href="#comp"><i>02</i><span>Конкурентный анализ</span></a>
+      <a href="#prod"><i>03</i><span>Продукт и позиционирование</span></a>
+    </nav>
+    <div class="foot">GEO · РФ<br>Июль 2026<br>14 конкурентов</div>
+  </aside>
+
+  <main>
+
+    <!-- ================= HERO ================= -->
+    <header class="hero">
+      <div class="eyebrow">AI Brand Advocacy · Внешний UGC-слой</div>
+      <h1>Ваш бренд <em>отсутствует</em> в ответе нейросети</h1>
+      <p class="lead">Ни таргет, ни SEO, ни контент-маркетинг, ни ORM туда не дотягиваются. Мы строим то, чему нейросети верят больше всего, — голос пользователей: отзывы, комментарии, посты.</p>
+
+      <div class="answer" aria-label="Пример ответа нейросети">
+        <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mono" style="margin-left:6px">assistant · ответ</span></div>
+        <div class="prompt">&gt; <b>лучшие компании в нише X — кого посоветуешь?</b></div>
+        <ol>
+          <li>Конкурент А
+            <div class="chips"><span class="chip">vc.ru</span><span class="chip">otzovik</span></div>
+          </li>
+          <li>Конкурент Б
+            <div class="chips"><span class="chip">pikabu</span><span class="chip">форум</span></div>
+          </li>
+          <li>Конкурент В
+            <div class="chips"><span class="chip">habr</span><span class="chip">отзывы</span></div>
+          </li>
+          <li class="us"><strong>Ваш бренд</strong>
+            <div class="chips"><span class="chip">10 отзывов</span><span class="chip">30 комментариев</span><span class="chip">2 поста</span></div>
+          </li>
+        </ol>
+      </div>
+      <p class="caption">Нейросети берут рекомендации из UGC. Мы производим этот слой и показываем цифрами, сколько именно отзывов, комментариев и постов двигают вашу AI-видимость.</p>
+
+      <div class="stats">
+        <div class="stat"><b>70 000 ₽</b><span>Основной пакет</span></div>
+        <div class="stat"><b>×2–4</b><span>Ниже прямых конкурентов</span></div>
+        <div class="stat"><b>50–150К</b><span>Недообслуженный сегмент</span></div>
+        <div class="stat"><b>2–6 нед</b><span>Цикл сделки</span></div>
+      </div>
+    </header>
+
+    <!-- ================= 01 ЦА ================= -->
+    <section id="ca">
+      <div class="shead"><i>01</i><h2>Целевая аудитория</h2></div>
+      <p class="sdesc">Самый горячий сегмент — CMO, которые уже осознали потребность в SEO. Потребность в органике осознана, бюджет на неё есть, остаётся расширить её на AI-выдачу.</p>
+
+      <div class="seg reveal">
+        <div class="card">
+          <h3 class="blk">CMO, которые уже осознали потребность в SEO</h3>
+          <p style="margin-top:0">Если у маркдира уже есть подрядчик на SEO — или он ищет такого, или SEO делают инхаус — он заинтересован в присутствии в выдаче и готов в это вкладываться. Логичный шаг 2026 года: усилить присутствие в AI-выдаче. SEO является частью GEO: добавь UGC-контент под AI — и дело сделано.</p>
+          <p><b>Почему это важно для нас:</b> сегмент позволяет позиционироваться как часть тандема <span class="mono" style="color:var(--cobalt)">UGC + SEO = GEO</span> и компенсировать отсутствие технического GEO в продукте. Важно показать, что мы готовы работать вместе с их SEO-шниками и совмещать усилия.</p>
+          <dl><dt>Основной запрос</dt><dd>Усилить присутствие в выдаче AI-поисковиков, в AI-выдаче.</dd></dl>
+        </div>
+        <div class="prio">
+          <div class="lbl">Приоритет сегмента</div>
+          <div class="n">8<small>/10</small></div>
+          <div class="bar"><em></em></div>
+          <p style="font-size:13.5px;color:var(--mute);margin:16px 0 0">Потребность осознана — сокращённый цикл сделки и минимальные затраты на просвещение рынка.</p>
+        </div>
+      </div>
+
+      <h3 class="blk">Персона: Марина, CMO</h3>
+      <div class="persona">
+        <div class="card">
+          <dl>
+            <dt>Демография</dt>
+            <dd>34–42 года. Чаще женщина (условно 60/40), сегмент смешанный. Москва, Санкт-Петербург, реже — крупные миллионники или релокация (Дубай, Лимассол, Белград) при работе на международный рынок.</dd>
+            <dt>Роль</dt>
+            <dd>CMO / директор по маркетингу в компании 50–300 человек. В роли 2–5 лет, отвечает за лидогенерацию и продажи, а не только за «узнаваемость».</dd>
+            <dt>Доход</dt>
+            <dd>400–700 тыс. ₽/мес + бонусы за выполнение KPI по лидам и выручке.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <dl>
+            <dt>Чем занимается каждый день</dt>
+            <dd>Планёрки с командой (контент, перформанс, PR), защита бюджета перед CEO, разбор дашбордов по лидам и CAC, синки с подрядчиками.</dd>
+            <dt>Какие задачи решает</dt>
+            <dd>Рост органического трафика и входящих лидов, снижение зависимости от платного трафика, отчётность «что мы получили за эти деньги».</dd>
+            <dt>С кем взаимодействует</dt>
+            <dd>CEO, sales-директор, SEO-подрядчик, инхаус-контент-команда, иногда продакт.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size:14px;margin-bottom:14px">Боли и проблемы</h4>
+          <dl>
+            <dt>Главная боль</dt>
+            <dd>Трафик из классического поиска стагнирует или падает — часть запросов «съедают» AI Overviews, ChatGPT и Perplexity, а бренд в ответах нейросетей не фигурирует вообще. Или фигурируют конкуренты.</dd>
+            <dt>Второстепенные</dt>
+            <dd>SEO-подрядчик отчитывается позициями и трафиком, но не понимает, что делать с AI-выдачей. Нет метрик и инструментов, чтобы измерить видимость в LLM. CEO уже спрашивает «а мы есть в ChatGPT?» — а ответа нет.</dd>
+            <dt>Что не даёт спать ночью</dt>
+            <dd>Страх, что за 1–2 года канал органики перестроится, конкуренты займут «полку» в AI-ответах первыми, а её будут спрашивать, почему компания это проспала.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size:14px;margin-bottom:14px">Желания и цели</h4>
+          <dl>
+            <dt>Чего хочет достичь</dt>
+            <dd>Чтобы бренд стабильно упоминался и рекомендовался в ответах ChatGPT, Perplexity и AI Overviews по коммерческим запросам ниши. Получить измеримый канал и красивый слайд для борда.</dd>
+            <dt>Мечта</dt>
+            <dd>Стать CMO, который «поймал волну GEO раньше рынка»: кейс, выступление на конференции, репутация визионера.</dd>
+            <dt>Эмоциональная работа</dt>
+            <dd>Снять тревогу «мы отстаём», почувствовать контроль над меняющимся каналом.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size:14px;margin-bottom:14px">Барьеры и возражения</h4>
+          <dl>
+            <dt>Почему не покупает прямо сейчас</dt>
+            <dd>Бюджет уже распределён, в том числе на текущего SEO-подрядчика. Непонятно, как измерять результат. Рынок GEO-услуг молодой — сложно отличить экспертизу от хайпа.</dd>
+            <dt>Типичные возражения</dt>
+          </dl>
+          <ul class="tight">
+            <li>«Это не покроет ли мой текущий SEO-подрядчик?»</li>
+            <li>«Как вы докажете, что упоминания в AI дали лиды?»</li>
+            <li>«Не забанят ли нас за UGC-посевы?»</li>
+            <li>«Покажите кейсы в моей нише»</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size:14px;margin-bottom:14px">Где обитает</h4>
+          <dl>
+            <dt>Соцсети</dt><dd>Telegram (профильные каналы по маркетингу и SEO), LinkedIn, закрытые чаты CMO-комьюнити.</dd>
+            <dt>Медиа и блоги</dt><dd>VC.ru, Cossa, SearchEngines. Зарубежные — Search Engine Land, блоги Ahrefs и Semrush, рассылки про AI в маркетинге.</dd>
+            <dt>Офлайн</dt><dd>Отраслевые конференции (Optimization, MatchPoint, Digital Brand Day), закрытые бизнес-завтраки, комьюнити типа R-Founders и CMO-клубов.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size:14px;margin-bottom:14px">Как принимает решение</h4>
+          <dl>
+            <dt>Что влияет на выбор</dt><dd>Кейсы с цифрами (доля упоминаний в AI-ответах до и после), понятная методология и метрики, прозрачная отчётность, рекомендации коллег.</dd>
+            <dt>Кому доверяет</dt><dd>Другим CMO из своего круга, известным SEO-экспертам, спикерам конференций, отзывам в профессиональных чатах.</dd>
+            <dt>Сколько длится решение</dt><dd>2–6 недель — быстрее среднего для B2B, потому что потребность уже осознана. Нужен один-два созвона, кейсы и внятный пилот.</dd>
+          </dl>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size:14px;margin-bottom:14px">JTBD</h4>
+          <dl>
+            <dt>Главная «работа»</dt>
+            <dd>«Когда мои клиенты начинают искать решения через AI, я хочу, чтобы мой бренд появлялся в их ответах, чтобы не потерять входящий поток лидов».</dd>
+            <dt>Связанные «работы»</dt>
+          </dl>
+          <ul class="tight">
+            <li>Измерять видимость бренда в AI-выдаче</li>
+            <li>Переупаковать контент под цитируемость LLM</li>
+            <li>Усилить UGC-слой (отзывы, форумы, Reddit-подобные площадки), на который опираются модели</li>
+          </ul>
+          <dl><dt>Социальная работа</dt><dd>Выглядеть в глазах CEO и борда дальновидным лидером, который управляет трендом, а не догоняет его.</dd></dl>
+        </div>
+
+        <blockquote class="quote reveal">
+          <p>«У нас нормальные позиции в Яндексе и Google, но я вбила наш ключевой запрос в ChatGPT — и там три конкурента, а нас нет. Я не понимаю, кто за это отвечает и с чего вообще начать».</p>
+          <footer>Марина, CMO · 38 лет</footer>
+        </blockquote>
+
+        <div class="card full">
+          <h4 style="font-size:14px;margin-bottom:16px">Упрощённая модель персоны</h4>
+          <div class="grid g4">
+            <div>
+              <div class="lbl">Задачи</div>
+              <ul class="tight"><li>Понять, как попасть в ответы AI-поисковиков</li><li>Измерить текущую видимость бренда в LLM</li><li>Найти подрядчика, который закроет GEO поверх существующего SEO</li><li>Обосновать бюджет перед CEO</li></ul>
+            </div>
+            <div>
+              <div class="lbl">Влияние</div>
+              <ul class="tight"><li>CEO и борд: давление «почему нас нет в ChatGPT»</li><li>Комьюнити CMO и профильные Telegram-каналы</li><li>Текущий SEO-подрядчик</li><li>Кейсы конкурентов, спикеры конференций</li></ul>
+            </div>
+            <div>
+              <div class="lbl">Точки боли</div>
+              <ul class="tight"><li>Падение органического трафика из-за AI Overviews</li><li>Нулевая видимость бренда в ответах нейросетей</li><li>Отсутствие метрик и понятной методологии</li><li>Неготовность подрядчика работать с GEO</li></ul>
+            </div>
+            <div>
+              <div class="lbl">Чувства</div>
+              <p style="font-size:14.5px;margin:6px 0 10px">Тревога «поезд уходит», раздражение от отсутствия ответов у подрядчиков, азарт от возможности стать первопроходцем.</p>
+              <div class="pills"><span class="pill b">Контроль над каналом</span><span class="pill b">Измеримость</span><span class="pill b">Признание внутри компании</span></div>
+            </div>
+          </div>
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--line)">
+            <div class="lbl">Общая цель</div>
+            <p style="margin:8px 0 0;font-size:16px">Сохранить и нарастить входящий поток лидов из органики в условиях, когда поиск смещается в AI-интерфейсы. И закрепить за собой репутацию CMO, который сыграл на опережение.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 02 КОНКУРЕНТЫ ================= -->
+    <section id="comp">
+      <div class="shead"><i>02</i><h2>Конкурентный анализ</h2></div>
+      <p class="sdesc">Июль 2026 · рынок GEO РФ · 14 конкурентов. Рынок сформирован, ниша свободна, окно закрывается.</p>
+
+      <div class="grid g2 reveal" style="margin-bottom:56px">
+        <div class="card">
+          <h3 class="blk">Уникальная механика «снаружи»</h3>
+          <p style="margin-top:0">Все GEO-агентства оптимизируют сайт клиента «изнутри». Мы создаём внешний UGC-слой — отзывы, посты и комментарии, которым нейросети верят больше. Ниша «крауд-маркетинг для эпохи AI» не занята никем.</p>
+          <p>Усиливает отличие цена: <b>70 000 ₽/мес</b> в разрыве между крауд-биржами (3–30К) и GEO-агентствами (150–300К).</p>
+        </div>
+        <div class="card" style="border-color:var(--amber)">
+          <h3 class="blk">Главный разрыв — измеримость</h3>
+          <p style="margin-top:0">Доказательства сегодня — валюта этого рынка, и её у нас нет.</p>
+          <ul class="tight">
+            <li>Ковалевы отслеживают частоту и формулировки упоминаний</li>
+            <li>Пиксель Плюс ведёт 3000+ проектов на своей платформе</li>
+            <li>AthenaHQ продаёт «рост доли голоса в 6 раз»</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="blk">14 игроков в трёх кругах</h3>
+      <p style="color:var(--mute);max-width:70ch;margin:-4px 0 22px;font-size:15px">Прямые — те же деньги и та же задача. Косвенные — та же проблема клиента, другой инструмент. Эталонные — задают планку, к которой придут ожидания покупателей.</p>
+
+      <div class="filters" role="group" aria-label="Фильтр конкурентов">
+        <button data-f="all" aria-pressed="true">Все · 14</button>
+        <button data-f="direct" aria-pressed="false">Прямые · 6</button>
+        <button data-f="indirect" aria-pressed="false">Косвенные · 6</button>
+        <button data-f="bench" aria-pressed="false">Эталонные · 2</button>
+      </div>
+      <div class="comps" id="comps"></div>
+
+      <h3 class="blk" style="margin-top:64px">Сравнение цен</h3>
+      <div class="tablewrap reveal">
+        <table>
+          <thead><tr><th>Параметр</th><th class="us-col">Мы</th><th>NeuroReach</th><th>GEOSEO</th><th>Roso Team</th><th>Ex Libris</th><th>Пиксель Плюс</th><th>SERM</th></tr></thead>
+          <tbody>
+            <tr><td>Бесплатный вход</td><td class="us-col">Аудит ИИ-выдачи</td><td>Аудит ниши</td><td>Аудит по заявке</td><td>—</td><td>—</td><td>Демо платформы</td><td>Нет</td></tr>
+            <tr><td>Минимальный чек</td><td class="us-col">20 000 ₽</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+            <tr><td>Основной тариф</td><td class="us-col">70 000 ₽</td><td>от 300 000 ₽</td><td>79 000 ₽</td><td>95К промо / 190К</td><td>от 90 000 ₽</td><td>от 79 500 ₽</td><td>80–150К ₽</td></tr>
+            <tr><td>Верхний тариф</td><td class="us-col">200 000 ₽</td><td>индивидуально</td><td>от 249 900 ₽</td><td>190 000 ₽</td><td>150–180К ₽</td><td>от 170 000 ₽</td><td>150К+ ₽</td></tr>
+            <tr><td>Прозрачность цен</td><td class="us-col">Полная</td><td>Частичная</td><td>Полная</td><td>Полная</td><td>Частичная</td><td>Частичная</td><td>Частичная</td></tr>
+            <tr><td>Обязательства</td><td class="us-col">Помесячно</td><td>Договор</td><td>н/д</td><td>Мин. 8 мес</td><td>Обычно от 3 мес</td><td>Договор</td><td>Обычно от 3 мес</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="blk" style="margin-top:64px">SWOT нашего продукта</h3>
+      <div class="swotgrid reveal">
+        <div class="q s">
+          <div class="h"><em>S</em><span>Сильные стороны</span></div>
+          <ul class="tight">
+            <li>Уникальная механика: внешний UGC-слой как ядро — ниша не занята никем</li>
+            <li>Самая прозрачная тарифная сетка рынка: точные объёмы контента в каждом пакете</li>
+            <li>Цена в 2–4 раза ниже прямых конкурентов при сопоставимом обещании</li>
+            <li>Помесячно без обязательств + бесплатный аудит на входе</li>
+            <li>Понятное доказательство «до/после» для нетехнического покупателя</li>
+            <li>Честный тон FAQ: «если нужны быстрые лиды — мы не тот инструмент»</li>
+          </ul>
+        </div>
+        <div class="q w">
+          <div class="h"><em>W</em><span>Слабые стороны</span></div>
+          <ul class="tight">
+            <li>Нет технического слоя GEO</li>
+            <li>Ни одного кейса с цифрами — главной валюты этого рынка</li>
+            <li>Ручные скриншоты против трекеров и дашбордов конкурентов</li>
+            <li>Мониторинг только с пакета 120К — конкуренты дают как базу</li>
+            <li>Нет гарантий на фоне 100% гарантии NeuroReach</li>
+          </ul>
+        </div>
+        <div class="q o">
+          <div class="h"><em>O</em><span>Возможности</span></div>
+          <ul class="tight">
+            <li>Недообслуженный сегмент 50–150К ₽/мес: агентства дороже, биржи не понимают AI-задачу</li>
+            <li>Категория «UGC-GEO» никем не названа — назвать её первым</li>
+            <li>White-label партнёрства с GEO- и SEO-агентствами</li>
+            <li>Контент-темы без владельца: GEO vs SEO vs SERM, ROI, этика</li>
+          </ul>
+        </div>
+        <div class="q t">
+          <div class="h"><em>T</em><span>Угрозы</span></div>
+          <ul class="tight">
+            <li>Zenlink и Exiterra переупакуют производство под «нейросети» — смена лендинга, не бизнеса</li>
+            <li>SERM-лидеры добавят AI-модуль и заберут крупных клиентов через готовую базу</li>
+            <li>GEO-агентство добавит UGC-посевы — отличие закроется</li>
+            <li>Ужесточение модерации площадок и требований маркировки рекламы</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="blk" style="margin-top:64px">Тактики, которые стоит перенять</h3>
+      <div class="tablewrap reveal">
+        <table>
+          <thead><tr><th>Тактика</th><th>У кого</th><th>Суть</th><th>Усилие</th><th>Эффект</th></tr></thead>
+          <tbody>
+            <tr><td>Собственный трекер упоминаний</td><td>Ковалевы</td><td>Превращает «поверьте, вот скриншот» в «вот ваш индекс видимости с историей формулировок». Логировать пары «промпт → ответ» ежемесячно, показывать клиенту как дашборд</td><td>среднее</td><td><b>высокий</b></td></tr>
+            <tr><td>Мягкая финансовая гарантия</td><td>NeuroReach</td><td>Снимает главный страх «заплачу 70К, а результата не будет»: не появились в AI-ответах за 3 месяца — 4-й месяц бесплатно</td><td>низкое</td><td><b>высокий</b></td></tr>
+            <tr><td>Метрики в кейсах и отзывах</td><td>GEOSEO, AthenaHQ</td><td>«+42% заявок» или «доля голоса ×6» — цифра, которую клиент повторит руководителю. После первых циклов — анонимизированный кейс с дельтой видимости</td><td>низкое</td><td><b>высокий</b></td></tr>
+            <tr><td>Публичный инструмент проверки</td><td>Пиксель Плюс</td><td>«Проверь свою AI-видимость» — идеальный лид-магнит, совпадает с бесплатным аудитом. Позже — страница-опросник или Telegram-бот «бренд + 3 запроса → скриншоты ответов»</td><td>среднее</td><td><b>высокий</b></td></tr>
+            <tr><td>Собственное исследование</td><td>Impulse, Пиксель Плюс</td><td>«Мы задали ChatGPT, Алисе и DeepSeek 100 вопросов о брендах в 10 нишах» → статья на VC. Исследования цитируют СМИ и, что важнее, сами нейросети</td><td>среднее</td><td><b>высокий</b></td></tr>
+            <tr><td>Эксклюзив по нише — опция MAX</td><td>NeuroReach</td><td>«Мы не можем продвигать двух конкурентов в одной выдаче» — аргумент закрытия для конкурентных B2B. Как именованная опция верхнего тарифа, не общая политика</td><td>низкое</td><td>средний+</td></tr>
+            <tr><td>Блок юридической безопасности</td><td>GEOSEO</td><td>Проактивный разбор рисков (маркировка, правила площадок, РКН/ФАС) обезоруживает возражение до того, как его озвучат. Плюс страховка от атаки конкурентов на метод</td><td>низкое</td><td>средний</td></tr>
+            <tr><td>Работа с негативом через партнёра</td><td>Ex Libris</td><td>Реферальная схема с SERM-партнёром закрывает разрыв по репутационным кризисам, не размывая UGC-специализацию</td><td>низкое</td><td>средний</td></tr>
+            <tr><td>Технический слой через партнёра</td><td>Roso Team</td><td>Партнёрство с техническим SEO-подрядчиком (llms.txt, schema) как дополнительный тариф — захват бюджета технических покупателей без построения компетенции с нуля</td><td>среднее</td><td>средний</td></tr>
+            <tr><td>Прямые каналы связи</td><td>Распиарыч</td><td>Для чека 70К+ многие хотят поговорить, а не заполнять форму: кнопки Telegram и WhatsApp рядом с каждой CTA</td><td>низкое</td><td>средний</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="blk" style="margin-top:64px">Нарративы переключения</h3>
+      <div class="narr reveal">
+        <blockquote><div class="from">От крауд-биржи</div><p>«Вы уже платите за комментарии и отзывы ради SEO-ссылок. Те же деньги могут работать дважды — если контент написан так, чтобы его цитировали нейросети. Ссылки видит Google; смысл видит ChatGPT».</p></blockquote>
+        <blockquote><div class="from">От GEO-агентства</div><p>«Агентство оптимизировало ваш сайт, но ChatGPT по-прежнему рекомендует конкурентов? Нейросети берут рекомендации с VC, Pikabu и отзовиков. Мы закрываем именно этот слой — параллельно с вашим агентством, не вместо».</p></blockquote>
+        <blockquote><div class="from">От SERM-агентства</div><p>«Репутация в Яндексе под контролем? Теперь спросите Алису и ChatGPT, что они говорят о вас. Бесплатный аудит покажет».</p></blockquote>
+        <blockquote><div class="from">От Roso Team</div><p>«8 месяцев контракта и 190 тысяч в месяц — рискованная первая попытка в GEO. У нас: бесплатный аудит до платных обязательств, помесячно без штрафов, вход со стратегии за 20 000 ₽».</p></blockquote>
+      </div>
+    </section>
+
+    <!-- ================= 03 ПРОДУКТ ================= -->
+    <section id="prod">
+      <div class="shead"><i>03</i><h2>Продукт и позиционирование</h2></div>
+      <p class="sdesc">Пять ступеней от бесплатного аудита до технического GEO. Каждый пакет измерим в штуках контента — это и есть отличие от абстрактных «стартов» конкурентов.</p>
+
+      <div class="vp reveal">
+        <div class="card">
+          <div class="lbl">Ценностное предложение</div>
+          <p>Мы помогаем директорам по маркетингу и PR-директорам привлекать клиентов через нейросети и формировать позитивный образ в AI-выдаче с помощью UGC-контента.</p>
+        </div>
+        <div class="card dark">
+          <div class="lbl">УТП</div>
+          <p>Новый канал продвижения — позитивное присутствие в ответах AI, куда не дотягиваются ни таргет, ни SEO, ни контент-маркетинг, ни ORM.</p>
+        </div>
+      </div>
+
+      <div class="card reveal" style="margin-bottom:56px;border-left:3px solid var(--cobalt)">
+        <div class="lbl">Рекомендуемое позиционирование</div>
+        <p style="font-family:Unbounded;font-weight:400;font-size:clamp(16px,1.6vw,21px);line-height:1.5;letter-spacing:-.02em;margin:14px 0 0">«GEO-агентства оптимизируют ваш сайт. Мы создаём то, чему нейросети верят больше, — <span style="color:var(--cobalt)">голос пользователей</span>. И показываем это цифрами: сколько именно отзывов, комментариев и постов двигают вашу AI-видимость».</p>
+      </div>
+
+      <h3 class="blk">Продуктовая линейка</h3>
+      <div class="ladder reveal">
+
+        <div class="tier">
+          <div class="step">Лид-магнит</div>
+          <h4>Аудит и мониторинг</h4>
+          <div class="p">Бесплатно</div>
+          <ul>
+            <li>Аудит ИИ-выдачи</li>
+            <li>Мониторинг упоминаний</li>
+          </ul>
+          <div class="how">Быстрая автоматическая машинка готовит мини-доклад: как бренд отображается в различных нейросетях.</div>
+        </div>
+
+        <div class="tier">
+          <div class="step">Трипваер</div>
+          <h4>Хорошее начало</h4>
+          <div class="p">20 000 ₽</div>
+          <ul>
+            <li>Анализ и стратегия: как, где и о чём писать про бренд, чтобы повлиять на AI-выдачу</li>
+          </ul>
+          <div class="how">Формируем общий анализ смыслов. Делаем за день-два, по шаблону.</div>
+        </div>
+
+        <div class="tier core">
+          <div class="badge">Core offer</div>
+          <div class="step">Основной пакет</div>
+          <h4>Фундамент</h4>
+          <div class="p">70 000 ₽</div>
+          <ul>
+            <li>Анализ и стратегия</li>
+            <li>10 отзывов</li>
+            <li>30 комментариев</li>
+            <li>2 поста</li>
+            <li>3 новых страницы на сайтах-отзовиках</li>
+            <li>Мониторинг ИИ-выдачи</li>
+          </ul>
+          <div class="how">Создаём UGC-фундамент как основу GEO-продвижения. Ставим ИИ-выдачу на мониторинг.</div>
+        </div>
+
+        <div class="tier">
+          <div class="step">Upsell 1</div>
+          <h4>Премиум</h4>
+          <div class="p">120 000 ₽</div>
+          <ul>
+            <li>Анализ и стратегия</li>
+            <li>30 отзывов</li>
+            <li>60 комментариев</li>
+            <li>4 поста</li>
+            <li>5 новых страниц на сайтах-отзовиках</li>
+            <li>Мониторинг ИИ-выдачи</li>
+            <li>Контроль за упоминаниями</li>
+          </ul>
+          <div class="how">Создаём более прочный и мощный UGC-фундамент как основу GEO-продвижения.</div>
+        </div>
+
+        <div class="tier">
+          <div class="step">Upsell 2</div>
+          <h4>Максимум</h4>
+          <div class="p">200 000 ₽</div>
+          <ul>
+            <li>Анализ и стратегия</li>
+            <li>50 отзывов</li>
+            <li>80 комментариев</li>
+            <li>4 поста</li>
+            <li>5 новых страниц на сайтах-отзовиках</li>
+            <li>100 соцсигналов</li>
+            <li>Мониторинг ИИ-выдачи</li>
+            <li>Контроль за упоминаниями</li>
+            <li>Отдельный сайт с отзывами на компанию</li>
+            <li>Техническое GEO</li>
+          </ul>
+          <div class="how">Очень прочный UGC-фундамент плюс техническое GEO-SEO — через сильного специалиста или агентство-партнёра.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer class="end">
+      <span>UGC for AI · Паспорт проекта</span>
+      <span>ЦА · Конкуренты · Продукт</span>
+      <span>Июль 2026</span>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+const COMPS=[
+ {g:"direct",n:"NeuroReach",p:"от 300К ₽/мес",r:"Бутик · «доминирование в рекомендациях ИИ» · главный конкурент по позиционированию",u:"https://neuroreach.ru/",
+  s:"100% финансовая гарантия в договоре — сильнейший убийца возражений на рынке. Эксклюзив «1 клиент на нишу» как дефицит. 3 кейса с цифрами (захват 25% доли рынка).",
+  w:"Цена отсекает малый и средний бизнес. Работают «изнутри» (контент, E-E-A-T) — UGC-слой не ядро. Эксклюзивность ограничивает их собственный рост.",
+  o:"Весь сегмент 50–150К им не интересен. Клиенты, которым отказали из-за «занятой ниши», — предквалифицированные тёплые лиды.",
+  t:"Добавят UGC-посевы — закроют наше отличие. Их гарантия задаёт планку ожиданий всех клиентов рынка."},
+
+ {g:"direct",n:"GEOSEO Agency",p:"79 / 159,9 / 249,9К",r:"«Первое в СПб агентство продвижения в нейросетях» · ближайший по цене",u:"https://geoseoagency.ru/",
+  s:"Отзывы с метриками (+25% упоминаний, +42% заявок), публичная команда, юридический аудит рисков РКН/ФАС. Сроки 4–8 недель — дословно наше обещание.",
+  w:"Привязка к СПб в H1 сужает рынок. Методика классическая (контент + оптимизация), без UGC-слоя.",
+  o:"Наш пакет за 70К с конкретикой «10 отзывов + 30 комментариев + 2 поста» осязаемее их абстрактного «Старта» за 79К.",
+  t:"При равном чеке у них есть отзывы с цифрами и команда — у нас пока нет."},
+
+ {g:"direct",n:"Roso Team",p:"95К промо / 190К",r:"Full-funnel GEO: техника + контент + внешние упоминания",u:"https://roso.team/geo",
+  s:"Технический слой (LLMS.txt, schema, скорость) — компетенция, которой у нас нет вообще. Доверие в SEO, устоявшийся бренд.",
+  w:"Минимальный контракт 8 месяцев тяжело продаётся против помесячных условий. Почти двукратная цена относительно нашего верхнего тарифа при меньшей насыщенности UGC.",
+  o:"Забрать чувствительный к цене и не готовый к обязательствам сегмент их воронки: бесплатный аудит → помесячно → вход за 20К.",
+  t:"Реальный разрыв в компетенциях: их техслой закрывает бюджеты технических покупателей, к которым нам не подступиться."},
+
+ {g:"direct",n:"Агентство Ковалевы",p:"цены не раскрыты",r:"GEO с приоритетом аналитики · прямая угроза нашей отчётности",u:"https://d-kovalev.ru/service/geo-i-aeo-prodvizhenie/",
+  s:"Собственный трекер: как часто и в каких формулировках бренд упоминается в ChatGPT и Алисе, месяц к месяцу. Снимает возражение «откуда я знаю, что это работает».",
+  w:"Неясно, производят ли они сам контент — возможно, игра только про мониторинг.",
+  o:"Мы уже делаем производство. Лёгкий дашборд позволит заявлять и производство, и измерение — чего нет ни у кого.",
+  t:"Самая прямая угроза скриншот-отчётности: ровно то, о чём аналитичный корпоративный покупатель спросит первым делом."},
+
+ {g:"direct",n:"Ex Libris",p:"от 90К ₽/мес",r:"SERM и репутация в поисковой и AI-выдаче, включая персон",u:"https://exlibris.ru/services/serm",
+  s:"Умеют удалять и деиндексировать негатив (от 150К ₽) — мы не предлагаем вовсе. Обслуживают руководителей и основателей наравне с брендами. KPI по срокам 1/3/6/12 мес.",
+  w:"Нет явного списка AI-платформ — читаются как SEO-эпоха, а не AI-native. Выше порог входа.",
+  o:"Позиционироваться как «чистая AI-видимость, UGC-native» для клиентов без репутационного кризиса.",
+  t:"Если у нашего клиента случится кризис — их способность к «расчистке» заберёт его у нас."},
+
+ {g:"direct",n:"Распиарыч",p:"цены по запросу",r:"Полный цикл для локального бизнеса · GEO в связке с Картами и SEO",u:"https://raspiarych.ru/",
+  s:"700+ клиентов в Яндекс Картах (клиники, автосервисы) — готовая база для допродажи GEO. Много каналов связи.",
+  w:"GEO размыт среди 61 услуги. Цены скрыты («перезвоним»). Агрессивный «базарный» тон отталкивает средний+ сегмент.",
+  o:"Прозрачные пакеты выигрывают у «перезвоним» — готовая ось сравнения.",
+  t:"По низкочастотным локальным нишам закроют AI-выдачу раньше просто за счёт объёма клиентов."},
+
+ {g:"indirect",n:"Пиксель Плюс",p:"от 79,5К / 170К",r:"«GEO невозможно без SEO» · продуктовый лидер рынка",u:"https://pixelplus.ru/ai-seo/",
+  s:"Платформа AI Пиксель Тулс: видимость в 7+ нейросетях, 3000+ проектов за год — самый масштабируемый актив на рынке. 20+ лет бренда.",
+  w:"Обязательная связка с SEO повышает порог входа. Не работают с внешним UGC-слоем.",
+  o:"Их платформой можно пользоваться для собственного мониторинга и отчётности клиентам.",
+  t:"Задают стандарт отчётности (дашборды против наших скриншотов). Могут сделать мониторинг коммодити и забрать точку входа «аудит»."},
+
+ {g:"indirect",n:"Zenlink · Exiterra",p:"от 2 990 ₽",r:"Крауд-биржи · латентная угроза №1",u:"https://zenlink.ru/",
+  s:"Делают физически то же самое (посты, комментарии, отзывы), но продают как SEO-ссылки по 300–1000 ₽ за размещение. У Zenlink — 52 специалиста с 2014 года.",
+  w:"Не понимают AI-задачу: нет стратегии, мониторинга, работы со смыслом ответов нейросетей.",
+  o:"Их клиенты — готовый нарратив переключения: «те же деньги могут работать дважды».",
+  t:"Самая дешёвая атака на нашу нишу: им достаточно поменять лендинг — производство уже есть."},
+
+ {g:"indirect",n:"Markway · Sidorin Lab",p:"80–150К ₽/мес",r:"SERM-лидеры · латентная угроза №2",u:"https://markway.ru/",
+  s:"Markway — №1 в Рейтинге Рунета 2023–2025, Sidorin Lab — 12+ лет. Владеют бюджетами крупных брендов на «репутацию в отзовиках».",
+  w:"AI-выдача пока не в оффере — работают в парадигме поисковой репутации.",
+  o:"Их клиенты, дозревающие до вопроса «а что в ChatGPT?», — наш сегмент. Возможен white-label: мы — подрядчик по UGC-слою.",
+  t:"Добавят AI-модуль — станут прямыми конкурентами с готовой клиентской базой."},
+
+ {g:"indirect",n:"Ашманов и партнёры",p:"от 180К ₽/мес",r:"Легаси-SEO → «генеративное SEO»",u:"https://www.ashmanov.com/seo-prodvizhenie/generative-optimization/",
+  s:"20+ лет доверия у enterprise с действующим SEO-контрактом. Образовательная деятельность, федеральные клиенты, долгие кейсы.",
+  w:"GEO — довесок к SEO-ретейнеру, не специализированная методология. Слабее по механике «органического голоса».",
+  o:"Специалист рядом с универсалом: «они оптимизируют сайт — мы строим сторонний голос, которому ИИ верит».",
+  t:"Корпоративный закуп по умолчанию отдаёт «ещё одну строку в смете» действующему подрядчику — инерция на их стороне."},
+
+ {g:"indirect",n:"Kokoc Group",p:"enterprise",r:"Перформанс-холдинг · GEO как модуль",u:"https://kokoc.com/seo-prodvijenie-saytov/v-nejrosetyah/",
+  s:"Кросс-канальный масштаб (платный трафик, SEO, GEO под одной крышей) плюс собственная BI-инфраструктура в финансах, ритейле, e-commerce.",
+  w:"GEO — второстепенное универсальное предложение внутри большего P&L. Меньше мастерства в UGC.",
+  o:"Клиенты, которым нужен специалист по GEO, а не «GEO как апсейл» от медийного агентства.",
+  t:"Холдинги включают GEO почти без наценки для удержания крупных аккаунтов — подрезают самостоятельных игроков."},
+
+ {g:"bench",n:"Profound",p:"цены по запросу",r:"США · full-stack платформа AI-поиска с автономными агентами",u:"https://www.tryprofound.com/",
+  s:"Почему эталон: лидирующая глубина продукта. Agent Analytics отслеживает, как LLM краулят сайт, — компетенция без аналога в РФ. Покрытие ChatGPT, Perplexity, Claude, Gemini.",
+  o:"Набор функций Profound — дорожная карта того, как должно выглядеть «измерение видимости» в нашей отчётности. Это только софт: клиенту всё равно нужен исполнитель UGC — такой, как мы.",
+  t:"Локализация Profound или его клона на русский моментально сделает измерительную часть GEO коммодити."},
+
+ {g:"bench",n:"AthenaHQ",p:"Free / $295 в мес.",r:"«Стань брендом, которому доверяет ИИ» · self-serve SaaS",u:"https://athenahq.ai/",
+  s:"Почему эталон: прозрачные опубликованные цены плюс корпоративный комплаенс (SOC II, GDPR). Маркетинг на твёрдых цифрах: «клиенты видят рост доли голоса в 6 раз».",
+  o:"Доказывает, что категория конвертит на числах, а не на скриншотах. Нам нужны эквивалентные метрики: дельта упоминаний, индекс видимости до и после.",
+  t:"Задаёт планку «как выглядит хорошая отчётность», которую корпоративные покупатели РФ принесут в тендеры."}
+];
+const TAG={direct:"Прямой конкурент",indirect:"Косвенный конкурент",bench:"Эталонный игрок"};
+const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
+const row=(k,cls,txt)=>txt?`<div class="${cls}"><b>${k}</b><span>${txt}</span></div>`:"";
+document.getElementById("comps").innerHTML=COMPS.map(c=>`
+<article class="comp" data-g="${c.g}">
+  <div class="top"><h4>${c.n}</h4><span class="price">${c.p}</span></div>
+  <div class="tag">${TAG[c.g]}</div>
+  <div class="role">${c.r}</div>
+  <div class="swot">
+    ${row("S","s",c.s)}${row("W","w",c.w)}${row("O","o",c.o)}${row("T","t",c.t)}
+  </div>
+  <a class="src" href="${c.u}" target="_blank" rel="noopener">${host(c.u)} ↗</a>
+</article>`).join("");
+
+document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".filters button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  const f=b.dataset.f;
+  document.querySelectorAll(".comp").forEach(c=>{c.style.display=(f==="all"||c.dataset.g===f)?"flex":"none"});
+}));
+
+const links=[...document.querySelectorAll("#nav a")];
+const secs=links.map(a=>document.querySelector(a.getAttribute("href")));
+const so=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){
+  links.forEach(l=>l.classList.toggle("on",l.getAttribute("href")==="#"+e.target.id));}})},{rootMargin:"-30% 0px -60% 0px"});
+secs.forEach(s=>s&&so.observe(s));
+
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");ro.unobserve(e.target)}}),{threshold:.08});
+document.querySelectorAll(".reveal").forEach(e=>ro.observe(e));
+</script>
+</body>
+</html>

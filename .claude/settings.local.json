@@ -3,7 +3,14 @@
     "allow": [
       "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\mpolu\\\\Documents\\\\Landings\\\\UGC-blogs-AI\\\\.agents\")",
       "Skill(run)",
-      "Skill(run:*)"
+      "Skill(run:*)",
+      "WebFetch(domain:mpolubinskas.github.io)",
+      "WebSearch",
+      "WebFetch(domain:vc.ru)",
+      "WebFetch(domain:roso.team)",
+      "WebFetch(domain:exlibris.ru)",
+      "WebFetch(domain:www.tryprofound.com)",
+      "WebFetch(domain:athenahq.ai)"
     ]
   }
 }
