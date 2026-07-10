@@ -141,7 +141,8 @@ ul.tight li::marker{color:var(--cobalt)}
 .filters button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .comps{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 .comp{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px;display:flex;flex-direction:column}
-.comp .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.comp .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.comp .top .name{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0}
 .comp h4{font-size:17px;letter-spacing:-.02em}
 .comp .price{font-family:"JetBrains Mono";font-size:12px;color:var(--cobalt);white-space:nowrap}
 .comp .tag{font-family:"JetBrains Mono";font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:10px}
@@ -153,8 +154,8 @@ ul.tight li::marker{color:var(--cobalt)}
 .w b{background:#F2E7E7;color:#95403F}
 .o b{background:var(--cobalt-soft);color:var(--cobalt)}
 .t b{background:#F5EBDB;color:var(--amber)}
-.comp a.src{font-family:"JetBrains Mono";font-size:10.5px;color:var(--mute);margin-top:16px;text-decoration:none;border-bottom:1px solid var(--line);align-self:flex-start}
-.comp a.src:hover{color:var(--cobalt);border-color:var(--cobalt)}
+.comp a.src{font-family:"JetBrains Mono";font-size:11px;font-weight:500;color:var(--cobalt);text-decoration:none;white-space:nowrap;padding:2px 9px;border-radius:20px;background:var(--cobalt-soft);border:1px solid transparent;transition:.15s}
+.comp a.src:hover{background:var(--cobalt);color:#fff}
 
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
@@ -471,7 +472,7 @@ footer.end{padding:56px;color:var(--mute);font-family:"JetBrains Mono";font-size
           <ul class="tight">
             <li>Нет технического слоя GEO</li>
             <li>Ни одного кейса с цифрами — главной валюты этого рынка</li>
-            <li>Ручные скриншоты против трекеров и дашбордов конкурентов</li>
+            <li>Ручные скриншоты против ИИ-мониторинга, трекеров и дашбордов конкурентов</li>
             <li>Мониторинг только с пакета 120К — конкуренты дают как базу</li>
             <li>Нет гарантий на фоне 100% гарантии NeuroReach</li>
           </ul>
@@ -716,13 +717,15 @@ const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){retu
 const row=(k,cls,txt)=>txt?`<div class="${cls}"><b>${k}</b><span>${txt}</span></div>`:"";
 document.getElementById("comps").innerHTML=COMPS.map(c=>`
 <article class="comp" data-g="${c.g}">
-  <div class="top"><h4>${c.n}</h4><span class="price">${c.p}</span></div>
+  <div class="top">
+    <div class="name"><h4>${c.n}</h4><a class="src" href="${c.u}" target="_blank" rel="noopener">${host(c.u)} ↗</a></div>
+    <span class="price">${c.p}</span>
+  </div>
   <div class="tag">${TAG[c.g]}</div>
   <div class="role">${c.r}</div>
   <div class="swot">
     ${row("S","s",c.s)}${row("W","w",c.w)}${row("O","o",c.o)}${row("T","t",c.t)}
   </div>
-  <a class="src" href="${c.u}" target="_blank" rel="noopener">${host(c.u)} ↗</a>
 </article>`).join("");
 
 document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{
