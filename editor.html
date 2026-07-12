@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Редактор текстов — UGC for AI</title>
+<style>
+:root{--ink:#0F1115;--cobalt:#1E3AE8;--paper:#E3E4DF;--line:rgba(255,255,255,.14)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;font-family:"IBM Plex Sans","Segoe UI",Roboto,sans-serif;background:var(--ink)}
+.bar{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;color:#E6E7EA;
+  background:var(--ink);border-bottom:1px solid var(--line);flex-wrap:wrap;
+}
+.bar .title{font-weight:600;font-size:14px;margin-right:8px}
+.bar .title small{display:block;font-weight:400;font-size:11px;color:#8A90A0}
+.bar button{
+  font:inherit;font-size:13px;cursor:pointer;border-radius:6px;padding:8px 16px;
+  border:1px solid var(--line);background:#1A1E27;color:#E6E7EA;transition:.15s;
+}
+.bar button:hover:not(:disabled){border-color:#8A90A0}
+.bar button.primary{background:var(--cobalt);border-color:var(--cobalt);font-weight:600}
+.bar button.primary:hover:not(:disabled){background:#1730C4}
+.bar button:disabled{opacity:.4;cursor:default}
+#status{font-size:12px;color:#8A90A0;margin-left:auto;text-align:right}
+#status.ok{color:#6FBF7E}
+#status.warn{color:#E0A94F}
+#frame{flex:1;border:none;width:100%;background:var(--paper)}
+#empty{
+  flex:1;display:grid;place-items:center;color:#8A90A0;font-size:14px;text-align:center;line-height:1.8;
+}
+#empty b{color:#E6E7EA}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="title">Редактор текстов<small>кликните по любому тексту в макете и правьте</small></div>
+  <button id="btnOpen" class="primary">Открыть first-steps.html</button>
+  <button id="btnSave" disabled>Сохранить (Ctrl+S)</button>
+  <button id="btnDownload" disabled>Скачать копию</button>
+  <span id="status">Файл не открыт</span>
+</div>
+<div id="empty">Нажмите <b>«Открыть first-steps.html»</b> и выберите файл презентации.<br>
+Правки делаются кликом прямо по тексту. Кнопка «Сохранить» запишет изменения в тот же файл.</div>
+<iframe id="frame" hidden></iframe>
+<input type="file" id="filePick" accept=".html,.htm">
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const frame=$("frame"), empty=$("empty"), statusEl=$("status");
+
+let fileHandle=null;     // File System Access API handle (Chrome/Edge)
+let fileName="first-steps.html";
+let scriptTexts=[];      // inline-скрипты исходного файла (вырезаются на время редактирования)
+let compsData=null;      // распарсенный массив COMPS
+let dirty=false;
+let loaded=false;
+
+const EDITABLE_SELECTORS=[
+  "h1","h2","h3","h4","p","li","dt","dd","td","th",
+  "blockquote footer",".eyebrow",".lbl",".brand",".foot",
+  ".step",".p",".how",".badge","footer.end span","#nav a span",".filters button"
+].join(",");
+
+const TAG={direct:"Прямой конкурент",indirect:"Косвенный конкурент",bench:"Эталонный игрок"};
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const escAttr=s=>esc(s).replace(/"/g,"&quot;");
+const hostOf=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
+
+function setStatus(text,cls){statusEl.textContent=text;statusEl.className=cls||"";}
+function markDirty(){if(!dirty){dirty=true;setStatus("Есть несохранённые изменения","warn");}}
+
+/* ---------- открытие ---------- */
+$("btnOpen").addEventListener("click",async()=>{
+  if(window.showOpenFilePicker){
+    try{
+      [fileHandle]=await showOpenFilePicker({types:[{description:"HTML",accept:{"text/html":[".html",".htm"]}}]});
+      const f=await fileHandle.getFile();
+      fileName=f.name;
+      loadSource(await f.text());
+    }catch(e){/* отмена выбора */}
+  }else{
+    $("filePick").click();
+  }
+});
+$("filePick").addEventListener("change",e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+  fileHandle=null;fileName=f.name;
+  const r=new FileReader();
+  r.onload=()=>loadSource(r.result);
+  r.readAsText(f);
+});
+
+function loadSource(text){
+  const doc=new DOMParser().parseFromString(text,"text/html");
+
+  // вырезаем inline-скрипты (иначе они перерисуют карточки и сломают правки)
+  scriptTexts=[];
+  doc.querySelectorAll("script:not([src])").forEach(s=>{scriptTexts.push(s.textContent);s.remove();});
+
+  // достаём массив COMPS из скрипта, чтобы отрисовать карточки конкурентов в редактируемом виде
+  compsData=null;
+  for(const t of scriptTexts){
+    const m=t.match(/const COMPS=(\[[\s\S]*?\]);/);
+    if(m){
+      try{compsData=new Function("return "+m[1])();}catch(e){compsData=null;}
+      break;
+    }
+  }
+  const compsEl=doc.getElementById("comps");
+  if(compsEl&&compsData){
+    const row=(k,cls,txt)=>txt?`<div class="${cls}"><b>${k}</b><span contenteditable="true">${esc(txt)}</span></div>`:"";
+    compsEl.innerHTML=compsData.map(c=>`
+<article class="comp" data-g="${escAttr(c.g)}" data-u="${escAttr(c.u)}">
+  <div class="top">
+    <div class="name"><h4 contenteditable="true">${esc(c.n)}</h4><a class="src">${esc(hostOf(c.u))} ↗</a></div>
+    <span class="price" contenteditable="true">${esc(c.p)}</span>
+  </div>
+  <div class="tag">${TAG[c.g]||c.g}</div>
+  <div class="role" contenteditable="true">${esc(c.r)}</div>
+  <div class="swot">${row("S","s",c.s)}${row("W","w",c.w)}${row("O","o",c.o)}${row("T","t",c.t)}</div>
+</article>`).join("");
+  }
+
+  // включаем редактирование текстовых блоков
+  doc.querySelectorAll(EDITABLE_SELECTORS).forEach(el=>{
+    if(el.closest("#comps"))return; // карточки уже размечены выше
+    el.setAttribute("contenteditable","true");
+  });
+
+  // временные стили редактора (удаляются при сохранении)
+  const st=doc.createElement("style");
+  st.setAttribute("data-editor","1");
+  st.textContent=`
+.reveal{opacity:1!important;transform:none!important}
+[contenteditable="true"]{cursor:text}
+[contenteditable="true"]:hover{box-shadow:0 0 0 1.5px rgba(30,58,232,.4);border-radius:3px}
+[contenteditable="true"]:focus{outline:none;box-shadow:0 0 0 2px #1E3AE8;border-radius:3px}
+html{scroll-behavior:auto}`;
+  doc.head.appendChild(st);
+
+  frame.hidden=false;empty.hidden=true;
+  frame.srcdoc="<!DOCTYPE html>\n"+doc.documentElement.outerHTML;
+  frame.onload=()=>{
+    const idoc=frame.contentDocument;
+    // блокируем переходы по ссылкам и якорям, чтобы не выпасть из редактора
+    idoc.addEventListener("click",e=>{if(e.target.closest("a"))e.preventDefault();},true);
+    idoc.body.addEventListener("input",markDirty);
+    idoc.addEventListener("keydown",e=>{
+      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();save();}
+    });
+    loaded=true;dirty=false;
+    $("btnSave").disabled=false;$("btnDownload").disabled=false;
+    setStatus(fileHandle?`Открыт ${fileName}`:`Открыт ${fileName} (сохранение — скачиванием)`,"ok");
+  };
+}
+
+/* ---------- сборка итогового HTML ---------- */
+function buildOutput(){
+  const idoc=frame.contentDocument;
+  const clone=idoc.documentElement.cloneNode(true);
+
+  clone.querySelectorAll("[data-editor]").forEach(e=>e.remove());
+  clone.querySelectorAll("[contenteditable]").forEach(e=>e.removeAttribute("contenteditable"));
+
+  // собираем правки карточек конкурентов обратно в массив COMPS
+  let newScripts=scriptTexts.slice();
+  const compsEl=clone.querySelector("#comps");
+  if(compsEl&&compsData){
+    const txt=(root,sel)=>{const el=root.querySelector(sel);return el?el.textContent.trim():"";};
+    const arr=[...compsEl.querySelectorAll(".comp")].map(c=>{
+      const o={g:c.dataset.g,n:txt(c,"h4"),p:txt(c,".price"),r:txt(c,".role"),u:c.dataset.u};
+      for(const k of ["s","w","o","t"]){
+        const el=c.querySelector(".swot ."+k+" span");
+        if(el)o[k]=el.textContent.trim();
+      }
+      return o;
+    });
+    const json=JSON.stringify(arr,null,1).replace(/<\//g,"<\\/");
+    newScripts=newScripts.map(t=>t.replace(/const COMPS=\[[\s\S]*?\];/,()=>"const COMPS="+json+";"));
+    compsEl.innerHTML="";
+  }
+  // убираем служебный data-u, если карточки остались (COMPS не распарсился)
+  clone.querySelectorAll("[data-u]").forEach(e=>e.removeAttribute("data-u"));
+
+  const body=clone.querySelector("body");
+  for(const t of newScripts){
+    const s=idoc.createElement("script");
+    s.textContent=t;
+    body.appendChild(s);
+  }
+  return "<!DOCTYPE html>\n"+clone.outerHTML+"\n";
+}
+
+/* ---------- сохранение ---------- */
+async function save(){
+  if(!loaded)return;
+  const out=buildOutput();
+  if(fileHandle){
+    try{
+      const w=await fileHandle.createWritable();
+      await w.write(out);
+      await w.close();
+      dirty=false;
+      setStatus("Сохранено в "+fileName+" · "+new Date().toLocaleTimeString().slice(0,5),"ok");
+      return;
+    }catch(e){
+      setStatus("Не удалось записать файл — скачиваю копию","warn");
+    }
+  }
+  download(out);
+  dirty=false;
+}
+function download(out){
+  const blob=new Blob([out],{type:"text/html"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=fileName;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  setStatus("Копия скачана — замените ею исходный файл","ok");
+}
+$("btnSave").addEventListener("click",save);
+$("btnDownload").addEventListener("click",()=>{if(loaded)download(buildOutput());});
+window.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();save();}
+});
+window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue="";}});
+</script>
+</body>
+</html>
