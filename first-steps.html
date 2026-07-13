@@ -156,6 +156,27 @@ h3.blk::before{content:"";width:22px;height:2px;background:var(--accent,var(--co
 .segtabs button.on{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
 .segtabs button.on i{color:#C9D1FB}
 
+/* collapsed segment pane with fog */
+.segpane{position:relative}
+.segpane.fog{max-height:520px;overflow:hidden}
+.segpane.fog::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:320px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(227,228,223,0) 0%,rgba(227,228,223,.7) 55%,var(--paper) 94%);
+  backdrop-filter:blur(2px);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 60%);
+  mask-image:linear-gradient(180deg,transparent 0%,#000 60%);
+}
+.fogbtn{
+  position:absolute;left:50%;bottom:32px;transform:translateX(-50%);z-index:2;
+  font-family:"JetBrains Mono";font-size:12.5px;font-weight:500;color:var(--ink);
+  display:inline-flex;align-items:center;gap:8px;padding:11px 22px;
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:30px;
+  cursor:pointer;box-shadow:var(--shadow-md);white-space:nowrap;
+  transition:color .18s,border-color .18s;
+}
+.fogbtn:hover{border-color:var(--cobalt);color:var(--cobalt)}
+.segpane:not(.fog) .fogbtn{position:static;transform:none;display:flex;margin:40px auto 0}
+
 .persona{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .persona .full{grid-column:1/-1}
 dl{margin:0}
@@ -822,14 +843,6 @@ footer.end{padding:56px;color:var(--mute);font-family:"JetBrains Mono";font-size
       <div class="shead"><i>02</i><h2>Конкурентный анализ</h2></div>
       <p class="sdesc">Июль 2026 · рынок GEO РФ · 13 конкурентов. Рынок сформирован, ниша свободна, окно закрывается.</p>
 
-      <div class="grid g2 reveal" style="margin-bottom:56px">
-        <div class="card">
-          <h3 class="blk">Уникальная механика «снаружи»</h3>
-          <p style="margin-top:0">Все GEO-агентства оптимизируют сайт клиента «изнутри». Мы создаём внешний UGC-слой — отзывы, посты и комментарии, которым нейросети верят больше. Ниша «крауд-маркетинг для эпохи AI» уже не пуста: Zenlink вышел в GEO и через опцию GERM («управление отзывами в ответах ИИ», в тарифах от 200К) заходит и на UGC-территорию — правда, как дорогую допопцию, а не как ядро продукта. Это не факт, что хорошо&nbsp;— просто мы занишевались на UGC-контенте, в то время как другие продают его как часть общего пакета (в том числе с включением технического GEO, SEO).</p>
-          <p>Усиливает отличие цена: <b>70 000 ₽/мес</b> в разрыве между крауд-биржами (3–30К) и GEO-агентствами (150–300К).</p>
-        </div>
-      </div>
-
       <h3 class="blk">13 игроков в трёх кругах</h3>
       <p style="color:var(--mute);max-width:70ch;margin:-4px 0 22px;font-size:15px">Прямые — те же деньги и та же задача. Косвенные — та же проблема клиента, другой инструмент. Эталонные — задают планку, к которой придут ожидания покупателей. Кликните на конкурента в списке — справа откроется его обзор; ссылка на сайт всегда в шапке обзора, любой может перейти и убедиться сам.</p>
 
@@ -1263,6 +1276,23 @@ segTabs.forEach(b=>b.addEventListener("click",()=>{
   segTabs.forEach(x=>{const on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-pressed",on)});
   segPanes.forEach(p=>{p.hidden=p.id!==b.dataset.pane});
 }));
+
+segPanes.forEach(p=>{
+  p.classList.add("fog");
+  // .reveal внутри свёрнутой панели может не попасть в IntersectionObserver — показываем сразу
+  p.querySelectorAll(".reveal").forEach(e=>e.classList.add("in"));
+  const b=document.createElement("button");
+  b.type="button";b.className="fogbtn";
+  b.textContent="Раскрыть сегмент полностью ↓";
+  b.setAttribute("aria-expanded","false");
+  b.addEventListener("click",()=>{
+    const fogged=p.classList.toggle("fog");
+    b.textContent=fogged?"Раскрыть сегмент полностью ↓":"Свернуть сегмент ↑";
+    b.setAttribute("aria-expanded",!fogged);
+    if(fogged)document.getElementById("segtabs").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+  p.appendChild(b);
+});
 
 const links=[...document.querySelectorAll("#nav a")];
 const secs=links.map(a=>document.querySelector(a.getAttribute("href")));
