@@ -150,6 +150,124 @@
   .btn-orange:active{transform:translateY(0) scale(.97);box-shadow:0 2px 8px rgba(var(--orange-rgb),.15);}
   .header-cta{padding:11px 24px}
 
+  /* ============ AUDIT FORM (hero) ============ */
+  .audit-form{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:10px;}
+  .audit-row{
+    display:flex;gap:8px;width:100%;
+    background:var(--bg-3);
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    padding:6px;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .audit-row:focus-within{
+    border-color:rgba(var(--cyan-rgb),.55);
+    box-shadow:0 0 0 3px rgba(var(--cyan-rgb),.12);
+  }
+  .audit-input{
+    flex:1 1 auto;min-width:0;
+    background:transparent;border:none;outline:none;
+    color:var(--ink);font-family:var(--body);font-size:14.5px;
+    padding:0 8px 0 16px;
+  }
+  .audit-input::placeholder{color:var(--muted);}
+  .audit-btn{flex:none;white-space:nowrap;}
+  .audit-hint{
+    font-family:var(--pix);font-size:11.5px;letter-spacing:.3px;
+    color:var(--muted);text-align:center;
+  }
+  .audit-row.shake{animation:auditShake .4s ease;}
+  @keyframes auditShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+  @media (max-width:520px){
+    .audit-row{flex-direction:column;border-radius:14px;padding:10px;gap:10px;}
+    .audit-input{padding:12px 14px;background:rgba(255,255,255,.03);border-radius:8px;}
+    .audit-btn{width:100%;}
+  }
+
+  /* ============ AUDIT MODAL ============ */
+  .audit-modal{
+    position:fixed;inset:0;z-index:200;
+    display:none;align-items:center;justify-content:center;
+    padding:20px;
+  }
+  .audit-modal.open{display:flex;}
+  .audit-modal-backdrop{
+    position:absolute;inset:0;
+    background:rgba(5,5,7,.78);backdrop-filter:blur(6px);
+    animation:auditFade .25s ease;
+  }
+  .audit-modal-card{
+    position:relative;z-index:1;
+    width:min(520px,100%);
+    background:linear-gradient(160deg,var(--bg-2),var(--bg-3));
+    border:1px solid var(--line-strong);
+    border-radius:16px;
+    padding:clamp(24px,4vw,38px);
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+    animation:auditPop .28s cubic-bezier(.2,.9,.3,1.1);
+    max-height:90vh;overflow-y:auto;
+  }
+  @keyframes auditFade{from{opacity:0}to{opacity:1}}
+  @keyframes auditPop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+  .audit-modal-close{
+    position:absolute;top:14px;right:16px;
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);
+    color:var(--muted);font-size:20px;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:color .15s,background .15s,border-color .15s;
+  }
+  .audit-modal-close:hover{color:var(--ink);background:rgba(255,255,255,.1);border-color:var(--line-strong);}
+  .audit-modal-title{
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(1.15rem,2.4vw,1.5rem);line-height:1.3;
+    margin-bottom:22px;padding-right:26px;
+  }
+  .audit-methods{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    margin-bottom:22px;
+  }
+  .audit-method{
+    font-family:var(--body);font-weight:700;font-size:14px;
+    padding:14px 12px;border-radius:10px;cursor:pointer;
+    background:var(--bg);border:1px solid var(--line-strong);
+    color:var(--ink);text-align:center;
+    transition:border-color .15s,background .15s,transform .12s,color .15s;
+  }
+  .audit-method:hover{border-color:rgba(var(--cyan-rgb),.5);transform:translateY(-2px);}
+  .audit-method.active{
+    background:rgba(var(--cyan-rgb),.12);
+    border-color:var(--cyan);color:var(--cyan-soft);
+  }
+  .audit-contact-form{display:flex;flex-direction:column;gap:16px;}
+  .audit-field{display:flex;flex-direction:column;gap:7px;}
+  .audit-field label{
+    font-family:var(--pix);font-size:11px;letter-spacing:.8px;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .audit-field input{
+    background:var(--bg);border:1px solid var(--line-strong);
+    border-radius:10px;padding:13px 15px;width:100%;
+    color:var(--ink);font-family:var(--body);font-size:14.5px;
+    outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  .audit-field input::placeholder{color:var(--muted);}
+  .audit-field input:focus{
+    border-color:rgba(var(--cyan-rgb),.55);
+    box-shadow:0 0 0 3px rgba(var(--cyan-rgb),.12);
+  }
+  .audit-field input.invalid{border-color:var(--orange);box-shadow:0 0 0 3px rgba(var(--orange-rgb),.15);}
+  .audit-submit{width:100%;margin-top:4px;}
+  .audit-success{text-align:center;padding:14px 0;}
+  .audit-success-icon{
+    width:56px;height:56px;margin:0 auto 16px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(var(--cyan-rgb),.14);color:var(--cyan);
+    font-size:28px;border:1px solid rgba(var(--cyan-rgb),.4);
+  }
+  .audit-success p{color:#cfcfd4;font-size:1.02rem;line-height:1.6;}
+  @media (max-width:420px){.audit-methods{grid-template-columns:1fr;}}
+
   /* ============ HERO ============ */
   .hero{
     flex:1 1 auto;
@@ -1118,9 +1236,17 @@
           <div class="eye-tag t2"><b>★</b>натуральный контент</div>
           <div class="eye-tag t3"><b>AI</b>показывает ваши преимущества</div>
         </div>
-        <a href="#contact" class="btn btn-c btn-lg">Заказать консультацию</a>
       </div>
     </div>
+
+    <form class="audit-form" id="auditForm" novalidate>
+      <div class="audit-row">
+        <input type="text" class="audit-input" id="auditWebsite" name="website"
+               placeholder="Введите адрес вашего сайта" autocomplete="url" required>
+        <button type="submit" class="btn btn-c audit-btn">Получить бесплатный аудит</button>
+      </div>
+      <span class="audit-hint">Бесплатно покажем, как AI-системы видят ваш бренд</span>
+    </form>
 
     <div class="platforms">
       <span class="chip on-o">GEO-оптимизация</span>
@@ -1582,6 +1708,40 @@
 
 </div><!-- /stage -->
 
+<!-- ===== AUDIT MODAL ===== -->
+<div class="audit-modal" id="auditModal" aria-hidden="true">
+  <div class="audit-modal-backdrop" data-close></div>
+  <div class="audit-modal-card" role="dialog" aria-modal="true" aria-labelledby="auditModalTitle">
+    <button class="audit-modal-close" type="button" data-close aria-label="Закрыть">&times;</button>
+    <span class="eyebrow" style="margin-bottom:14px;">// Бесплатный аудит</span>
+    <h3 id="auditModalTitle" class="audit-modal-title">Куда отправить бесплатный аудит для сайта <span class="hl-c" id="auditSiteName">вашего сайта</span>?</h3>
+
+    <div class="audit-methods">
+      <button type="button" class="audit-method" data-method="telegram">Telegram</button>
+      <button type="button" class="audit-method" data-method="max">MAX</button>
+      <button type="button" class="audit-method" data-method="email">Email</button>
+      <button type="button" class="audit-method" data-method="phone">Оставить телефон</button>
+    </div>
+
+    <form class="audit-contact-form" id="auditContactForm" novalidate hidden>
+      <div class="audit-field">
+        <label for="auditName">Ваше имя</label>
+        <input type="text" id="auditName" name="name" placeholder="Как к вам обращаться" required>
+      </div>
+      <div class="audit-field">
+        <label id="auditContactLabel" for="auditContact">Контакт</label>
+        <input type="text" id="auditContact" name="contact" required>
+      </div>
+      <button type="submit" class="btn btn-orange audit-submit">Отправить заявку</button>
+    </form>
+
+    <div class="audit-success" id="auditSuccess" hidden>
+      <div class="audit-success-icon">&check;</div>
+      <p>Спасибо! Мы подготовим аудит и&nbsp;свяжемся с&nbsp;вами в&nbsp;рабочий день.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   /* ---- pixel eye ---- */
@@ -1684,6 +1844,87 @@
       }
     });
   });
+
+  /* ---- free audit form + modal ---- */
+  (function(){
+    const heroForm=document.getElementById('auditForm');
+    const modal=document.getElementById('auditModal');
+    if(!heroForm||!modal)return;
+    const websiteInput=document.getElementById('auditWebsite');
+    const siteName=document.getElementById('auditSiteName');
+    const methods=[...modal.querySelectorAll('.audit-method')];
+    const contactForm=document.getElementById('auditContactForm');
+    const nameInput=document.getElementById('auditName');
+    const contactInput=document.getElementById('auditContact');
+    const contactLabel=document.getElementById('auditContactLabel');
+    const successBox=document.getElementById('auditSuccess');
+    const row=heroForm.querySelector('.audit-row');
+
+    const METHODS={
+      telegram:{label:'Telegram',placeholder:'@username',type:'text'},
+      max:{label:'MAX',placeholder:'@username или номер',type:'text'},
+      email:{label:'Email',placeholder:'you@example.com',type:'email'},
+      phone:{label:'Телефон',placeholder:'+7 (___) ___-__-__',type:'tel'}
+    };
+    let currentMethod=null;
+
+    function openModal(){modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+    function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+    function reset(){
+      methods.forEach(m=>m.classList.remove('active'));
+      contactForm.hidden=true;successBox.hidden=true;
+      contactForm.reset();currentMethod=null;
+    }
+
+    heroForm.addEventListener('submit',e=>{
+      e.preventDefault();
+      const val=websiteInput.value.trim();
+      if(!val){
+        row.classList.remove('shake');void row.offsetWidth;row.classList.add('shake');
+        websiteInput.focus();return;
+      }
+      siteName.textContent=val;
+      reset();openModal();
+    });
+
+    methods.forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        currentMethod=btn.dataset.method;
+        methods.forEach(m=>m.classList.toggle('active',m===btn));
+        const cfg=METHODS[currentMethod];
+        contactLabel.textContent=cfg.label;
+        contactInput.type=cfg.type;
+        contactInput.placeholder=cfg.placeholder;
+        contactInput.value='';contactInput.classList.remove('invalid');
+        contactForm.hidden=false;successBox.hidden=true;
+        nameInput.focus();
+      });
+    });
+
+    contactForm.addEventListener('submit',e=>{
+      e.preventDefault();
+      let ok=true;
+      [nameInput,contactInput].forEach(inp=>{
+        if(!inp.value.trim()){inp.classList.add('invalid');ok=false;}
+        else inp.classList.remove('invalid');
+      });
+      if(!ok)return;
+      const payload={
+        website:websiteInput.value.trim(),
+        method:currentMethod,
+        name:nameInput.value.trim(),
+        contact:contactInput.value.trim()
+      };
+      /* TODO: отправить payload на backend / CRM (fetch к своему эндпоинту) */
+      console.log('Заявка на аудит:',payload);
+      contactForm.hidden=true;
+      methods.forEach(m=>m.classList.remove('active'));
+      successBox.hidden=false;
+    });
+
+    modal.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',closeModal));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeModal();});
+  })();
 })();
 </script>
 </body>
