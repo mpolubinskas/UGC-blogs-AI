@@ -32,9 +32,10 @@ nano .env                       # DOMAIN, ALLOWED_ORIGIN, ADMIN_TOKEN
 openssl rand -hex 32            # <- подставить в ADMIN_TOKEN
 
 # 3. статику лендинга — в ./site
+#    (сюда кладём geo.html и все локальные файлы, которые он грузит.
+#     сейчас это только одна картинка — woman_stars.png; шрифты идут из Google Fonts)
 mkdir -p site
-cp geo.html site/
-cp woman_stars.png site/        # и остальные картинки/ассеты, что использует geo.html
+cp geo.html woman_stars.png site/
 
 # 4. запуск
 docker compose up -d --build
