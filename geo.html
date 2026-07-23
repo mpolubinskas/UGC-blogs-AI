@@ -950,6 +950,126 @@
     *{transition:none !important}
     .reveal,.reveal-scale{opacity:1;transform:none;}
   }
+
+  /* ============ «ГЛАС НАРОДА» BLOCK (namespaced gn-) ============ */
+  .gn-block{
+    position:relative;isolation:isolate;overflow:hidden;
+    border:1px solid var(--line);border-radius:16px;
+    padding:clamp(40px,7vh,80px) clamp(20px,4vw,56px);
+    margin:clamp(44px,6vh,68px) 0;
+  }
+  .gn-block::before{
+    content:"";position:absolute;inset:0;z-index:-2;
+    background:
+      radial-gradient(680px 500px at 15% 8%, rgba(255,90,0,.09), transparent 60%),
+      radial-gradient(720px 540px at 88% 88%, rgba(31,209,240,.09), transparent 62%);
+  }
+  .gn-block::after{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);
+    background-size:26px 26px;background-position:center;
+    mask-image:radial-gradient(circle at 50% 45%,#000 0%,#000 55%,transparent 85%);
+    -webkit-mask-image:radial-gradient(circle at 50% 45%,#000 0%,#000 55%,transparent 85%);
+    pointer-events:none;
+  }
+  .gn-inner{max-width:1240px;margin:0 auto;position:relative;z-index:1;}
+
+  .gn-thesis{max-width:680px;margin:0 auto;text-align:center;position:relative;z-index:5;}
+  .gn-eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--pix);font-weight:600;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);
+    margin-bottom:26px;
+  }
+  .gn-eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+
+  .gn-reject{
+    display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+    font-family:var(--body);font-weight:600;font-size:clamp(.92rem,1.4vw,1.08rem);color:#b0b0b8;
+    border:1px dashed rgba(224,71,58,.4);background:rgba(224,71,58,.05);
+    border-radius:999px;padding:9px 18px;margin-bottom:clamp(28px,4vh,42px);
+  }
+  .gn-reject s{color:#8a8a92;text-decoration-color:rgba(224,71,58,.7);text-decoration-thickness:2px;}
+  .gn-sauce{font-family:var(--pix);font-weight:700;font-size:.78em;letter-spacing:.5px;text-transform:uppercase;color:#e0473a;border:1px solid rgba(224,71,58,.4);border-radius:5px;padding:2px 8px;background:rgba(224,71,58,.08);}
+
+  .gn-thesis h2{
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(2rem,5.4vw,4rem);line-height:1.04;letter-spacing:-1.4px;
+    margin-bottom:22px;
+  }
+  .gn-cross{position:relative;color:#7a7a84;}
+  .gn-cross::after{content:"";position:absolute;left:-2px;right:-2px;top:55%;height:4px;background:var(--orange);transform:rotate(-2.5deg);border-radius:3px;box-shadow:0 0 18px rgba(var(--orange-rgb),.55);}
+  .gn-hl{color:var(--cyan);position:relative;}
+  .gn-hl .gn-mark{position:absolute;left:-4px;right:-4px;bottom:6%;height:34%;background:rgba(var(--cyan-rgb),.16);z-index:-1;border-radius:3px;transform:rotate(-1deg);}
+
+  .gn-thesis p{color:#cfcfd4;font-size:clamp(1rem,1.3vw,1.15rem);line-height:1.6;max-width:560px;margin:0 auto 24px;}
+  .gn-thesis p b{color:var(--ink);font-weight:700;}
+  .gn-u-o{color:var(--orange-soft);font-weight:700;}
+  .gn-u-c{color:var(--cyan);font-weight:700;}
+
+  .gn-payoff{
+    display:inline-flex;flex-direction:column;gap:6px;align-items:center;
+    position:relative;overflow:hidden;
+    border:1px solid rgba(var(--orange-rgb),.35);border-radius:14px;
+    background:linear-gradient(145deg,rgba(var(--orange-rgb),.09),rgba(var(--cyan-rgb),.05) 60%,rgba(var(--orange-rgb),.03));
+    padding:20px 30px;margin-top:8px;
+    transition:border-color .25s,box-shadow .25s;
+  }
+  .gn-payoff:hover{border-color:rgba(var(--orange-rgb),.55);box-shadow:0 0 50px rgba(var(--orange-rgb),.14);}
+  .gn-payoff::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--cyan));}
+  .gn-lbl{font-family:var(--pix);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--orange-soft);}
+  .gn-txt{font-family:var(--body);font-weight:800;font-size:clamp(1.05rem,1.8vw,1.35rem);line-height:1.25;letter-spacing:-.4px;max-width:440px;}
+  .gn-txt .gn-o{color:var(--orange);}.gn-txt .gn-c{color:var(--cyan);}
+
+  .gn-voices{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .gn-vcard{
+    position:absolute;width:255px;pointer-events:auto;
+    background:rgba(16,16,20,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+    box-shadow:0 18px 40px rgba(0,0,0,.4);
+    animation:gn-floaty 8s ease-in-out infinite;
+    transition:transform .25s,border-color .25s,box-shadow .25s;
+  }
+  .gn-vcard:hover{transform:translateY(-6px) scale(1.03) rotate(0deg)!important;border-color:var(--line-strong);box-shadow:0 26px 60px rgba(0,0,0,.5);z-index:6;}
+  .gn-vhead{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+  .gn-avatar{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--pix);font-weight:700;font-size:12px;color:#0c0c0e;}
+  .gn-vname{font-size:12.5px;font-weight:700;line-height:1.1;}
+  .gn-vmeta{font-family:var(--pix);font-size:9.5px;letter-spacing:.4px;color:var(--muted);margin-top:2px;text-transform:uppercase;}
+  .gn-src{margin-left:auto;font-family:var(--pix);font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:4px;flex:none;}
+  .gn-vbody{font-size:12px;line-height:1.55;color:#c2c2ca;}
+  .gn-vbody .gn-brand{color:var(--ink);font-weight:700;background:rgba(var(--cyan-rgb),.14);padding:0 4px;border-radius:3px;}
+  .gn-stars{color:var(--orange);font-size:11px;letter-spacing:1px;margin-top:9px;}
+
+  .gn-vcard.gn-c .gn-avatar{background:var(--cyan);}
+  .gn-vcard.gn-c .gn-src{background:rgba(var(--cyan-rgb),.14);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .gn-vcard.gn-o .gn-avatar{background:var(--orange);}
+  .gn-vcard.gn-o .gn-src{background:rgba(var(--orange-rgb),.14);color:var(--orange-soft);border:1px solid rgba(var(--orange-rgb),.3);}
+
+  /* 4 cards: left column stacked (v1 over v2), right column stacked (v3 over v4) */
+  .gn-v1{top:3%;left:0;--rot:-3deg;transform:rotate(-3deg);animation-delay:0s;}
+  .gn-v2{top:33%;left:0;--rot:-3deg;transform:rotate(-3deg);animation-delay:-2.5s;}
+  .gn-v3{top:3%;right:0;--rot:3deg;transform:rotate(3deg);animation-delay:-1.2s;}
+  .gn-v4{top:33%;right:0;--rot:3deg;transform:rotate(3deg);animation-delay:-3.6s;}
+  @keyframes gn-floaty{0%,100%{transform:translateY(0) rotate(var(--rot,0deg));}50%{transform:translateY(-12px) rotate(var(--rot,0deg));}}
+
+  .gn-natural{
+    display:inline-flex;align-items:center;gap:9px;margin-top:26px;
+    font-family:var(--pix);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+    color:var(--cyan);background:rgba(var(--cyan-rgb),.06);border:1px solid rgba(var(--cyan-rgb),.22);
+    border-radius:999px;padding:8px 16px;
+  }
+  .gn-natural::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+
+  @media (max-width:1080px){
+    .gn-voices{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:clamp(36px,6vh,56px);pointer-events:auto;}
+    .gn-vcard{position:static;width:auto;transform:none!important;animation:none;}
+    .gn-block::after{mask-image:linear-gradient(180deg,#000 0%,#000 82%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 82%,transparent 100%);}
+  }
+  @media (max-width:560px){
+    .gn-voices{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .gn-vcard{animation:none;}
+  }
 </style>
 </head>
 <body>
@@ -1121,6 +1241,50 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- ===== «ГЛАС НАРОДА» BLOCK ===== -->
+      <div class="gn-block reveal">
+        <div class="gn-inner">
+
+          <div class="gn-voices" aria-hidden="true">
+            <div class="gn-vcard gn-c gn-v1">
+              <div class="gn-vhead"><div class="gn-avatar">М</div><div><div class="gn-vname">Максим&nbsp;Р.</div><div class="gn-vmeta">2 дня назад</div></div><span class="gn-src">VC</span></div>
+              <div class="gn-vbody">Полгода на <span class="gn-brand">этом сервисе</span> — наконец нормальная поддержка и адекватные тарифы. Советую.</div>
+            </div>
+            <div class="gn-vcard gn-o gn-v2">
+              <div class="gn-vhead"><div class="gn-avatar">А</div><div><div class="gn-vname">Анна&nbsp;К.</div><div class="gn-vmeta">Otzovik</div></div><span class="gn-src">Отзыв</span></div>
+              <div class="gn-vbody">Сравнивала несколько вариантов, остановились на <span class="gn-brand">бренде</span>. Не пожалели.</div>
+              <div class="gn-stars">★★★★★</div>
+            </div>
+            <div class="gn-vcard gn-c gn-v3">
+              <div class="gn-vhead"><div class="gn-avatar">S</div><div><div class="gn-vname">Sergey&nbsp;M.</div><div class="gn-vmeta">1 неделю назад</div></div><span class="gn-src">DTF</span></div>
+              <div class="gn-vbody">Тоже искал такое решение. По итогу лучший опыт из того, что пробовал.</div>
+            </div>
+            <div class="gn-vcard gn-o gn-v4">
+              <div class="gn-vhead"><div class="gn-avatar">О</div><div><div class="gn-vname">Ольга&nbsp;П.</div><div class="gn-vmeta">Яндекс Карты</div></div><span class="gn-src">5.0</span></div>
+              <div class="gn-vbody">Обращались повторно — всё чётко. Рекомендую знакомым.</div>
+              <div class="gn-stars">★★★★★</div>
+            </div>
+          </div>
+
+          <div class="gn-thesis">
+            <span class="gn-eyebrow">// Как мы работаем</span>
+
+            <div class="gn-reject"><span>Мы не делаем устаревшие SEO-фокусы под соусом GEO</span></div>
+
+            <h2>AI не доверяет <span class="gn-cross">сайтам</span>.<br>AI доверяет <span class="gn-hl"><span class="gn-mark"></span>людям.</span></h2>
+
+            <p>Поэтому мы обеспечиваем <b>комплексный подход</b>: работаем и с&nbsp;<span class="gn-u-o">технической оптимизацией</span>, и с&nbsp;<span class="gn-u-c">источниками</span>, из которых нейросети формируют ответы — создаём «глас&nbsp;народа». посты, комментарии и обсуждения на VC, DTF, Pikabu, Reddit, TenChat, Дзен, а также отзывы на Otzovik, IRecommend, Яндекс Картах.</p>
+
+            <div style="height:22px"></div>
+
+            <div class="gn-payoff">
+              <span class="gn-txt">Вы получаете единственную <span class="gn-o">реально работающую связку</span> для управления <span class="gn-c">AI-выдачей</span>.</span>
+            </div>
+          </div>
+
+        </div>
       </div>
 
       <div class="section-header reveal" style="margin-top:clamp(44px,6vh,68px);">
