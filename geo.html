@@ -425,6 +425,10 @@
   .chip:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.18);transform:translateY(-1px);}
   .chip.on-o{border-color:rgba(255,90,0,.55); color:#ffd2b8}
   .chip.on-c{border-color:rgba(31,209,240,.5); color:#bdf2fb}
+  /* на мобиле вторая строка (голубые чипы-площадки) разваливается на 4-5 строк — скрываем */
+  @media (max-width:760px){
+    .platforms .platform-row + .platform-row{display:none;}
+  }
 
   .visual-col{display:flex;flex-direction:column;align-items:center;gap:24px;}
   .visual{position:relative;display:flex;align-items:center;justify-content:center;width:100%;}
@@ -1288,7 +1292,7 @@
       <div class="method-card">
         <div class="card-label"><span>// Как это работает</span></div>
         <p class="lead">Клиенты всё чаще спрашивают нейросети «кого выбрать» — и покупают у тех, кого назовёт AI-система. <i>Мы делаем так, чтобы нейровыдача рекомендовала вас.</i></p>
-        <p class="lead">Используем эффективную связку самых мощных инструментов для управления AI-выдачей: работа с UGC-контентом, экспертными материалами и техническим GEO.</p>
+        <p class="lead">Используем эффективную связку самых мощных инструментов для управления AI-выдачей: работа с UGC-контентом, техническим GEO и экспертными материалами.</p>
       </div>
 
       <div class="visual-col">
@@ -1446,7 +1450,7 @@
 
             <h2>AI не доверяет <span class="gn-cross">сайтам</span>.<br>AI доверяет <span class="gn-hl"><span class="gn-mark"></span>людям.</span></h2>
 
-            <p>Поэтому мы обеспечиваем <b>комплексный подход</b>: работаем и с&nbsp;<span class="gn-u-o">технической оптимизацией</span>, и с&nbsp;<span class="gn-u-c">источниками</span>, из которых нейросети формируют ответы — создаём «глас&nbsp;народа». посты, комментарии и обсуждения на VC, DTF, Pikabu, Reddit, TenChat, Дзен, а также отзывы на Otzovik, IRecommend, Яндекс Картах.</p>
+            <p>Мы обеспечиваем <b>комплексный подход</b>: работаем и с&nbsp;<span class="gn-u-o">технической оптимизацией</span>, и с&nbsp;<span class="gn-u-c">источниками</span>, из которых нейросети формируют ответы — создаём «глас&nbsp;народа». Посты, комментарии и обсуждения на VC, DTF, Pikabu, Reddit, TenChat, Дзен, а также отзывы на Otzovik, IRecommend, Яндекс Картах и прочих отзовиках.</p>
           </div>
 
           <div class="gn-voices" aria-hidden="true">
@@ -1786,7 +1790,6 @@
   </svg>
   <div class="footstrip">
     <span>© AI Brand Advocacy</span>
-    <span>Глас народа для нейросетей</span>
   </div>
 
 </div><!-- /stage -->
