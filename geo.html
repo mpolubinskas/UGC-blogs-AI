@@ -213,10 +213,30 @@
   .audit-form--inline .audit-hint{justify-content:flex-start;}
   .audit-row.shake{animation:auditShake .4s ease;}
   @keyframes auditShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-  @media (max-width:520px){
-    .audit-row{flex-direction:column;border-radius:14px;padding:10px;gap:10px;}
-    .audit-input{padding:12px 14px;background:rgba(255,255,255,.03);border-radius:8px;}
-    .audit-btn{width:100%;}
+  @media (max-width:560px){
+    .audit-form{max-width:100%;gap:10px;}
+    /* halo рассчитан на широкую «пилюлю»: в вертикальной раскладке он
+       превращается в блоб, вылезающий за края экрана — убираем */
+    .audit-form::before{display:none;}
+    .audit-row{
+      flex-direction:column;border-radius:16px;padding:10px;gap:10px;
+      box-shadow:0 8px 24px rgba(0,0,0,.35);
+    }
+    .audit-input{
+      padding:14px 16px;background:rgba(255,255,255,.04);border-radius:10px;
+      font-size:16px; /* <16px заставляет iOS зумить страницу при фокусе */
+    }
+    .audit-btn{
+      width:100%;white-space:normal;
+      padding:14px 16px;font-size:12.5px;letter-spacing:.4px;line-height:1.3;
+      animation:none; /* кольцо пульсации у кнопки на всю ширину бьётся о края карточки */
+    }
+    .audit-hint{
+      display:block;text-align:center;
+      font-size:11.5px;line-height:1.5;
+    }
+    .audit-hint::before{display:none;}
+    .audit-form--inline .audit-hint{text-align:left;}
   }
 
   /* ============ AUDIT MODAL ============ */
