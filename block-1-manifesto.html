@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow">
+<title>Вариант 1 — Манифест</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0e;--bg-2:#101013;--bg-3:#131317;
+    --orange:#ff5a00;--orange-soft:#ff7a2e;--orange-rgb:255,90,0;
+    --cyan:#1fd1f0;--cyan-soft:#5fe1ff;--cyan-rgb:31,209,240;
+    --ink:#f4f3ee;--muted:#8b8b93;
+    --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+    --pix:'Manrope',system-ui,sans-serif;
+    --body:'Onest',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body);color:var(--ink);background:var(--bg);
+    min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+
+  /* ambient background (matches site .stage) */
+  .stage{position:relative;isolation:isolate;padding:clamp(56px,9vh,100px) clamp(20px,4vw,56px);}
+  .stage::before{
+    content:"";position:absolute;inset:0;z-index:-2;
+    background:
+      radial-gradient(620px 420px at 8% 6%, rgba(255,90,0,.10), transparent 60%),
+      radial-gradient(680px 520px at 100% 30%, rgba(31,209,240,.10), transparent 62%),
+      var(--bg);
+  }
+  .stage::after{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);
+    background-size:26px 26px;background-position:center;
+    mask-image:linear-gradient(180deg,#000 0%,#000 78%,transparent 100%);
+    pointer-events:none;
+  }
+  .inner{max-width:1120px;margin:0 auto;position:relative;z-index:1;}
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--pix);font-weight:600;font-size:13px;
+    letter-spacing:1px;text-transform:uppercase;color:var(--cyan);
+    margin-bottom:26px;
+  }
+  .eyebrow::before{content:"";width:26px;height:3px;background:var(--cyan);box-shadow:0 5px 0 var(--orange);}
+
+  /* ===== reject line ===== */
+  .reject{
+    display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(1.35rem,3vw,2.3rem);line-height:1.12;letter-spacing:-.6px;
+    margin-bottom:clamp(30px,5vh,52px);
+  }
+  .strike{
+    position:relative;color:#9a9aa2;white-space:nowrap;
+  }
+  .strike::after{
+    content:"";position:absolute;left:-4px;right:-4px;top:52%;height:3px;
+    background:#e0473a;transform:rotate(-3deg);
+    box-shadow:0 0 14px rgba(224,71,58,.5);border-radius:2px;
+  }
+  .sauce{
+    font-family:var(--pix);font-weight:700;font-size:.62em;
+    letter-spacing:.5px;text-transform:uppercase;
+    color:#e0473a;border:1.5px solid rgba(224,71,58,.4);
+    background:rgba(224,71,58,.08);padding:5px 11px;border-radius:6px;
+    transform:rotate(-2deg);white-space:nowrap;
+  }
+  .reject .no{
+    font-family:var(--pix);font-size:.5em;font-weight:700;letter-spacing:1px;
+    text-transform:uppercase;color:#e0473a;
+    border:1.5px dashed rgba(224,71,58,.45);border-radius:999px;
+    padding:6px 14px;transform:rotate(-2deg);
+  }
+
+  /* ===== complex-approach lead ===== */
+  .lead{
+    max-width:760px;color:#cfcfd4;
+    font-size:clamp(1rem,1.35vw,1.22rem);line-height:1.6;
+    margin-bottom:clamp(42px,7vh,76px);
+  }
+  .lead b{color:var(--ink);font-weight:700;}
+  .lead .u-o{color:var(--orange-soft);font-weight:700;}
+  .lead .u-c{color:var(--cyan);font-weight:700;}
+
+  /* ===== the big claim ===== */
+  .claim-wrap{
+    position:relative;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:clamp(40px,7vh,72px) 0;margin-bottom:clamp(42px,7vh,72px);
+  }
+  .claim-tag{
+    font-family:var(--pix);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--muted);margin-bottom:20px;display:block;
+  }
+  .claim-tag span{color:var(--orange-soft);}
+  .claim{
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(2rem,5.4vw,4.1rem);line-height:1.05;letter-spacing:-1.5px;
+  }
+  .claim .dim{color:#5c5c66;}
+  .claim .cross{position:relative;color:#7a7a84;}
+  .claim .cross::after{
+    content:"";position:absolute;left:-2px;right:-2px;top:54%;height:4px;
+    background:linear-gradient(90deg,var(--orange),var(--orange-soft));
+    transform:rotate(-2.5deg);border-radius:3px;
+    box-shadow:0 0 18px rgba(var(--orange-rgb),.55);
+  }
+  .claim .glow-c{
+    color:var(--cyan);
+    text-shadow:0 0 34px rgba(var(--cyan-rgb),.5);
+  }
+  .claim .arr{color:var(--orange);padding:0 .1em;}
+
+  /* ===== glas naroda ===== */
+  .voice{
+    display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,3vw,40px);
+    align-items:center;margin-bottom:clamp(40px,6vh,64px);
+  }
+  .voice-title{
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(1.3rem,2.4vw,1.9rem);line-height:1.1;letter-spacing:-.5px;
+    white-space:nowrap;
+  }
+  .voice-title .q{color:var(--orange);}
+  .voice-title small{
+    display:block;font-family:var(--pix);font-weight:600;font-size:11px;
+    letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:8px;
+  }
+  .chip-cloud{display:flex;flex-wrap:wrap;gap:9px;}
+  .chip{
+    font-family:var(--body);font-weight:700;font-size:13px;letter-spacing:.3px;
+    padding:9px 15px;border:1px solid var(--line);
+    background:rgba(255,255,255,.02);border-radius:6px;color:#cdcdd2;
+    transition:transform .15s,border-color .15s,background .15s,color .15s,box-shadow .15s;
+    cursor:default;
+  }
+  .chip.c{border-color:rgba(var(--cyan-rgb),.4);color:#bdf2fb;}
+  .chip.o{border-color:rgba(var(--orange-rgb),.42);color:#ffd2b8;}
+  .chip:hover{transform:translateY(-3px);}
+  .chip.c:hover{background:rgba(var(--cyan-rgb),.1);box-shadow:0 6px 22px rgba(var(--cyan-rgb),.16);}
+  .chip.o:hover{background:rgba(var(--orange-rgb),.1);box-shadow:0 6px 22px rgba(var(--orange-rgb),.16);}
+
+  .natural{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--pix);font-size:11.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+    color:var(--cyan);background:rgba(var(--cyan-rgb),.06);
+    border:1px solid rgba(var(--cyan-rgb),.22);border-radius:999px;padding:8px 16px;
+    margin-bottom:clamp(40px,6vh,64px);
+  }
+  .natural::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+
+  /* ===== payoff banner ===== */
+  .payoff{
+    position:relative;overflow:hidden;border-radius:16px;
+    border:1px solid rgba(var(--orange-rgb),.35);
+    background:linear-gradient(145deg,rgba(var(--orange-rgb),.09),rgba(var(--cyan-rgb),.05) 60%,rgba(var(--orange-rgb),.03));
+    padding:clamp(30px,5vw,52px);
+    display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;
+    transition:border-color .25s,box-shadow .25s;
+  }
+  .payoff:hover{border-color:rgba(var(--orange-rgb),.55);box-shadow:0 0 60px rgba(var(--orange-rgb),.12),0 16px 48px rgba(0,0,0,.3);}
+  .payoff::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--orange),var(--cyan));}
+  .payoff-label{
+    font-family:var(--pix);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--orange-soft);margin-bottom:14px;display:inline-flex;align-items:center;gap:8px;
+  }
+  .payoff-label::before{content:"★";}
+  .payoff h3{
+    font-family:var(--body);font-weight:800;max-width:640px;
+    font-size:clamp(1.35rem,2.8vw,2.1rem);line-height:1.15;letter-spacing:-.6px;
+  }
+  .payoff h3 .hl{
+    color:var(--orange);
+  }
+  .payoff h3 .hl2{color:var(--cyan);}
+  .payoff .one{
+    flex:none;font-family:var(--pix);font-weight:800;
+    font-size:clamp(3.4rem,9vw,6rem);line-height:.8;
+    color:transparent;-webkit-text-stroke:2px rgba(var(--orange-rgb),.55);
+    letter-spacing:-4px;
+  }
+
+  @media (max-width:680px){
+    .voice{grid-template-columns:1fr;}
+    .voice-title{white-space:normal;}
+    .payoff{flex-direction:column;align-items:flex-start;}
+    .payoff .one{align-self:flex-end;}
+  }
+</style>
+</head>
+<body>
+  <section class="stage">
+    <div class="inner">
+
+      <span class="eyebrow">// Почему мы</span>
+
+      <div class="reject">
+        <span class="no">Мы&nbsp;не&nbsp;делаем</span>
+        устаревшие <span class="strike">SEO-фокусы</span> под соусом
+        <span class="sauce">GEO</span>
+      </div>
+
+      <p class="lead">
+        Мы обеспечиваем <b>комплексный подход</b>, работая и с&nbsp;<span class="u-o">технической оптимизацией</span>,
+        и с&nbsp;<span class="u-c">источниками</span>, из которых нейросети формируют свои ответы.
+      </p>
+
+      <div class="claim-wrap">
+        <span class="claim-tag">// потому&nbsp;что <span>AI работает не так, как думают SEO-агентства</span></span>
+        <p class="claim">
+          <span class="dim">AI не доверяет</span> <span class="cross">сайтам</span> <span class="arr">→</span><br>
+          AI доверяет <span class="glow-c">людям.</span>
+        </p>
+      </div>
+
+      <div class="voice">
+        <div class="voice-title">
+          Мы создаём <span class="q">«глас&nbsp;народа»</span>
+          <small>Посты · комментарии · обсуждения · отзывы</small>
+        </div>
+        <div class="chip-cloud">
+          <span class="chip c">VC</span>
+          <span class="chip c">DTF</span>
+          <span class="chip c">Pikabu</span>
+          <span class="chip c">Reddit</span>
+          <span class="chip c">TenChat</span>
+          <span class="chip c">Дзен</span>
+          <span class="chip o">Otzovik</span>
+          <span class="chip o">IRecommend</span>
+          <span class="chip o">Яндекс&nbsp;Карты</span>
+        </div>
+      </div>
+
+      <span class="natural">Неотличимо от пользовательских материалов · только натуральные тексты</span>
+
+      <div class="payoff">
+        <div>
+          <span class="payoff-label">Итог</span>
+          <h3>Вы получаете <span class="hl">единственную реально&nbsp;работающую связку</span> для управления <span class="hl2">AI-выдачей</span>.</h3>
+        </div>
+        <div class="one" aria-hidden="true">01</div>
+      </div>
+
+    </div>
+  </section>
+</body>
+</html>

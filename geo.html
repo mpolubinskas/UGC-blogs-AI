@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow">
+<title>AI Brand Advocacy — видимость бренда в нейросетях</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c0e;
+    --bg-2:#101013;
+    --bg-3:#131317;
+    --orange:#ff5a00;
+    --orange-soft:#ff7a2e;
+    --orange-rgb:255,90,0;
+    --cyan:#1fd1f0;
+    --cyan-soft:#5fe1ff;
+    --cyan-rgb:31,209,240;
+    --ink:#f4f3ee;
+    --muted:#8b8b93;
+    --line:rgba(255,255,255,.08);
+    --line-strong:rgba(255,255,255,.14);
+    --pix:'Manrope', system-ui, sans-serif;
+    --body:'Onest', system-ui, -apple-system, sans-serif;
+    --radius:10px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:var(--bg);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ---- scroll progress bar ---- */
+  .scroll-progress{
+    position:fixed;top:0;left:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+    z-index:9999;transform-origin:left;transform:scaleX(0);
+    pointer-events:none;
+  }
+
+  /* ---- cursor glow ---- */
+  .cursor-glow{
+    position:fixed;width:500px;height:500px;border-radius:50%;
+    background:radial-gradient(circle,rgba(var(--orange-rgb),.055) 0%,transparent 65%);
+    pointer-events:none;z-index:0;transform:translate(-50%,-50%);
+    transition:opacity .3s;opacity:0;
+  }
+
+  /* ---- ambient background ---- */
+  .stage{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    isolation:isolate;
+  }
+  .stage::before{
+    content:"";
+    position:absolute; inset:0; z-index:-2;
+    background:
+      radial-gradient(620px 420px at 8% 6%, rgba(255,90,0,.10), transparent 60%),
+      radial-gradient(680px 520px at 100% 30%, rgba(31,209,240,.10), transparent 62%),
+      var(--bg);
+  }
+  .stage::after{
+    content:"";
+    position:absolute; inset:0; z-index:-1;
+    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);
+    background-size:26px 26px;
+    background-position:center;
+    mask-image:linear-gradient(180deg, #000 0%, #000 70%, transparent 100%);
+    pointer-events:none;
+  }
+
+  /* ============ HEADER ============ */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:24px;
+    padding:20px clamp(20px,4vw,56px);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:100;
+    background:transparent;
+    transition:background .3s ease, backdrop-filter .3s ease, border-color .3s ease;
+  }
+  header.scrolled{
+    background:rgba(12,12,14,.85);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-bottom-color:var(--line-strong);
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand-mark{
+    width:38px; height:38px; flex:none;
+    display:grid; place-items:center;
+    background:var(--orange);
+    color:#0c0c0e;
+    font-family:var(--pix); font-weight:700; font-size:16px;
+    box-shadow:4px 4px 0 rgba(31,209,240,.9);
+  }
+  .brand-name{
+    font-family:var(--pix); font-weight:600;
+    font-size:15px; line-height:1.05; letter-spacing:.5px;
+    text-transform:uppercase;
+  }
+  .brand-name span{color:var(--cyan)}
+
+  nav{display:flex; align-items:center; gap:30px;}
+  nav a{
+    color:var(--muted); text-decoration:none;
+    font-size:14px; font-weight:600; letter-spacing:.3px;
+    text-transform:uppercase;
+    transition:color .15s ease;
+    position:relative;
+  }
+  nav a::after{
+    content:'';position:absolute;bottom:-3px;left:0;width:0;height:1.5px;
+    background:var(--orange);transition:width .25s ease;
+  }
+  nav a:hover{color:var(--ink)}
+  nav a:hover::after{width:100%}
+  nav a.active{color:var(--ink)}
+  nav a.active::after{width:100%}
+
+  .btn{
+    font-family:var(--body); font-weight:700;
+    text-transform:uppercase; letter-spacing:.6px;
+    font-size:13.5px;
+    border:2px solid transparent; border-radius:999px;
+    padding:12px 22px; cursor:pointer; text-decoration:none;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform .12s ease, background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+    white-space:nowrap;
+  }
+  .btn-orange{background:var(--orange); color:#0c0c0e; border-color:var(--orange);}
+  .btn-orange:hover{
+    background:var(--orange-soft); border-color:var(--orange-soft);
+    transform:translateY(-2px);
+    box-shadow:0 6px 24px rgba(var(--orange-rgb),.35);
+  }
+  .btn-orange:active{transform:translateY(0) scale(.97);box-shadow:0 2px 8px rgba(var(--orange-rgb),.15);}
+  .header-cta{padding:11px 24px}
+
+  /* ============ HERO ============ */
+  .hero{
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+    gap:clamp(24px,3.5vh,44px);
+    padding:clamp(28px,5vh,64px) clamp(20px,4vw,56px);
+    max-width:1320px; width:100%; margin:0 auto;
+  }
+  .hero-top{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--pix); font-weight:500;
+    font-size:13px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--cyan);
+    margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:""; width:26px; height:3px; background:var(--cyan);
+    box-shadow:0 5px 0 var(--orange);
+  }
+  h1{
+    font-family:var(--body); font-weight:800;
+    font-size:clamp(2.05rem, 4.6vw, 3.7rem);
+    line-height:1.1; letter-spacing:-1px;
+  }
+  h1 .hl-o{color:var(--orange)}
+  h1 .hl-c{color:var(--cyan)}
+
+  .hero-cols{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    align-items:start;
+    gap:clamp(28px,5vw,72px);
+  }
+  .lead{
+    color:#cfcfd4; font-size:clamp(.98rem,1.15vw,1.08rem);
+    line-height:1.65;
+  }
+  .lead b{color:var(--ink); font-weight:700}
+  .lead i{color:var(--cyan); font-style:normal; font-weight:600}
+
+  .method-card{
+    padding:22px 24px;
+    background:linear-gradient(145deg, rgba(255,90,0,.06) 0%, rgba(31,209,240,.04) 100%);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:8px;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .25s ease, box-shadow .25s ease;
+  }
+  .method-card:hover{
+    border-color:rgba(255,255,255,.2);
+    box-shadow:0 0 48px rgba(var(--orange-rgb),.12), 0 8px 32px rgba(0,0,0,.2);
+  }
+  .method-card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--orange) 0%, var(--cyan) 100%);
+  }
+  .card-label{
+    font-family:var(--pix);
+    font-size:11px; letter-spacing:1.2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .card-label span{color:var(--orange-soft)}
+  .method-card .lead+.lead{
+    margin-top:0;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  .platforms{
+    display:flex; flex-wrap:wrap; gap:9px;
+  }
+  .chip{
+    font-family:var(--body); font-weight:700; font-size:12px;
+    letter-spacing:.4px; color:#cdcdd2;
+    padding:7px 12px; border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    border-radius:4px;
+    transition:border-color .15s, background .15s, color .15s, transform .15s;
+  }
+  .chip:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.18);transform:translateY(-1px);}
+  .chip.on-o{border-color:rgba(255,90,0,.55); color:#ffd2b8}
+  .chip.on-c{border-color:rgba(31,209,240,.5); color:#bdf2fb}
+
+  .visual-col{display:flex;flex-direction:column;align-items:center;gap:24px;}
+  .visual{position:relative;display:flex;align-items:center;justify-content:center;width:100%;}
+  .eye-wrap{
+    position:relative; width:100%; max-width:430px;
+    filter:drop-shadow(0 0 26px rgba(255,90,0,.22));
+    animation:float 7s ease-in-out infinite;
+  }
+  .eye-wrap svg{width:100%; height:auto; display:block; shape-rendering:crispEdges;}
+  .eye-tag{
+    position:absolute; font-family:var(--pix); font-size:12px;
+    letter-spacing:.5px; padding:6px 11px; border-radius:4px;
+    background:#101014; border:1px solid var(--line); color:#dfe7ea;
+    animation:float 7s ease-in-out infinite;
+  }
+  .eye-tag b{color:#0c0c0e; background:var(--cyan); padding:1px 5px; margin-right:6px; border-radius:2px;}
+  .t1{top:2%; right:0; border-color:rgba(31,209,240,.45)}
+  .t2{bottom:6%; left:-2%; animation-delay:-2.3s; border-color:rgba(255,90,0,.5)}
+  .t2 b{background:var(--orange)}
+  .t3{bottom:38%; right:-3%; animation-delay:-4.1s}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .btn-lg{padding:16px 30px; font-size:14.5px}
+  .teeth{width:100%; height:30px; display:block; color:var(--cyan); margin-top:auto;}
+
+  /* ============ MARQUEE ============ */
+  .marquee-wrap{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.015);
+    overflow:hidden;
+    padding:12px 0;
+    position:relative;
+  }
+  .marquee-wrap::before,.marquee-wrap::after{
+    content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;
+    pointer-events:none;
+  }
+  .marquee-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent);}
+  .marquee-wrap::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent);}
+  .marquee-track{
+    display:flex;gap:0;
+    animation:marqueeScroll 28s linear infinite;
+    width:max-content;
+  }
+  .marquee-track:hover{animation-play-state:paused;}
+  @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  .marquee-item{
+    font-family:var(--pix);font-size:11.5px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--muted);
+    padding:0 28px;white-space:nowrap;
+    display:flex;align-items:center;gap:28px;
+  }
+  .marquee-item .dot{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--orange);flex:none;
+    box-shadow:0 0 6px rgba(var(--orange-rgb),.6);
+  }
+  .marquee-item .dot.c{background:var(--cyan);box-shadow:0 0 6px rgba(var(--cyan-rgb),.6);}
+
+  /* ============ SHARED SECTION ============ */
+  .section{
+    padding:clamp(56px,9vh,100px) clamp(20px,4vw,56px);
+    border-top:1px solid var(--line);
+    position:relative;overflow:hidden;
+  }
+  .section-inner{max-width:1320px;margin:0 auto;position:relative;z-index:1;}
+  .section-alt{background:rgba(255,255,255,.013);}
+  .section-header{
+    display:flex;flex-direction:column;align-items:center;
+    text-align:center;gap:14px;
+    margin-bottom:clamp(36px,6vh,64px);
+  }
+  .section-header .eyebrow{margin-bottom:0;}
+  h2{
+    font-family:var(--body);font-weight:800;
+    font-size:clamp(1.7rem,3.2vw,2.9rem);
+    line-height:1.08;letter-spacing:-.6px;
+  }
+  h2 .hl-o{color:var(--orange)}
+  h2 .hl-c{color:var(--cyan)}
+  h3{
+    font-family:var(--body);font-weight:700;
+    font-size:clamp(.96rem,1.2vw,1.12rem);
+    line-height:1.3;color:var(--ink);
+  }
+
+  /* ---- scroll reveal ---- */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+  .reveal-scale{opacity:0;transform:scale(.94);transition:opacity .55s cubic-bezier(.34,1.56,.64,1),transform .55s cubic-bezier(.34,1.56,.64,1);}
+  .reveal-scale.in-view{opacity:1;transform:scale(1);}
+
+  /* ============ EXAMPLES ============ */
+  .col-labels{
+    display:grid;
+    grid-template-columns:1fr 52px 1fr;
+    gap:0;
+    margin-bottom:12px;
+    max-width:920px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .col-lbl{
+    font-family:var(--pix);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;
+  }
+  .col-lbl.left{justify-content:flex-start;}
+  .col-lbl.right{justify-content:flex-end;}
+  .col-lbl .lbadge{padding:4px 10px;border-radius:3px;font-size:10px;font-weight:700;}
+  .col-lbl.left .lbadge{background:rgba(200,50,50,.15);color:#ff8080;border:1px solid rgba(200,50,50,.25);}
+  .col-lbl.right .lbadge{background:rgba(var(--cyan-rgb),.12);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .col-lbl .sub{color:var(--muted);}
+  .col-lbl.right .sub{color:rgba(var(--cyan-rgb),.6);}
+
+  .compare-rows{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    max-width:920px;
+    margin:0 auto clamp(28px,4vh,48px);
+  }
+  .compare-row{
+    display:grid;
+    grid-template-columns:1fr 52px 1fr;
+    gap:0;
+    align-items:stretch;
+  }
+  .bylo-col,.stalo-col{display:flex;flex-direction:column;}
+
+  .cr-arrow{
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:4px;
+    position:relative;
+  }
+  .cr-arrow::before{
+    content:'';display:block;width:1px;height:100%;
+    position:absolute;top:0;left:50%;
+    background:linear-gradient(180deg,transparent 0%,rgba(var(--orange-rgb),.18) 30%,rgba(var(--orange-rgb),.18) 70%,transparent 100%);
+  }
+  .cr-arrow-icon{
+    font-family:var(--pix);font-size:22px;
+    color:var(--orange);text-shadow:0 0 20px rgba(var(--orange-rgb),.6);
+    position:relative;z-index:1;line-height:1;
+  }
+
+  /* ---- chat window (dialog bubble style) ---- */
+  .chat-win{
+    border-radius:12px;overflow:hidden;
+    border:1px solid var(--line);
+    background:#0d0d10;
+    transition:border-color .25s ease, box-shadow .25s ease;
+    display:flex;flex-direction:column;height:100%;
+  }
+  .bylo-col .chat-win{border-color:rgba(200,50,50,.22);}
+  .stalo-col .chat-win{
+    border-color:rgba(var(--cyan-rgb),.22);
+    box-shadow:0 2px 24px rgba(var(--cyan-rgb),.04),inset 0 1px 0 rgba(var(--cyan-rgb),.05);
+  }
+  .bylo-col .chat-win:hover{border-color:rgba(200,50,50,.4);}
+  .stalo-col .chat-win:hover{
+    border-color:rgba(var(--cyan-rgb),.42);
+    box-shadow:0 4px 32px rgba(var(--cyan-rgb),.09);
+  }
+
+  .chat-win-head{
+    display:flex;align-items:center;gap:8px;
+    padding:9px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  .bylo-col .chat-win-head{
+    background:linear-gradient(90deg,rgba(200,50,50,.1) 0%,#0f0f12 100%);
+    border-bottom-color:rgba(200,50,50,.15);
+  }
+  .stalo-col .chat-win-head{
+    background:linear-gradient(90deg,rgba(var(--cyan-rgb),.07) 0%,#0f0f12 100%);
+    border-bottom-color:rgba(var(--cyan-rgb),.12);
+  }
+
+  .chat-badge{
+    font-family:var(--pix);font-size:10px;font-weight:700;
+    padding:2px 7px;border-radius:4px;letter-spacing:.5px;flex:none;
+  }
+  .bylo-col .chat-badge{background:rgba(200,50,50,.25);color:#ff8080;border:1px solid rgba(200,50,50,.35);}
+  .stalo-col .chat-badge{background:var(--cyan);color:#06222a;}
+
+  .chat-ai-name{font-size:11px;font-family:var(--pix);letter-spacing:.3px;}
+  .bylo-col .chat-ai-name{color:rgba(200,100,100,.6);}
+  .stalo-col .chat-ai-name{color:rgba(var(--cyan-rgb),.55);}
+
+  .chat-win-dots{margin-left:auto;display:flex;gap:5px;align-items:center;}
+  .chat-win-dots i{display:block;width:7px;height:7px;border-radius:50%;font-style:normal;}
+  .bylo-col .chat-win-dots i{background:rgba(200,50,50,.3);}
+  .stalo-col .chat-win-dots i{background:rgba(var(--cyan-rgb),.14);}
+  .chat-win-dots i:nth-child(1){opacity:.3;}
+  .chat-win-dots i:nth-child(2){opacity:.6;}
+
+  .chat-msgs{
+    padding:14px 14px 10px;
+    display:flex;flex-direction:column;gap:9px;
+  }
+
+  .b-bubble{
+    max-width:90%;padding:8px 12px;
+    font-size:12.5px;line-height:1.65;
+  }
+  .b-bubble.b-user{
+    align-self:flex-end;
+    background:rgba(255,90,0,.1);
+    border:1px solid rgba(255,90,0,.17);
+    color:#887060;
+    border-radius:12px 12px 3px 12px;
+  }
+  .b-bubble.b-ai{
+    align-self:flex-start;
+    border-radius:12px 12px 12px 3px;
+  }
+  .bylo-col .b-ai{
+    background:rgba(200,50,50,.07);
+    border:1px solid rgba(200,50,50,.18);
+    color:#b08080;
+  }
+  .stalo-col .b-ai{
+    background:rgba(var(--cyan-rgb),.07);
+    border:1px solid rgba(var(--cyan-rgb),.18);
+    color:#7ab8c0;
+  }
+
+  .b-ai .b-hit{
+    background:var(--cyan);color:#06222a;font-weight:700;
+    padding:1px 5px;border-radius:3px;
+  }
+  .b-ai .rival{font-weight:600;}
+  .bylo-col .b-ai .rival{color:#7a5050;}
+  .stalo-col .b-ai .rival{color:#4e7a82;}
+
+  .chat-foot{
+    padding:7px 14px;
+    font-family:var(--pix);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
+    display:flex;align-items:center;gap:6px;
+    margin-top:auto;
+  }
+  .bylo-col .chat-foot{
+    color:#884040;background:rgba(200,50,50,.05);
+    border-top:1px solid rgba(200,50,50,.1);
+  }
+  .stalo-col .chat-foot{
+    color:var(--cyan);background:rgba(var(--cyan-rgb),.05);
+    border-top:1px solid rgba(var(--cyan-rgb),.12);
+  }
+
+  /* ============ PRINCIPLE SPLIT ============ */
+  .p2-split{
+    display:grid;
+    grid-template-columns:55fr 45fr;
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .p2-left{
+    padding:clamp(28px,3.5vw,48px);
+    display:flex;flex-direction:column;
+    border-right:1px solid var(--line);
+  }
+  .p2-timeline{
+    display:flex;flex-direction:column;
+    position:relative;flex:1;
+  }
+  .p2-timeline::before{
+    content:"";
+    position:absolute;left:18px;top:0;bottom:0;width:1px;
+    background:linear-gradient(180deg,var(--orange),var(--cyan));
+    opacity:.28;
+  }
+  .p2-tcard{
+    display:flex;gap:18px;align-items:flex-start;
+    padding:20px 0;position:relative;
+  }
+  .p2-tcard:not(:last-child){border-bottom:1px solid var(--line);}
+  .p2-tnum{
+    width:36px;height:36px;border-radius:50%;flex:none;
+    display:grid;place-items:center;
+    font-family:var(--pix);font-size:12px;font-weight:700;
+    position:relative;z-index:1;border:1.5px solid;
+  }
+  .p2-tcard:nth-child(1) .p2-tnum{background:rgba(var(--orange-rgb),.1);border-color:rgba(var(--orange-rgb),.4);color:var(--orange-soft);}
+  .p2-tcard:nth-child(2) .p2-tnum{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.18);color:var(--muted);}
+  .p2-tcard:nth-child(3) .p2-tnum{background:rgba(var(--cyan-rgb),.1);border-color:rgba(var(--cyan-rgb),.38);color:var(--cyan-soft);}
+  .p2-tbody{flex:1;padding-top:2px;}
+  .p2-tlabel{
+    font-family:var(--pix);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .p2-tcard:nth-child(1) .p2-tlabel{color:var(--orange-soft);}
+  .p2-tcard:nth-child(2) .p2-tlabel{color:var(--muted);}
+  .p2-tcard:nth-child(3) .p2-tlabel{color:var(--cyan-soft);}
+  .p2-tbody h3{margin-bottom:8px;}
+  .p2-tbody .lead{font-size:13px;color:#9090a6;}
+  .p2-tbody .lead b{color:var(--ink);}
+  .p2-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+  .p2-chip{
+    font-family:var(--pix);font-size:10px;letter-spacing:.4px;
+    padding:3px 8px;border-radius:3px;
+    background:rgba(var(--cyan-rgb),.06);
+    border:1px solid rgba(var(--cyan-rgb),.17);
+    color:rgba(var(--cyan-rgb),.7);
+    transition:border-color .15s, background .15s, color .15s;
+  }
+  .p2-chip:hover{
+    border-color:rgba(var(--cyan-rgb),.38);
+    background:rgba(var(--cyan-rgb),.11);
+    color:var(--cyan);
+  }
+  .p2-own{
+    display:inline-flex;align-items:center;gap:5px;
+    font-family:var(--pix);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    background:rgba(var(--orange-rgb),.1);color:var(--orange-soft);
+    border:1px solid rgba(var(--orange-rgb),.25);
+    padding:4px 9px;border-radius:3px;margin-top:10px;
+  }
+  .p2-right{
+    position:relative;overflow:hidden;
+    min-height:480px;
+  }
+  .p2-right img{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:top center;
+    filter:brightness(.85) saturate(1.05);
+  }
+  .p2-right::before{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(90deg,var(--bg) 0%,rgba(12,12,14,.15) 30%,transparent 60%);
+  }
+  .p2-right::after{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,transparent 55%,rgba(12,12,14,.65) 100%);
+  }
+  .p2-img-label{
+    position:absolute;bottom:18px;right:18px;z-index:2;
+    font-family:var(--pix);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    color:rgba(var(--cyan-rgb),.55);
+    padding:5px 10px;border-radius:4px;
+    border:1px solid rgba(var(--cyan-rgb),.14);
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(8px);
+  }
+
+  /* ============ HOW IT WORKS ============ */
+  .steps-timeline{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+    position:relative;
+  }
+  .steps-timeline::before{
+    content:'';position:absolute;
+    top:48px;left:calc(12.5% + 24px);right:calc(12.5% + 24px);
+    height:1px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+    opacity:.4;pointer-events:none;
+    z-index:0;
+  }
+  .step{
+    background:var(--bg-2);border:1px solid var(--line);
+    border-radius:var(--radius);padding:28px 22px 24px;
+    position:relative;z-index:1;
+    transition:border-color .25s,transform .3s,box-shadow .3s;
+  }
+  .step:hover{
+    border-color:rgba(var(--orange-rgb),.4);
+    transform:translateY(-4px);
+    box-shadow:0 12px 40px rgba(0,0,0,.25),0 0 0 1px rgba(var(--orange-rgb),.15);
+  }
+  .step-n{
+    font-family:var(--pix);font-size:42px;font-weight:700;
+    color:transparent;-webkit-text-stroke:1.5px rgba(255,90,0,.3);
+    line-height:1;margin-bottom:16px;display:block;
+    transition:-webkit-text-stroke-color .25s;
+  }
+  .step:hover .step-n{-webkit-text-stroke-color:rgba(255,90,0,.65);}
+  .step h3{margin-bottom:10px;}
+  .step .lead{font-size:13px;color:#a0a0b0;}
+
+  .step-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--bg-2);border:2px solid rgba(var(--orange-rgb),.5);
+    position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+    z-index:2;
+    transition:background .25s,border-color .25s,box-shadow .25s;
+  }
+  .step:hover .step-dot{
+    background:var(--orange);border-color:var(--orange);
+    box-shadow:0 0 10px rgba(var(--orange-rgb),.6);
+  }
+
+  /* ============ DIFF / BENTO ============ */
+  .bento-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:auto auto;
+    gap:16px;
+  }
+  .bento-card{
+    background:var(--bg-2);border:1px solid var(--line);
+    border-radius:var(--radius);padding:28px;
+    position:relative;overflow:hidden;
+    transition:border-color .25s,box-shadow .25s,transform .3s;
+  }
+  .bento-card:hover{border-color:rgba(255,255,255,.18);transform:translateY(-3px);}
+  .bento-card.ours{
+    grid-column:1 / -1;
+    border-color:rgba(var(--orange-rgb),.35);
+    background:linear-gradient(145deg,rgba(var(--orange-rgb),.07),rgba(var(--cyan-rgb),.04) 60%,rgba(var(--orange-rgb),.02));
+  }
+  .bento-card.ours:hover{
+    border-color:rgba(var(--orange-rgb),.55);
+    box-shadow:0 0 60px rgba(var(--orange-rgb),.12),0 16px 48px rgba(0,0,0,.3);
+  }
+  .bento-card.ours::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--orange),var(--cyan));
+  }
+  .bento-card.ours::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(600px circle at 60% 50%,rgba(var(--orange-rgb),.06),transparent 55%);
+    pointer-events:none;
+  }
+  .bento-card:not(.ours)::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(180px circle at var(--gx,50%) var(--gy,50%), rgba(255,255,255,.05), transparent 65%);
+    pointer-events:none;opacity:0;
+    transition:opacity .3s;border-radius:inherit;
+  }
+  .bento-card:not(.ours):hover::after{opacity:1;}
+  .bento-corner{
+    position:absolute;bottom:16px;right:18px;
+    font-family:var(--pix);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    color:rgba(var(--orange-rgb),.5);
+  }
+  .diff-who{
+    font-family:var(--pix);font-size:11px;letter-spacing:1px;
+    text-transform:uppercase;margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .diff-who .who-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex:none;}
+  .bento-card.ours .diff-who .who-dot{background:var(--orange);box-shadow:0 0 8px rgba(var(--orange-rgb),.6);}
+  .bento-card:not(.ours) .diff-who{color:var(--muted);}
+  .bento-card.ours .diff-who{color:var(--orange-soft);}
+  .bento-card .lead{font-size:13.5px;line-height:1.7;}
+  .bento-card.ours .lead{font-size:13.5px;}
+  .ours-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--pix);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+    background:rgba(var(--orange-rgb),.15);color:var(--orange-soft);
+    border:1px solid rgba(var(--orange-rgb),.3);
+    padding:4px 10px;border-radius:3px;
+    margin-top:16px;
+  }
+
+  /* ============ FAQ ============ */
+  .faq-layout{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:clamp(32px,5vw,72px);
+    align-items:start;
+  }
+  .faq-sidebar{
+    position:sticky;top:96px;
+  }
+  .faq-sidebar h2{text-align:left;font-size:clamp(1.5rem,2.5vw,2.2rem);}
+  .faq-sidebar .eyebrow{margin-bottom:16px;}
+  .faq-sidebar-text{
+    margin-top:18px;font-size:13.5px;color:var(--muted);line-height:1.7;
+  }
+  .faq-list{display:flex;flex-direction:column;gap:6px;}
+  .faq-item{
+    border:1px solid var(--line);border-radius:8px;overflow:hidden;
+    transition:border-color .2s;
+  }
+  .faq-item:hover{border-color:rgba(255,255,255,.16);}
+  .faq-item.open{border-color:rgba(var(--orange-rgb),.3);}
+  .faq-q{
+    width:100%;text-align:left;background:var(--bg-2);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:18px 22px;font-family:var(--body);font-weight:600;
+    font-size:14.5px;color:var(--ink);transition:background .15s;
+  }
+  .faq-q:hover{background:var(--bg-3);}
+  .faq-toggle{
+    width:28px;height:28px;border-radius:50%;flex:none;
+    border:1.5px solid rgba(255,255,255,.15);
+    display:grid;place-items:center;
+    font-family:var(--pix);font-size:16px;color:var(--orange);
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1),background .15s,border-color .15s;
+    line-height:1;
+  }
+  .faq-item.open .faq-toggle{transform:rotate(45deg);background:rgba(var(--orange-rgb),.1);border-color:rgba(var(--orange-rgb),.4);}
+  .faq-a{
+    max-height:0;overflow:hidden;
+    transition:max-height .3s cubic-bezier(.16,1,.3,1),padding .3s;
+    padding:0 22px;
+    font-size:14px;line-height:1.75;color:#a0a0b0;
+    background:var(--bg-2);border-top:0 solid var(--line);
+  }
+  .faq-item.open .faq-a{
+    max-height:400px;padding:10px 22px 20px;
+    border-top-width:1px;
+  }
+  .faq-a b{color:var(--ink);}
+  .faq-note{margin-top:10px;font-size:12.5px;color:var(--muted);font-style:italic;}
+  .faq-q:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px;}
+
+  /* ============ FINAL CTA ============ */
+  .cta-section{
+    padding:clamp(72px,12vh,128px) clamp(20px,4vw,56px);
+    text-align:center;border-top:1px solid var(--line);
+    position:relative;overflow:hidden;
+  }
+  .cta-bg{
+    position:absolute;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(800px 600px at 50% 50%,rgba(var(--orange-rgb),.09),transparent 60%),
+      radial-gradient(500px 400px at 80% 20%,rgba(var(--cyan-rgb),.06),transparent 55%);
+  }
+  .cta-bg::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1.4px);
+    background-size:24px 24px;
+  }
+  .cta-inner{max-width:760px;margin:0 auto;position:relative;z-index:1;}
+  .cta-inner h2{
+    font-size:clamp(1.8rem,3.8vw,3.2rem);
+    margin-bottom:20px;
+  }
+  .cta-sub{
+    font-size:clamp(.98rem,1.3vw,1.12rem);
+    color:var(--orange-soft);font-weight:600;
+    line-height:1.55;margin-bottom:clamp(28px,5vh,44px);
+  }
+  .btn-xl{
+    padding:20px 52px;font-size:15.5px;
+    position:relative;overflow:hidden;
+  }
+  .btn-xl::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 50%);
+    opacity:0;transition:opacity .2s;border-radius:inherit;
+  }
+  .btn-xl:hover::after{opacity:1;}
+  .cta-fine{margin-top:20px;font-size:13.5px;color:var(--muted);line-height:1.65;max-width:520px;margin-left:auto;margin-right:auto;}
+
+  /* ============ FOOTER ============ */
+  .footstrip{
+    background:var(--cyan); color:#06222a;
+    font-family:var(--pix); font-size:13px; letter-spacing:1px;
+    text-transform:uppercase;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; padding:11px clamp(20px,4vw,56px);
+    flex-wrap:wrap;
+  }
+  .footstrip span{font-weight:600}
+  .footstrip .credit{
+    font-size:10px;letter-spacing:.5px;opacity:.5;
+  }
+
+  /* ============ SERVICES ACCORDION ============ */
+  .section-sub{color:var(--muted);font-size:.95rem;max-width:540px;text-align:center;line-height:1.6;}
+  #services .section-inner{max-width:860px;}
+
+  .acc-list{display:flex;flex-direction:column;gap:8px;}
+  .acc-item{
+    border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;transition:border-color .2s,box-shadow .2s;position:relative;
+  }
+  .acc-item::before{
+    content:"";position:absolute;top:0;left:0;bottom:0;width:2px;
+    background:var(--line);transition:background .2s;
+  }
+  .acc-item.open{border-color:rgba(var(--orange-rgb),.35);box-shadow:0 4px 28px rgba(0,0,0,.2);}
+  .acc-item.open::before{background:linear-gradient(180deg,var(--orange),var(--cyan));}
+  .acc-item.cyan-item{border-color:rgba(var(--cyan-rgb),.2);}
+  .acc-item.cyan-item::before{background:var(--cyan);}
+  .acc-item.cyan-item.open{border-color:rgba(var(--cyan-rgb),.5);box-shadow:0 4px 28px rgba(0,0,0,.2);}
+  .acc-item:not(.open):hover{border-color:rgba(255,255,255,.16);}
+
+  .acc-trigger{
+    width:100%;background:var(--bg-2);border:none;cursor:pointer;
+    display:grid;grid-template-columns:auto 1fr auto auto;
+    align-items:center;gap:16px;padding:16px 20px;text-align:left;
+    transition:background .15s;outline:none;
+  }
+  .acc-trigger:hover{background:var(--bg-3);}
+  .acc-item.open .acc-trigger{background:var(--bg-3);}
+  .acc-trigger:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px;}
+
+  .acc-badge{
+    font-family:var(--pix);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    padding:3px 9px;border-radius:3px;flex:none;
+  }
+  .acc-badge.bfree{background:rgba(var(--cyan-rgb),.15);color:var(--cyan);border:1px solid rgba(var(--cyan-rgb),.3);}
+  .acc-badge.bpaid{background:rgba(var(--orange-rgb),.12);color:var(--orange-soft);border:1px solid rgba(var(--orange-rgb),.25);}
+
+  .acc-meta{display:flex;flex-direction:column;gap:2px;}
+  .acc-name{font-weight:700;font-size:.96rem;color:var(--ink);}
+  .acc-summary{font-size:12px;color:var(--muted);line-height:1.3;}
+
+  .acc-price{font-family:var(--pix);font-weight:700;font-size:.95rem;color:var(--ink);white-space:nowrap;flex:none;}
+  .cyan-item .acc-price{color:var(--cyan);}
+  .acc-item.open .acc-price{color:var(--orange);}
+  .cyan-item.open .acc-price{color:var(--cyan);}
+
+  .acc-toggle{
+    width:30px;height:30px;border-radius:50%;flex:none;
+    border:1.5px solid rgba(255,255,255,.12);
+    display:grid;place-items:center;
+    font-family:var(--pix);font-size:18px;color:var(--orange);
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1),background .15s,border-color .15s;
+    line-height:1;
+  }
+  .cyan-item .acc-toggle{color:var(--cyan);}
+  .acc-item.open .acc-toggle{transform:rotate(45deg);background:rgba(var(--orange-rgb),.1);border-color:rgba(var(--orange-rgb),.35);}
+  .cyan-item.open .acc-toggle{background:rgba(var(--cyan-rgb),.1);border-color:rgba(var(--cyan-rgb),.35);}
+
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.16,1,.3,1);background:var(--bg-2);}
+  .acc-item.open .acc-body{max-height:600px;}
+
+  .acc-inner{
+    padding:4px 20px 22px 20px;border-top:1px solid var(--line);
+    display:grid;grid-template-columns:1fr auto;gap:20px 32px;align-items:start;
+  }
+
+  .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;padding-top:16px;}
+  .feat-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#cfcfd4;line-height:1.4;}
+  .f-icon{
+    width:20px;height:20px;border-radius:50%;flex:none;margin-top:1px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-family:var(--pix);font-weight:700;
+  }
+  .f-icon.yes{background:rgba(var(--cyan-rgb),.09);border:1px solid rgba(var(--cyan-rgb),.22);color:var(--cyan);}
+  .f-icon.num{background:rgba(var(--orange-rgb),.09);border:1px solid rgba(var(--orange-rgb),.22);color:var(--orange-soft);}
+  .f-text b{color:var(--ink);}
+
+  .acc-cta-col{padding-top:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-end;min-width:160px;}
+  .btn-o{background:var(--orange);color:#0c0c0e;border-color:var(--orange);}
+  .btn-o:hover{background:var(--orange-soft);border-color:var(--orange-soft);transform:translateY(-2px);box-shadow:0 6px 20px rgba(var(--orange-rgb),.35);}
+  .btn-c{background:var(--cyan);color:#06222a;border-color:var(--cyan);}
+  .btn-c:hover{background:var(--cyan-soft);border-color:var(--cyan-soft);transform:translateY(-2px);box-shadow:0 6px 20px rgba(var(--cyan-rgb),.35);}
+  .acc-note{font-size:11.5px;color:var(--muted);line-height:1.5;text-align:right;max-width:160px;}
+
+  .rec-strip{
+    display:flex;align-items:center;gap:7px;
+    font-family:var(--pix);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
+    color:var(--orange-soft);padding:6px 20px;
+    background:rgba(var(--orange-rgb),.05);border-bottom:1px solid rgba(var(--orange-rgb),.1);
+  }
+  .rec-strip::before{content:"★";color:var(--orange);}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:760px){
+    .desktop-only{display:none;}
+  }
+
+  @media (max-width:960px){
+    .hero-cols{grid-template-columns:1fr;}
+    .visual-col{order:-1}
+    .eye-wrap{max-width:360px}
+    .col-labels,.compare-row{grid-template-columns:1fr;}
+    .cr-arrow{padding:8px 0;flex-direction:row;}
+    .cr-arrow::before{width:100%;height:1px;top:50%;left:0;}
+    .p2-split{grid-template-columns:1fr;}
+    .p2-right{min-height:280px;order:-1;}
+    .p2-right::before{background:linear-gradient(180deg,transparent 40%,var(--bg) 100%);}
+    .p2-left{border-right:none;border-top:1px solid var(--line);}
+    .steps-timeline{grid-template-columns:repeat(2,1fr);}
+    .steps-timeline::before{display:none;}
+    .bento-grid{grid-template-columns:1fr 1fr;}
+    .bento-card.ours{grid-column:1 / -1;}
+    .faq-layout{grid-template-columns:1fr;}
+    .faq-sidebar{position:static;}
+  }
+  @media (max-width:760px){
+    nav{display:none}
+    .footstrip{justify-content:center;text-align:center}
+    .bento-grid{grid-template-columns:1fr;}
+    .bento-card.ours{grid-column:auto;}
+    .acc-trigger{grid-template-columns:auto 1fr auto;}
+    .acc-price{display:none;}
+    .feat-grid{grid-template-columns:1fr;}
+    .acc-inner{grid-template-columns:1fr;}
+    .acc-cta-col{align-items:stretch;}
+    .acc-note{text-align:left;max-width:none;}
+  }
+  @media (max-width:600px){
+    .steps-timeline{grid-template-columns:1fr;}
+    .eye-tag{display:none}
+    .eye-wrap{max-width:300px}
+  }
+
+  a:focus-visible, .btn:focus-visible{
+    outline:3px solid var(--cyan); outline-offset:3px;
+  }
+  .section,.cta-section{scroll-margin-top:80px;}
+
+  @media (prefers-reduced-motion:reduce){
+    .eye-wrap,.eye-tag,.marquee-track{animation:none}
+    *{transition:none !important}
+    .reveal,.reveal-scale{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- scroll progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+<!-- cursor glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<div class="stage">
+
+  <!-- ===== HEADER ===== -->
+  <header id="mainHeader">
+    <div class="brand">
+      <div class="brand-mark">AI</div>
+      <div class="brand-name">AI Brand<br><span>Advocacy</span></div>
+    </div>
+    <nav>
+      <a href="#services">Услуги</a>
+      <a href="#examples">Примеры</a>
+      <a href="#faq">FAQ</a>
+      <a href="#diff">О нас</a>
+    </nav>
+    <a href="#contact" class="btn btn-orange header-cta">Связаться</a>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <main class="hero">
+
+    <div class="hero-top">
+      <span class="eyebrow">// Видимость в нейросетях</span>
+      <h1>Продвигается ли ваш бренд в&nbsp;ответах <span class="hl-o">нейросетей</span> и&nbsp;<span class="hl-c">AI-поиска</span>?</h1>
+    </div>
+
+    <div class="hero-cols">
+      <div class="method-card">
+        <div class="card-label"><span>// Как это работает</span></div>
+        <p class="lead">Клиенты всё чаще спрашивают нейросети «кого выбрать» — и покупают у тех, кого назовёт AI-система. <i>Мы делаем так, чтобы нейровыдача рекомендовала вас.</i></p>
+        <p class="lead">Используем эффективную связку самых мощных инструментов для управления AI-выдачей: работа с UGC-контентом, экспертными материалами и техническим GEO.</p>
+      </div>
+
+      <div class="visual-col">
+        <div class="visual">
+          <div class="eye-wrap" aria-hidden="true">
+            <div id="eye"></div>
+          </div>
+          <div class="eye-tag t1"><b>AI</b>видит ваш бренд</div>
+          <div class="eye-tag t2"><b>★</b>натуральный контент</div>
+          <div class="eye-tag t3"><b>AI</b>показывает ваши преимущества</div>
+        </div>
+        <a href="#contact" class="btn btn-c btn-lg">Заказать консультацию</a>
+      </div>
+    </div>
+
+    <div class="platforms">
+      <span class="chip on-o">GEO-оптимизация</span>
+      <span class="chip on-o">Работа с контентом</span>
+      <span class="chip on-o">Отзывы</span>
+      <span class="chip on-o">Пользовательские рейтинги</span>
+      <span class="chip on-o">UGC-статьи</span>
+      <span class="chip on-c">VC</span>
+      <span class="chip on-c">DTF</span>
+      <span class="chip on-c">Pikabu</span>
+      <span class="chip on-c">TenChat</span>
+      <span class="chip on-c">Дзен</span>
+      <span class="chip on-c">Otzovik</span>
+      <span class="chip on-c">IRecommend</span>
+      <span class="chip on-c">Яндекс Карты</span>
+    </div>
+
+  </main>
+
+  <!-- ===== MARQUEE ===== -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" aria-hidden="true">
+      <!-- repeated twice for seamless loop -->
+      <span class="marquee-item">Нейросети<span class="dot"></span>ChatGPT<span class="dot c"></span>Яндекс AI<span class="dot"></span>Google AI<span class="dot c"></span>UGC Контент<span class="dot"></span>GEO Оптимизация<span class="dot c"></span>AI Выдача<span class="dot"></span>Органический рост<span class="dot c"></span>Репутация в AI<span class="dot"></span>DeepSeek<span class="dot c"></span>Claude<span class="dot"></span></span>
+      <span class="marquee-item">Нейросети<span class="dot"></span>ChatGPT<span class="dot c"></span>Яндекс AI<span class="dot"></span>Google AI<span class="dot c"></span>UGC Контент<span class="dot"></span>GEO Оптимизация<span class="dot c"></span>AI Выдача<span class="dot"></span>Органический рост<span class="dot c"></span>Репутация в AI<span class="dot"></span>DeepSeek<span class="dot c"></span>Claude<span class="dot"></span></span>
+    </div>
+  </div>
+
+  <!-- ===== EXAMPLES ===== -->
+  <section class="section" id="examples">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="eyebrow">// Примеры</span>
+        <h2>Нейровыдача: <span class="hl-o">до</span> и&nbsp;<span class="hl-c">после</span></h2>
+      </div>
+
+      <!-- Заголовки колонок -->
+      <div class="col-labels reveal">
+        <div class="col-lbl left">
+          <span class="lbadge">✕ БЫЛО</span>
+          <span class="sub">без присутствия в AI</span>
+        </div>
+        <div></div>
+        <div class="col-lbl right">
+          <span class="sub">после работы с нами</span>
+          <span class="lbadge">✓ СТАЛО</span>
+        </div>
+      </div>
+
+      <!-- Строки сравнения -->
+      <div class="compare-rows">
+
+        <!-- Строка 1: ChatGPT -->
+        <div class="compare-row reveal" style="transition-delay:.05s">
+          <div class="bylo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">GPT</span>
+                <span class="chat-ai-name">ChatGPT</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
+                <div class="b-bubble b-ai">Для малого бизнеса подойдут <span class="rival">AmoCRM</span>, <span class="rival">Bitrix24</span> и&nbsp;<span class="rival">Мегаплан</span>. Они предлагают базовые функции по доступной цене.</div>
+              </div>
+              <div class="chat-foot">✕ Ваш бренд не упомянут</div>
+            </div>
+          </div>
+          <div class="cr-arrow"><span class="cr-arrow-icon">→</span></div>
+          <div class="stalo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">GPT</span>
+                <span class="chat-ai-name">ChatGPT</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Лучший CRM для малого бизнеса в России?</div>
+                <div class="b-bubble b-ai">Пользователи VC и Pikabu активно рекомендуют <span class="b-hit">ВашБренд</span> — интуитивный интерфейс и поддержка. Также упоминаются <span class="rival">AmoCRM</span> и&nbsp;<span class="rival">Bitrix24</span>.</div>
+              </div>
+              <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Строка 2: Яндекс AI -->
+        <div class="compare-row reveal desktop-only" style="transition-delay:.15s">
+          <div class="bylo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">ЯА</span>
+                <span class="chat-ai-name">Яндекс AI</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
+                <div class="b-bubble b-ai">По отзывам и обсуждениям, за разработкой обращаются в&nbsp;<span class="rival">Surf</span>, <span class="rival">Redmadrobot</span> и&nbsp;<span class="rival">Sibedge</span>.</div>
+              </div>
+              <div class="chat-foot">✕ Ваш бренд не упомянут</div>
+            </div>
+          </div>
+          <div class="cr-arrow"><span class="cr-arrow-icon">→</span></div>
+          <div class="stalo-col">
+            <div class="chat-win">
+              <div class="chat-win-head">
+                <span class="chat-badge">ЯА</span>
+                <span class="chat-ai-name">Яндекс AI</span>
+                <div class="chat-win-dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="chat-msgs">
+                <div class="b-bubble b-user">Где заказать разработку мобильного приложения?</div>
+                <div class="b-bubble b-ai">По отзывам на форумах, <span class="b-hit">ВашБренд</span> стабильно в топе: прозрачное ценообразование и соблюдение сроков.</div>
+              </div>
+              <div class="chat-foot">✓ Ваш бренд в топе ответа</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="section-header reveal" style="margin-top:clamp(44px,6vh,68px);">
+        <span class="eyebrow">// Принцип</span>
+        <h2>В чём наш <span class="hl-o">принцип</span> работы?</h2>
+      </div>
+
+      <div class="p2-split reveal" style="transition-delay:.08s">
+
+        <div class="p2-left">
+          <div class="p2-timeline">
+
+            <div class="p2-tcard">
+              <div class="p2-tnum">01</div>
+              <div class="p2-tbody">
+                <div class="p2-tlabel">Механика</div>
+                <h3>AI доверяет органическому UGC</h3>
+                <p class="lead">AI-модели обучаются на&nbsp;контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов они воспринимают как трастовые источники — и&nbsp;включают в&nbsp;свои ответы.</p>
+              </div>
+            </div>
+
+            <div class="p2-tcard">
+              <div class="p2-tnum">02</div>
+              <div class="p2-tbody">
+                <div class="p2-tlabel">«Глас народа»</div>
+                <h3>Нужен органичный голос пользователей</h3>
+                <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда.</p>
+                <div class="p2-own">★ именно это мы берём на&nbsp;себя</div>
+              </div>
+            </div>
+
+            <div class="p2-tcard">
+              <div class="p2-tnum">03</div>
+              <div class="p2-tbody">
+                <div class="p2-tlabel">Техническое GEO</div>
+                <h3>К делу подключаются техспециалисты</h3>
+                <p class="lead">Эффект от UGC-контента мы усиливаем через работу с техническими особенностями вашего сайта, GEO-оптимизацией, различными SEO-alike решениями и прочей техничкой, которая обеспечивает нужный результат.</p>
+              </div>
+            </div>
+
+            <div class="p2-tcard">
+              <div class="p2-tnum">03</div>
+              <div class="p2-tbody">
+                <div class="p2-tlabel">Результат</div>
+                <h3>Рекомендации во всех нейросетях</h3>
+                <p class="lead">AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах:</p>
+                <div class="p2-chips">
+                  <span class="p2-chip">Google AI</span>
+                  <span class="p2-chip">Яндекс AI</span>
+                  <span class="p2-chip">ChatGPT</span>
+                  <span class="p2-chip">Claude</span>
+                  <span class="p2-chip">DeepSeek</span>
+                  <span class="p2-chip">Алиса</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="p2-right">
+          <img src="woman_stars.png" alt="">
+          <div class="p2-img-label">// AI sees your brand</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="section section-alt" id="how">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="eyebrow">// Процесс</span>
+        <h2>Четыре шага до&nbsp;управления AI&#8209;выдачей</h2>
+      </div>
+      <div class="steps-timeline">
+        <div class="step reveal" style="transition-delay:.0s">
+          <span class="step-n">01</span>
+          <h3>Анализ ниши</h3>
+          <p class="lead">Выясняем, как нужно писать про ваш бренд,&nbsp;чтобы AI начал рекомендовать его.</p>
+          <div class="step-dot"></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.1s">
+          <span class="step-n">02</span>
+          <h3>Создание и публикация контента</h3>
+          <p class="lead">Пишем посты, отзывы, рейтинги, комментарии и&nbsp;тематические обсуждения — в&nbsp;стиле каждой платформы, без рекламного следа. Публикуем так, как публикуют живые пользователи. Платформы не банят. AI засчитывает как честный сигнал.</p>
+          <div class="step-dot"></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.2s">
+          <span class="step-n">03</span>
+          <h3>GEO-оптимизация</h3>
+          <p class="lead">Техническая магия довершает работу и формирует организованное, всестороннее влияние на AI-выдачу</p>
+          <div class="step-dot"></div>
+        </div>
+        <div class="step reveal" style="transition-delay:.3s">
+          <span class="step-n">04</span>
+          <h3>Мониторинг и отчётность</h3>
+          <p class="lead">Каждый месяц присылаем отчёт: объём контента + скриншоты нейроответов с упоминанием вашего бренда.</p>
+          <div class="step-dot"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section class="section" id="services">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="eyebrow">// Услуги</span>
+        <h2>Выберите <span class="hl-o">пакет</span> — раскройте <span class="hl-c">детали</span></h2>
+        <p class="section-sub">Нажмите на строку, чтобы увидеть полный состав пакета.</p>
+      </div>
+
+      <div class="acc-list reveal" style="transition-delay:.08s">
+
+        <!-- FREE -->
+        <div class="acc-item cyan-item" id="acc-free">
+          <button class="acc-trigger" aria-expanded="false" aria-controls="body-free">
+            <span class="acc-badge bfree">FREE</span>
+            <div class="acc-meta">
+              <span class="acc-name">Аудит AI-выдачи</span>
+              <span class="acc-summary">Аудит и мониторинг упоминаний</span>
+            </div>
+            <span class="acc-price">Бесплатно</span>
+            <span class="acc-toggle">+</span>
+          </button>
+          <div class="acc-body" id="body-free" role="region">
+            <div class="acc-inner">
+              <div class="feat-grid">
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Аудит AI-выдачи по вашим ключевым запросам</span></div>
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Мониторинг упоминаний бренда в нейросетях</span></div>
+              </div>
+              <div class="acc-cta-col">
+                <a href="#contact" class="btn btn-c">Получить бесплатно →</a>
+                <p class="acc-note">Без обязательств. Видите как вас видит AI.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 20к -->
+        <div class="acc-item" id="acc-start">
+          <button class="acc-trigger" aria-expanded="false" aria-controls="body-start">
+            <span class="acc-badge bpaid">20К</span>
+            <div class="acc-meta">
+              <span class="acc-name">Хорошее начало</span>
+              <span class="acc-summary">Анализ ниши + стратегия контента</span>
+            </div>
+            <span class="acc-price">20 000 ₽</span>
+            <span class="acc-toggle">+</span>
+          </button>
+          <div class="acc-body" id="body-start" role="region">
+            <div class="acc-inner">
+              <div class="feat-grid">
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ ниши и конкурентов в AI-выдаче</span></div>
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Стратегия: как, где и о чём писать про бренд, чтобы повлиять на AI-выдачу</span></div>
+              </div>
+              <div class="acc-cta-col">
+                <a href="#contact" class="btn btn-o">Заказать →</a>
+                <p class="acc-note">Разовый проект. Контент под вашу нишу.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 70к -->
+        <div class="acc-item" id="acc-base">
+          <button class="acc-trigger" aria-expanded="false" aria-controls="body-base">
+            <span class="acc-badge bpaid">70К</span>
+            <div class="acc-meta">
+              <span class="acc-name">Основной</span>
+              <span class="acc-summary">Стратегия · 10 отзывов · 30 комм · 2 поста</span>
+            </div>
+            <span class="acc-price">70 000 ₽</span>
+            <span class="acc-toggle">+</span>
+          </button>
+          <div class="acc-body" id="body-base" role="region">
+            <div class="acc-inner">
+              <div class="feat-grid">
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ и подготовка стратегии</span></div>
+                <div class="feat-item"><span class="f-icon num">10</span><span class="f-text"><b>10 отзывов</b> на Otzovik, IRecommend, Яндекс Картах</span></div>
+                <div class="feat-item"><span class="f-icon num">30</span><span class="f-text"><b>30 комментариев</b> на форумах и в блогах</span></div>
+                <div class="feat-item"><span class="f-icon num">2</span><span class="f-text"><b>2 поста</b> в VC, DTF, Дзен, Pikabu</span></div>
+              </div>
+              <div class="acc-cta-col">
+                <a href="#contact" class="btn btn-o">Заказать →</a>
+                <p class="acc-note">Ежемесячный пакет. Без долгосрочных обязательств.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 120к — recommended -->
+        <div class="acc-item" id="acc-premium">
+          <div class="rec-strip">Популярный выбор</div>
+          <button class="acc-trigger" aria-expanded="false" aria-controls="body-premium">
+            <span class="acc-badge bpaid">120К</span>
+            <div class="acc-meta">
+              <span class="acc-name">Премиум</span>
+              <span class="acc-summary">Стратегия · 30 отзывов · 60 комм · 4 поста · мониторинг</span>
+            </div>
+            <span class="acc-price">120 000 ₽</span>
+            <span class="acc-toggle">+</span>
+          </button>
+          <div class="acc-body" id="body-premium" role="region">
+            <div class="acc-inner">
+              <div class="feat-grid">
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ и подготовка стратегии</span></div>
+                <div class="feat-item"><span class="f-icon num">30</span><span class="f-text"><b>30 отзывов</b> на площадках</span></div>
+                <div class="feat-item"><span class="f-icon num">60</span><span class="f-text"><b>60 комментариев</b> на форумах и в блогах</span></div>
+                <div class="feat-item"><span class="f-icon num">4</span><span class="f-text"><b>4 поста</b> в community-блогах</span></div>
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Мониторинг AI-выдачи по ключевым запросам</span></div>
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Контроль за упоминаниями бренда</span></div>
+              </div>
+              <div class="acc-cta-col">
+                <a href="#contact" class="btn btn-o">Выбрать Премиум →</a>
+                <p class="acc-note">Ежемесячный пакет. Полный контроль присутствия.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 200к -->
+        <div class="acc-item" id="acc-max">
+          <button class="acc-trigger" aria-expanded="false" aria-controls="body-max">
+            <span class="acc-badge bpaid">MAX</span>
+            <div class="acc-meta">
+              <span class="acc-name">Пакет «Максимум»</span>
+              <span class="acc-summary">50 отзывов · 80 комм · 4 поста · 100 соцсигналов · сайт</span>
+            </div>
+            <span class="acc-price">200 000 ₽</span>
+            <span class="acc-toggle">+</span>
+          </button>
+          <div class="acc-body" id="body-max" role="region">
+            <div class="acc-inner">
+              <div class="feat-grid">
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Анализ и подготовка стратегии</span></div>
+                <div class="feat-item"><span class="f-icon num">50</span><span class="f-text"><b>50 отзывов</b> на площадках</span></div>
+                <div class="feat-item"><span class="f-icon num">80</span><span class="f-text"><b>80 комментариев</b> на форумах и в блогах</span></div>
+                <div class="feat-item"><span class="f-icon num">4</span><span class="f-text"><b>4 поста</b> в community-блогах</span></div>
+                <div class="feat-item"><span class="f-icon num">100</span><span class="f-text"><b>100 соцсигналов</b></span></div>
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Мониторинг AI-выдачи</span></div>
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Контроль за упоминаниями бренда</span></div>
+                <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Создание отдельного сайта с отзывами о компании</span></div>
+              </div>
+              <div class="acc-cta-col">
+                <a href="#contact" class="btn btn-o">Выбрать Максимум →</a>
+                <p class="acc-note">Максимальное присутствие и доминирование в нейровыдаче.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section section-alt" id="faq">
+    <div class="section-inner">
+      <div class="faq-layout">
+        <div class="faq-sidebar reveal">
+          <span class="eyebrow">// FAQ</span>
+          <h2>Частые<br>вопросы</h2>
+          <p class="faq-sidebar-text">Всё, что обычно спрашивают до старта. Если не нашли ответ — напишите, разберём вашу ситуацию лично.</p>
+        </div>
+        <div class="faq-list reveal" style="transition-delay:.1s">
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Как измерить результат?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Ежемесячный отчёт: скриншоты AI-ответов по целевым запросам, в которых появился ваш бренд. Видите конкретные нейроответы ChatGPT и Яндекс AI — до и после.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Это законно? Нас не забанят?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Нативный контент без ссылок и рекламных маркеров — стандартный пользовательский формат. Не нарушает правила платформ. AI воспринимает его как честный сигнал: нет коммерческих маркеров — нет причин игнорировать.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              У нас уже есть контент- или PR-агентство.
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Они решают другую задачу. Работаем параллельно, не вместо.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Когда будет результат?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Первые упоминания бренда в AI-ответах — через <b>4–8 недель</b>. Накопленный контент продолжает работать месяцами.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Это подойдёт, если нам нужны быстрые лиды?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">Нет. Это инвестиция в присутствие и репутацию — как появление в авторитетных СМИ. Если нужен трафик сегодня — мы не тот инструмент.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              Как выйти, если не подойдёт?
+              <span class="faq-toggle">+</span>
+            </button>
+            <div class="faq-a">
+              Работаем по ежемесячным пакетам без долгосрочных обязательств. Не устраивает — просто не продлеваете.
+              <p class="faq-note">Стоимость: пакеты по объёму контента, без скрытых платежей.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FINAL CTA ===== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-bg"></div>
+    <div class="cta-inner reveal">
+      <span class="eyebrow" style="justify-content:center;margin-bottom:20px;">// Финальный шаг</span>
+      <h2>Пока конкуренты не&nbsp;заняли AI&#8209;выдачу по&nbsp;вашей нише — это&nbsp;можно&nbsp;исправить.</h2>
+      <p class="cta-sub">Когда займут — отыграть будет сложно.</p>
+      <a href="#" class="btn btn-orange btn-xl">Обсудить нишу&nbsp;→</a>
+      <p class="cta-fine">Оставьте заявку — ответим в рабочий день, разберём вашу нишу и&nbsp;покажем, что сейчас выдаёт AI по вашим ключевым запросам.</p>
+    </div>
+  </section>
+
+  <!-- ===== jagged cyan accent ===== -->
+  <svg class="teeth" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 10 L0 6 L4 0 L8 6 L12 0 L16 6 L20 0 L24 6 L28 0 L32 6 L36 0 L40 6 L44 0 L48 6 L52 0 L56 6 L60 0 L64 6 L68 0 L72 6 L76 0 L80 6 L84 0 L88 6 L92 0 L96 6 L100 0 L100 10 Z" fill="currentColor"/>
+  </svg>
+  <div class="footstrip">
+    <span>© AI Brand Advocacy</span>
+    <span>Глас народа для нейросетей</span>
+  </div>
+
+</div><!-- /stage -->
+
+<script>
+(function(){
+  /* ---- pixel eye ---- */
+  const COLS=32,ROWS=20,CELL=12;
+  const W=COLS*CELL,H=ROWS*CELL;
+  const cx=15.5,cy=9.5;
+  const R=19,k=13,Ri=12,ki=8;
+  const inA=(x,y,r,kk)=>{const a=(x-cx)**2+(y-(cy+kk))**2<=r*r;const b=(x-cx)**2+(y-(cy-kk))**2<=r*r;return a&&b;};
+  const outline=(x,y,r,kk)=>{if(!inA(x,y,r,kk))return false;return!(inA(x-1,y,r,kk)&&inA(x+1,y,r,kk)&&inA(x,y-1,r,kk)&&inA(x,y+1,r,kk));};
+  const dist=(x,y)=>Math.hypot(x-cx,y-cy);
+  const ORANGE='#ff5a00',CYAN='#1fd1f0',WHITE='#f4f3ee';
+  let rects='';
+  const px=(c,r,fill)=>{rects+=`<rect x="${c*CELL}" y="${r*CELL}" width="${CELL}" height="${CELL}" fill="${fill}"/>`;};
+  for(let r=0;r<ROWS;r++){for(let c=0;c<COLS;c++){const d=dist(c,r);if(d<2.6){px(c,r,ORANGE);continue;}if(d>=4&&d<5.3){px(c,r,CYAN);continue;}if(outline(c,r,Ri,ki)){px(c,r,ORANGE);continue;}if(outline(c,r,R,k)){px(c,r,ORANGE);continue;}}}
+  px(Math.round(cx)-2,Math.round(cy)-1,WHITE);
+  document.getElementById('eye').innerHTML=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
+
+  /* ---- scroll progress ---- */
+  const bar=document.getElementById('scrollProgress');
+  function updateProgress(){bar.style.transform=`scaleX(${window.scrollY/(document.body.scrollHeight-window.innerHeight)||0})`;}
+  window.addEventListener('scroll',updateProgress,{passive:true});
+
+  /* ---- sticky header ---- */
+  const hdr=document.getElementById('mainHeader');
+  window.addEventListener('scroll',()=>{hdr.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
+
+  /* ---- cursor glow (hover devices only) ---- */
+  if(window.matchMedia('(hover:hover)').matches){
+    const glow=document.getElementById('cursorGlow');
+    glow.style.opacity='1';
+    let rafId;
+    document.addEventListener('mousemove',e=>{
+      cancelAnimationFrame(rafId);
+      rafId=requestAnimationFrame(()=>{
+        glow.style.left=e.clientX+'px';
+        glow.style.top=e.clientY+'px';
+      });
+    });
+  }
+
+  /* ---- scroll reveal ---- */
+  const revealObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');revealObs.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal,.reveal-scale').forEach(el=>revealObs.observe(el));
+
+  /* ---- bento spotlight ---- */
+  document.querySelectorAll('.bento-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width*100;
+      const y=(e.clientY-r.top)/r.height*100;
+      card.style.setProperty('--gx',x+'%');
+      card.style.setProperty('--gy',y+'%');
+    });
+  });
+
+  /* ---- services accordion ---- */
+  document.querySelectorAll('.acc-trigger').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const item=btn.closest('.acc-item');
+      const wasOpen=item.classList.contains('open');
+      document.querySelectorAll('.acc-item.open').forEach(el=>{
+        el.classList.remove('open');
+        el.querySelector('.acc-trigger').setAttribute('aria-expanded','false');
+      });
+      if(!wasOpen){
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+
+  /* ---- nav scroll-spy ---- */
+  const navLinks=[...document.querySelectorAll('nav a[href^="#"]')];
+  const spySections=navLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const spyObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        navLinks.forEach(a=>a.classList.remove('active'));
+        const link=navLinks.find(a=>a.getAttribute('href')==='#'+e.target.id);
+        if(link)link.classList.add('active');
+      }
+    });
+  },{threshold:.25,rootMargin:'-90px 0px -55% 0px'});
+  spySections.forEach(s=>spyObs.observe(s));
+
+  /* ---- FAQ accordion (smooth height) ---- */
+  document.querySelectorAll('.faq-q').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const item=btn.closest('.faq-item');
+      const wasOpen=item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(el=>{
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded','false');
+      });
+      if(!wasOpen){
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
