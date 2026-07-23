@@ -1,0 +1,26 @@
+{$DOMAIN} {
+	encode gzip zstd
+
+	# базовые заголовки безопасности
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# всё, что начинается с /api/, уходит в контейнер приёма заявок.
+	# сюда же попадает /api/admin/leads.csv — доступ к нему проверяет само приложение по Bearer-токену.
+	handle /api/* {
+		reverse_proxy audit:8080
+	}
+
+	# статический лендинг
+	handle {
+		root * /srv
+		file_server {
+			index geo.html
+		}
+	}
+}

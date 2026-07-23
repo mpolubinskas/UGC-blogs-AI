@@ -204,6 +204,13 @@
     content:"";width:6px;height:6px;border-radius:50%;
     background:var(--cyan);box-shadow:0 0 8px rgba(var(--cyan-rgb),.9);flex:none;
   }
+  /* inline variant — always-visible under a service row (no clipped halo/pulse) */
+  .acc-inline-cta{padding:16px 20px;border-top:1px solid var(--line);background:var(--bg-2);}
+  .audit-form--inline{max-width:none;gap:9px;}
+  .audit-form--inline::before{display:none;}
+  .audit-form--inline .audit-row{box-shadow:0 6px 20px rgba(0,0,0,.28);}
+  .audit-form--inline .audit-btn{animation:none;}
+  .audit-form--inline .audit-hint{justify-content:flex-start;}
   .audit-row.shake{animation:auditShake .4s ease;}
   @keyframes auditShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
   @media (max-width:520px){
@@ -286,6 +293,12 @@
   }
   .audit-field input.invalid{border-color:var(--orange);box-shadow:0 0 0 3px rgba(var(--orange-rgb),.15);}
   .audit-submit{width:100%;margin-top:4px;}
+  .audit-submit[disabled]{opacity:.6;cursor:progress;}
+  .audit-hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;}
+  .audit-error{
+    color:var(--orange-soft);font-family:var(--body);font-size:13px;
+    text-align:center;margin-top:2px;
+  }
   .audit-success{text-align:center;padding:14px 0;}
   .audit-success-icon{
     width:56px;height:56px;margin:0 auto 16px;border-radius:50%;
@@ -376,7 +389,10 @@
     border-top:1px solid var(--line);
   }
   .platforms{
-    display:flex; flex-wrap:wrap; gap:9px;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .platform-row{
+    display:flex; flex-wrap:wrap; gap:9px; justify-content:center;
   }
   .chip{
     font-family:var(--body); font-weight:700; font-size:12px;
@@ -1267,9 +1283,9 @@
       </div>
     </div>
 
-    <form class="audit-form" id="auditForm" novalidate>
+    <form class="audit-form" novalidate>
       <div class="audit-row">
-        <input type="text" class="audit-input" id="auditWebsite" name="website"
+        <input type="text" class="audit-input" name="website"
                placeholder="Введите адрес вашего сайта" autocomplete="url" required>
         <button type="submit" class="btn btn-c audit-btn">Получить бесплатный аудит</button>
       </div>
@@ -1277,19 +1293,23 @@
     </form>
 
     <div class="platforms">
-      <span class="chip on-o">GEO-оптимизация</span>
-      <span class="chip on-o">Работа с контентом</span>
-      <span class="chip on-o">Отзывы</span>
-      <span class="chip on-o">Пользовательские рейтинги</span>
-      <span class="chip on-o">UGC-статьи</span>
-      <span class="chip on-c">VC</span>
-      <span class="chip on-c">DTF</span>
-      <span class="chip on-c">Pikabu</span>
-      <span class="chip on-c">TenChat</span>
-      <span class="chip on-c">Дзен</span>
-      <span class="chip on-c">Otzovik</span>
-      <span class="chip on-c">IRecommend</span>
-      <span class="chip on-c">Яндекс Карты</span>
+      <div class="platform-row">
+        <span class="chip on-o">GEO-оптимизация</span>
+        <span class="chip on-o">Работа с контентом</span>
+        <span class="chip on-o">Отзывы</span>
+        <span class="chip on-o">Пользовательские рейтинги</span>
+        <span class="chip on-o">UGC-статьи</span>
+      </div>
+      <div class="platform-row">
+        <span class="chip on-c">VC</span>
+        <span class="chip on-c">DTF</span>
+        <span class="chip on-c">Pikabu</span>
+        <span class="chip on-c">TenChat</span>
+        <span class="chip on-c">Дзен</span>
+        <span class="chip on-c">Otzovik</span>
+        <span class="chip on-c">IRecommend</span>
+        <span class="chip on-c">Яндекс Карты</span>
+      </div>
     </div>
 
   </main>
@@ -1433,6 +1453,15 @@
         </div>
       </div>
 
+      <form class="audit-form reveal" novalidate style="margin-top:clamp(40px,6vh,64px);">
+        <div class="audit-row">
+          <input type="text" class="audit-input" name="website"
+                 placeholder="Введите адрес вашего сайта" autocomplete="url" required>
+          <button type="submit" class="btn btn-c audit-btn">Получить бесплатный аудит</button>
+        </div>
+        <span class="audit-hint">Бесплатно покажем, как AI-системы видят ваш бренд</span>
+      </form>
+
       <div class="section-header reveal" style="margin-top:clamp(44px,6vh,68px);">
         <span class="eyebrow">// Принцип</span>
         <h2>Четыре шага для управления <span class="hl-o">AI-выдачей</span></h2>
@@ -1522,15 +1551,21 @@
             <span class="acc-price">Бесплатно</span>
             <span class="acc-toggle">+</span>
           </button>
+          <div class="acc-inline-cta">
+            <form class="audit-form audit-form--inline" novalidate>
+              <div class="audit-row">
+                <input type="text" class="audit-input" name="website"
+                       placeholder="Введите адрес вашего сайта" autocomplete="url" required>
+                <button type="submit" class="btn btn-c audit-btn">Получить бесплатный аудит</button>
+              </div>
+              <span class="audit-hint">Без обязательств. Покажем, как вас видит AI.</span>
+            </form>
+          </div>
           <div class="acc-body" id="body-free" role="region">
             <div class="acc-inner">
               <div class="feat-grid">
                 <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Аудит AI-выдачи по вашим ключевым запросам</span></div>
                 <div class="feat-item"><span class="f-icon yes">✓</span><span class="f-text">Мониторинг упоминаний бренда в нейросетях</span></div>
-              </div>
-              <div class="acc-cta-col">
-                <a href="#contact" class="btn btn-c">Получить бесплатно →</a>
-                <p class="acc-note">Без обязательств. Видите как вас видит AI.</p>
               </div>
             </div>
           </div>
@@ -1760,7 +1795,10 @@
         <label id="auditContactLabel" for="auditContact">Контакт</label>
         <input type="text" id="auditContact" name="contact" required>
       </div>
+      <!-- honeypot: скрыт от людей, боты заполняют -->
+      <input type="text" class="audit-hp" name="hp_field" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit" class="btn btn-orange audit-submit">Отправить заявку</button>
+      <p class="audit-error" id="auditError" hidden>Не удалось отправить заявку. Попробуйте ещё раз чуть позже.</p>
     </form>
 
     <div class="audit-success" id="auditSuccess" hidden>
@@ -1875,10 +1913,9 @@
 
   /* ---- free audit form + modal ---- */
   (function(){
-    const heroForm=document.getElementById('auditForm');
+    const forms=[...document.querySelectorAll('.audit-form')];
     const modal=document.getElementById('auditModal');
-    if(!heroForm||!modal)return;
-    const websiteInput=document.getElementById('auditWebsite');
+    if(!forms.length||!modal)return;
     const siteName=document.getElementById('auditSiteName');
     const methods=[...modal.querySelectorAll('.audit-method')];
     const contactForm=document.getElementById('auditContactForm');
@@ -1886,7 +1923,11 @@
     const contactInput=document.getElementById('auditContact');
     const contactLabel=document.getElementById('auditContactLabel');
     const successBox=document.getElementById('auditSuccess');
-    const row=heroForm.querySelector('.audit-row');
+    const errorBox=document.getElementById('auditError');
+    const hpField=contactForm.querySelector('[name="hp_field"]');
+    const submitBtn=contactForm.querySelector('.audit-submit');
+    const ENDPOINT='/api/audit';
+    let activeWebsite='';
 
     const METHODS={
       telegram:{label:'Telegram',placeholder:'@username',type:'text'},
@@ -1900,19 +1941,24 @@
     function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
     function reset(){
       methods.forEach(m=>m.classList.remove('active'));
-      contactForm.hidden=true;successBox.hidden=true;
+      contactForm.hidden=true;successBox.hidden=true;errorBox.hidden=true;
       contactForm.reset();currentMethod=null;
     }
 
-    heroForm.addEventListener('submit',e=>{
-      e.preventDefault();
-      const val=websiteInput.value.trim();
-      if(!val){
-        row.classList.remove('shake');void row.offsetWidth;row.classList.add('shake');
-        websiteInput.focus();return;
-      }
-      siteName.textContent=val;
-      reset();openModal();
+    forms.forEach(form=>{
+      const input=form.querySelector('.audit-input');
+      const row=form.querySelector('.audit-row');
+      form.addEventListener('submit',e=>{
+        e.preventDefault();
+        const val=input.value.trim();
+        if(!val){
+          row.classList.remove('shake');void row.offsetWidth;row.classList.add('shake');
+          input.focus();return;
+        }
+        activeWebsite=val;
+        siteName.textContent=val;
+        reset();openModal();
+      });
     });
 
     methods.forEach(btn=>{
@@ -1929,7 +1975,7 @@
       });
     });
 
-    contactForm.addEventListener('submit',e=>{
+    contactForm.addEventListener('submit',async e=>{
       e.preventDefault();
       let ok=true;
       [nameInput,contactInput].forEach(inp=>{
@@ -1937,17 +1983,31 @@
         else inp.classList.remove('invalid');
       });
       if(!ok)return;
+      errorBox.hidden=true;
       const payload={
-        website:websiteInput.value.trim(),
+        website:activeWebsite,
         method:currentMethod,
         name:nameInput.value.trim(),
-        contact:contactInput.value.trim()
+        contact:contactInput.value.trim(),
+        hp_field:hpField?hpField.value:''
       };
-      /* TODO: отправить payload на backend / CRM (fetch к своему эндпоинту) */
-      console.log('Заявка на аудит:',payload);
-      contactForm.hidden=true;
-      methods.forEach(m=>m.classList.remove('active'));
-      successBox.hidden=false;
+      const prevText=submitBtn.textContent;
+      submitBtn.disabled=true;submitBtn.textContent='Отправляем…';
+      try{
+        const res=await fetch(ENDPOINT,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        if(!res.ok)throw new Error('status '+res.status);
+        contactForm.hidden=true;
+        methods.forEach(m=>m.classList.remove('active'));
+        successBox.hidden=false;
+      }catch(err){
+        errorBox.hidden=false;
+      }finally{
+        submitBtn.disabled=false;submitBtn.textContent=prevText;
+      }
     });
 
     modal.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',closeModal));

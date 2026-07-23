@@ -1,0 +1,32 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv:ro          # статика лендинга (geo.html + картинки)
+      - caddy_data:/data        # сертификаты Let's Encrypt
+      - caddy_config:/config
+    depends_on:
+      - audit
+
+  audit:
+    build: ./audit-server
+    restart: unless-stopped
+    environment:
+      - ADMIN_TOKEN=${ADMIN_TOKEN}       # длинный случайный токен для выгрузки CSV
+      - ALLOWED_ORIGIN=${ALLOWED_ORIGIN} # напр. https://example.com
+    volumes:
+      - leads_data:/data                 # CSV лежит ТОЛЬКО здесь; Caddy сюда не смотрит
+    expose:
+      - "8080"                           # порт виден только Caddy во внутренней сети, наружу НЕ проброшен
+
+volumes:
+  caddy_data:
+  caddy_config:
+  leads_data:

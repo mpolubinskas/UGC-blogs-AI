@@ -1,1 +1,7 @@
 /.claude
+
+# секреты и данные аудит-сервера
+.env
+/data
+*.csv
+leads.csv
