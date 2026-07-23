@@ -1006,30 +1006,38 @@
   .gn-u-o{color:var(--orange-soft);font-weight:700;}
   .gn-u-c{color:var(--cyan);font-weight:700;}
 
+  .gn-payoff-wrap{text-align:center;margin-top:clamp(30px,4.5vh,46px);}
   .gn-payoff{
     display:inline-flex;flex-direction:column;gap:6px;align-items:center;
     position:relative;overflow:hidden;
     border:1px solid rgba(var(--orange-rgb),.35);border-radius:14px;
     background:linear-gradient(145deg,rgba(var(--orange-rgb),.09),rgba(var(--cyan-rgb),.05) 60%,rgba(var(--orange-rgb),.03));
-    padding:20px 30px;margin-top:8px;
+    padding:20px 30px;
     transition:border-color .25s,box-shadow .25s;
   }
+  .gn-txt{text-align:center;}
   .gn-payoff:hover{border-color:rgba(var(--orange-rgb),.55);box-shadow:0 0 50px rgba(var(--orange-rgb),.14);}
   .gn-payoff::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--cyan));}
   .gn-lbl{font-family:var(--pix);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--orange-soft);}
   .gn-txt{font-family:var(--body);font-weight:800;font-size:clamp(1.05rem,1.8vw,1.35rem);line-height:1.25;letter-spacing:-.4px;max-width:440px;}
   .gn-txt .gn-o{color:var(--orange);}.gn-txt .gn-c{color:var(--cyan);}
 
-  .gn-voices{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .gn-voices{
+    display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;
+    gap:14px;margin:clamp(30px,4.5vh,46px) auto 0;position:relative;z-index:1;
+  }
   .gn-vcard{
-    position:absolute;width:255px;pointer-events:auto;
+    flex:1 1 220px;max-width:280px;
     background:rgba(16,16,20,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-    border:1px solid var(--line);border-radius:12px;padding:13px 15px;
-    box-shadow:0 18px 40px rgba(0,0,0,.4);
+    border:1px solid var(--line);border-radius:12px;padding:13px 15px;text-align:left;
+    box-shadow:0 12px 30px rgba(0,0,0,.32);
     animation:gn-floaty 8s ease-in-out infinite;
     transition:transform .25s,border-color .25s,box-shadow .25s;
   }
-  .gn-vcard:hover{transform:translateY(-6px) scale(1.03) rotate(0deg)!important;border-color:var(--line-strong);box-shadow:0 26px 60px rgba(0,0,0,.5);z-index:6;}
+  .gn-vcard:nth-child(2){animation-delay:-2s;}
+  .gn-vcard:nth-child(3){animation-delay:-4s;}
+  .gn-vcard:nth-child(4){animation-delay:-6s;}
+  .gn-vcard:hover{transform:translateY(-6px) scale(1.03);border-color:var(--line-strong);box-shadow:0 22px 50px rgba(0,0,0,.45);z-index:6;}
   .gn-vhead{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
   .gn-avatar{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--pix);font-weight:700;font-size:12px;color:#0c0c0e;}
   .gn-vname{font-size:12.5px;font-weight:700;line-height:1.1;}
@@ -1044,12 +1052,7 @@
   .gn-vcard.gn-o .gn-avatar{background:var(--orange);}
   .gn-vcard.gn-o .gn-src{background:rgba(var(--orange-rgb),.14);color:var(--orange-soft);border:1px solid rgba(var(--orange-rgb),.3);}
 
-  /* 4 cards: left column stacked (v1 over v2), right column stacked (v3 over v4) */
-  .gn-v1{top:3%;left:0;--rot:-3deg;transform:rotate(-3deg);animation-delay:0s;}
-  .gn-v2{top:33%;left:0;--rot:-3deg;transform:rotate(-3deg);animation-delay:-2.5s;}
-  .gn-v3{top:3%;right:0;--rot:3deg;transform:rotate(3deg);animation-delay:-1.2s;}
-  .gn-v4{top:33%;right:0;--rot:3deg;transform:rotate(3deg);animation-delay:-3.6s;}
-  @keyframes gn-floaty{0%,100%{transform:translateY(0) rotate(var(--rot,0deg));}50%{transform:translateY(-12px) rotate(var(--rot,0deg));}}
+  @keyframes gn-floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 
   .gn-natural{
     display:inline-flex;align-items:center;gap:9px;margin-top:26px;
@@ -1059,13 +1062,8 @@
   }
   .gn-natural::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
 
-  @media (max-width:1080px){
-    .gn-voices{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:clamp(36px,6vh,56px);pointer-events:auto;}
-    .gn-vcard{position:static;width:auto;transform:none!important;animation:none;}
-    .gn-block::after{mask-image:linear-gradient(180deg,#000 0%,#000 82%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 82%,transparent 100%);}
-  }
-  @media (max-width:560px){
-    .gn-voices{grid-template-columns:1fr;}
+  @media (max-width:620px){
+    .gn-vcard{flex:1 1 100%;max-width:340px;}
   }
   @media (prefers-reduced-motion:reduce){
     .gn-vcard{animation:none;}
@@ -1247,27 +1245,6 @@
       <div class="gn-block reveal">
         <div class="gn-inner">
 
-          <div class="gn-voices" aria-hidden="true">
-            <div class="gn-vcard gn-c gn-v1">
-              <div class="gn-vhead"><div class="gn-avatar">М</div><div><div class="gn-vname">Максим&nbsp;Р.</div><div class="gn-vmeta">2 дня назад</div></div><span class="gn-src">VC</span></div>
-              <div class="gn-vbody">Полгода на <span class="gn-brand">этом сервисе</span> — наконец нормальная поддержка и адекватные тарифы. Советую.</div>
-            </div>
-            <div class="gn-vcard gn-o gn-v2">
-              <div class="gn-vhead"><div class="gn-avatar">А</div><div><div class="gn-vname">Анна&nbsp;К.</div><div class="gn-vmeta">Otzovik</div></div><span class="gn-src">Отзыв</span></div>
-              <div class="gn-vbody">Сравнивала несколько вариантов, остановились на <span class="gn-brand">бренде</span>. Не пожалели.</div>
-              <div class="gn-stars">★★★★★</div>
-            </div>
-            <div class="gn-vcard gn-c gn-v3">
-              <div class="gn-vhead"><div class="gn-avatar">S</div><div><div class="gn-vname">Sergey&nbsp;M.</div><div class="gn-vmeta">1 неделю назад</div></div><span class="gn-src">DTF</span></div>
-              <div class="gn-vbody">Тоже искал такое решение. По итогу лучший опыт из того, что пробовал.</div>
-            </div>
-            <div class="gn-vcard gn-o gn-v4">
-              <div class="gn-vhead"><div class="gn-avatar">О</div><div><div class="gn-vname">Ольга&nbsp;П.</div><div class="gn-vmeta">Яндекс Карты</div></div><span class="gn-src">5.0</span></div>
-              <div class="gn-vbody">Обращались повторно — всё чётко. Рекомендую знакомым.</div>
-              <div class="gn-stars">★★★★★</div>
-            </div>
-          </div>
-
           <div class="gn-thesis">
             <span class="gn-eyebrow">// Как мы работаем</span>
 
@@ -1276,11 +1253,26 @@
             <h2>AI не доверяет <span class="gn-cross">сайтам</span>.<br>AI доверяет <span class="gn-hl"><span class="gn-mark"></span>людям.</span></h2>
 
             <p>Поэтому мы обеспечиваем <b>комплексный подход</b>: работаем и с&nbsp;<span class="gn-u-o">технической оптимизацией</span>, и с&nbsp;<span class="gn-u-c">источниками</span>, из которых нейросети формируют ответы — создаём «глас&nbsp;народа». посты, комментарии и обсуждения на VC, DTF, Pikabu, Reddit, TenChat, Дзен, а также отзывы на Otzovik, IRecommend, Яндекс Картах.</p>
+          </div>
 
-            <div style="height:22px"></div>
-
-            <div class="gn-payoff">
-              <span class="gn-txt">Вы получаете единственную <span class="gn-o">реально работающую связку</span> для управления <span class="gn-c">AI-выдачей</span>.</span>
+          <div class="gn-voices" aria-hidden="true">
+            <div class="gn-vcard gn-c">
+              <div class="gn-vhead"><div class="gn-avatar">М</div><div><div class="gn-vname">Максим&nbsp;Р.</div><div class="gn-vmeta">2 дня назад</div></div><span class="gn-src">VC</span></div>
+              <div class="gn-vbody">Полгода на <span class="gn-brand">этом сервисе</span> — наконец нормальная поддержка и адекватные тарифы. Советую.</div>
+            </div>
+            <div class="gn-vcard gn-o">
+              <div class="gn-vhead"><div class="gn-avatar">А</div><div><div class="gn-vname">Анна&nbsp;К.</div><div class="gn-vmeta">Otzovik</div></div><span class="gn-src">Отзыв</span></div>
+              <div class="gn-vbody">Сравнивала несколько вариантов, остановились на <span class="gn-brand">бренде</span>. Не пожалели.</div>
+              <div class="gn-stars">★★★★★</div>
+            </div>
+            <div class="gn-vcard gn-c">
+              <div class="gn-vhead"><div class="gn-avatar">S</div><div><div class="gn-vname">Sergey&nbsp;M.</div><div class="gn-vmeta">1 неделю назад</div></div><span class="gn-src">DTF</span></div>
+              <div class="gn-vbody">Тоже искал такое решение. По итогу лучший опыт из того, что пробовал.</div>
+            </div>
+            <div class="gn-vcard gn-o">
+              <div class="gn-vhead"><div class="gn-avatar">О</div><div><div class="gn-vname">Ольга&nbsp;П.</div><div class="gn-vmeta">Яндекс Карты</div></div><span class="gn-src">5.0</span></div>
+              <div class="gn-vbody">Обращались повторно — всё чётко. Рекомендую знакомым.</div>
+              <div class="gn-stars">★★★★★</div>
             </div>
           </div>
 
@@ -1289,7 +1281,7 @@
 
       <div class="section-header reveal" style="margin-top:clamp(44px,6vh,68px);">
         <span class="eyebrow">// Принцип</span>
-        <h2>В чём наш <span class="hl-o">принцип</span> работы?</h2>
+        <h2>Четыре шага для управления <span class="hl-o">AI-выдачей</span></h2>
       </div>
 
       <div class="p2-split reveal" style="transition-delay:.08s">
@@ -1301,8 +1293,8 @@
               <div class="p2-tnum">01</div>
               <div class="p2-tbody">
                 <div class="p2-tlabel">Механика</div>
-                <h3>AI доверяет органическому UGC</h3>
-                <p class="lead">AI-модели обучаются на&nbsp;контенте из&nbsp;UGC-блогов, community-платформ и&nbsp;отзовиков. Органичные материалы без коммерческих сигналов они воспринимают как трастовые источники — и&nbsp;включают в&nbsp;свои ответы.</p>
+                <h3>Анализ ниши</h3>
+                <p class="lead">Выясняем, как нужно писать про ваш бренд и какая оптимизация требуется, чтобы AI начал рекомендовать его.</p>
               </div>
             </div>
 
@@ -1310,27 +1302,27 @@
               <div class="p2-tnum">02</div>
               <div class="p2-tbody">
                 <div class="p2-tlabel">«Глас народа»</div>
-                <h3>Нужен органичный голос пользователей</h3>
-                <p class="lead">Собственный контент бренда не&nbsp;работает. Нужно наполнять инфополе натуральными постами, комментариями, отзывами от&nbsp;лица обычных пользователей — с&nbsp;текстами, в&nbsp;которых подсвечиваются преимущества бренда.</p>
-                <div class="p2-own">★ именно это мы берём на&nbsp;себя</div>
+                <h3>Создание и публикация контента</h3>
+                <p class="lead">Пишем посты, отзывы, рейтинги, комментарии и тематические обсуждения — в стиле каждой платформы, без рекламного следа. Публикуем так, как публикуют живые пользователи. Платформы не банят, AI засчитывает как честный сигнал.</p>
+                <div class="p2-own">★ важнейший фундамент для &nbsp;полноценного GEO-продвижения</div>
               </div>
             </div>
 
             <div class="p2-tcard">
               <div class="p2-tnum">03</div>
               <div class="p2-tbody">
-                <div class="p2-tlabel">Техническое GEO</div>
-                <h3>К делу подключаются техспециалисты</h3>
-                <p class="lead">Эффект от UGC-контента мы усиливаем через работу с техническими особенностями вашего сайта, GEO-оптимизацией, различными SEO-alike решениями и прочей техничкой, которая обеспечивает нужный результат.</p>
+                <div class="p2-tlabel">Техничка</div>
+                <h3>Техническое GEO</h3>
+                <p class="lead">Техническая работа GEO-специалистов довершает работу и формирует организованное, всестороннее влияние на AI-выдачу</p>
               </div>
             </div>
 
             <div class="p2-tcard">
-              <div class="p2-tnum">03</div>
+              <div class="p2-tnum">04</div>
               <div class="p2-tbody">
-                <div class="p2-tlabel">Результат</div>
-                <h3>Рекомендации во всех нейросетях</h3>
-                <p class="lead">AI-модели начинают рекомендовать ваш бренд пользователям — улучшается видимость компании в&nbsp;нейросистемах:</p>
+                <div class="p2-tlabel">Отслеживание</div>
+                <h3>Мониторинг и отчётность</h3>
+                <p class="lead">Каждый месяц присылаем отчёт: объём контента + скриншоты нейроответов с упоминанием вашего бренда.</p>
                 <div class="p2-chips">
                   <span class="p2-chip">Google AI</span>
                   <span class="p2-chip">Яндекс AI</span>
@@ -1350,42 +1342,6 @@
           <div class="p2-img-label">// AI sees your brand</div>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== HOW IT WORKS ===== -->
-  <section class="section section-alt" id="how">
-    <div class="section-inner">
-      <div class="section-header reveal">
-        <span class="eyebrow">// Процесс</span>
-        <h2>Четыре шага до&nbsp;управления AI&#8209;выдачей</h2>
-      </div>
-      <div class="steps-timeline">
-        <div class="step reveal" style="transition-delay:.0s">
-          <span class="step-n">01</span>
-          <h3>Анализ ниши</h3>
-          <p class="lead">Выясняем, как нужно писать про ваш бренд,&nbsp;чтобы AI начал рекомендовать его.</p>
-          <div class="step-dot"></div>
-        </div>
-        <div class="step reveal" style="transition-delay:.1s">
-          <span class="step-n">02</span>
-          <h3>Создание и публикация контента</h3>
-          <p class="lead">Пишем посты, отзывы, рейтинги, комментарии и&nbsp;тематические обсуждения — в&nbsp;стиле каждой платформы, без рекламного следа. Публикуем так, как публикуют живые пользователи. Платформы не банят. AI засчитывает как честный сигнал.</p>
-          <div class="step-dot"></div>
-        </div>
-        <div class="step reveal" style="transition-delay:.2s">
-          <span class="step-n">03</span>
-          <h3>GEO-оптимизация</h3>
-          <p class="lead">Техническая магия довершает работу и формирует организованное, всестороннее влияние на AI-выдачу</p>
-          <div class="step-dot"></div>
-        </div>
-        <div class="step reveal" style="transition-delay:.3s">
-          <span class="step-n">04</span>
-          <h3>Мониторинг и отчётность</h3>
-          <p class="lead">Каждый месяц присылаем отчёт: объём контента + скриншоты нейроответов с упоминанием вашего бренда.</p>
-          <div class="step-dot"></div>
-        </div>
       </div>
     </div>
   </section>
